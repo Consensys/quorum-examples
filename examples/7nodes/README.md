@@ -9,10 +9,13 @@ This example configures 7 nodes, each with their own PrivateTransactionManager. 
 All logs and temporary data will be written to the `qdata` folder.
 
 ## Testing Privacy
-You can run the [7node example](https://github.com/jpmorganchase/quorum-examples/tree/master/examples/7nodes) to test the privacy features of Quorum. As described in the Quick Start section of the [README](https://github.com/jpmorganchase/quorum), the final step of the 7node `start.sh` script was the sending of a private transaction to generate a (private) smart contract (SimpleStorage) sent from node 1 "for" node 7 (denoted by the public key passed via privateFor: ["ROAZBWtSacxXQrOe3FGAqJDyJjFePR5ce4TSIzmJ0Bc="] in the sendTransaction call). We'll begin by demonstrating only nodes 1 and 7 are able to view the initial state of the contract. Next we have node 1 update the state of this contract and again verify only nodes 1 and 7 are able to see the updated state of the contract after the block containing the update transaction is validated by the network. 
+You can run the 7node example to test the privacy features of Quorum. As described in the Quick Start section of the [README](https://github.com/jpmorganchase/quorum), the final step of the 7node `start.sh` script was the sending of a private transaction to generate a (private) smart contract (SimpleStorage) sent from node 1 "for" node 7 (denoted by the public key passed via privateFor: ["ROAZBWtSacxXQrOe3FGAqJDyJjFePR5ce4TSIzmJ0Bc="] in the sendTransaction call). We'll begin by demonstrating only nodes 1 and 7 are able to view the initial state of the contract. Next we have node 1 update the state of this contract and again verify only nodes 1 and 7 are able to see the updated state of the contract after the block containing the update transaction is validated by the network. 
 
 For this test it is recommended to use separate terminal windows running geth JavaScript console attached to node 1, node 7, and any node 2-6 (in our example we'll choose node 4).
 
+In each terminal, ensure you are in the 7nodes dir before running the below.
+
+* If you aren't already running the 7nodes example, in terminal 1 run ``$ ./init.sh `` followed by ``$ ./start.sh ``
 * In terminal 1 run ``$ geth attach ipc:qdata/dd1/geth.ipc``
 * In terminal 2 run ``$ geth attach ipc:qdata/dd4/geth.ipc``
 * In terminal 3 run ``$ geth attach ipc:qdata/dd7/geth.ipc``
