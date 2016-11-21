@@ -69,4 +69,4 @@ You can check the log files in ~7nodes/qdata/logs directory to see each node val
 > private.get()
 4
 ```
-And there you have it. All 7 nodes are validating the same blockchain of transactions, the private transactions carrying nothing other than a 256 bit hash, and only parties to private transactions are able to view and update the state of private contracts.
+And there you have it. All 7 nodes are validating the same blockchain of transactions, the private transactions carrying nothing other than a 512 bit hash, and only parties to private transactions are able to view and update the state of private contracts.
