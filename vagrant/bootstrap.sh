@@ -8,7 +8,7 @@ apt-get update
 apt-get install -y build-essential unzip libdb-dev libsodium-dev zlib1g-dev libtinfo-dev solc sysvbanner wrk
 
 # install constellation
-wget https://github.com/jpmorganchase/constellation/releases/download/v0.0.1-alpha/ubuntu1604.zip
+wget -q https://github.com/jpmorganchase/constellation/releases/download/v0.0.1-alpha/ubuntu1604.zip
 unzip ubuntu1604.zip
 cp ubuntu1604/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node
 cp ubuntu1604/constellation-enclave-keygen /usr/local/bin && chmod 0755 /usr/local/bin/constellation-enclave-keygen
@@ -16,7 +16,7 @@ rm -rf ubuntu1604.zip ubuntu1604
 
 # install golang
 GOREL=go1.7.3.linux-amd64.tar.gz
-wget https://storage.googleapis.com/golang/$GOREL
+wget -q https://storage.googleapis.com/golang/$GOREL
 tar xfz $GOREL
 mv go /usr/local/go
 rm -f $GOREL
