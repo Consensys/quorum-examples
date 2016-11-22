@@ -3,8 +3,8 @@
 This repository contains setup examples for Quorum.
 
 Current examples include:
-* 7nodes - The [7nodes](https://github.com/jpmorganchase/quorum-examples/tree/master/examples/7nodes) example starts up a fully-functioning Quorum environment consisting of 7 independent nodes with a mix of block makers, voters, and unprivileged nodes. From this example one can test consensus, privacy, and all the expected functionality of an Ethereum platform.
-* permissions - The [permissions](https://github.com/jpmorganchase/quorum-examples/tree/master/examples/permissions) example focuses on how to add, remove, and update the list of nodes permitted to participate in the network.
+* [7nodes](https://github.com/jpmorganchase/quorum-examples/tree/master/examples/7nodes): Starts up a fully-functioning Quorum environment consisting of 7 independent nodes with a mix of block makers, voters, and unprivileged nodes. From this example one can test consensus, privacy, and all the expected functionality of an Ethereum platform.
+* [permissions](https://github.com/jpmorganchase/quorum-examples/tree/master/examples/permissions): Focuses on how to add, remove, and update the list of nodes permitted to participate in the network.
 
 The easiest way to get started with running the examples is to use the vagrant environment (see below).
 
