@@ -33,7 +33,7 @@ vagrant ssh
 ```
 
 (*macOS note*: If you get an error saying that the ubuntu/xenial64 image doesn't
-exist, please run `rm -r /opt/vagrant/embedded/bin/curl`. This is usually due to
+exist, please run `sudo rm -r /opt/vagrant/embedded/bin/curl`. This is usually due to
 issues with the version of curl bundled with Vagrant.)
 
 Once in the VM environment, `cd quorum-examples` then simply follow the
