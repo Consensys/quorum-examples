@@ -22,7 +22,7 @@ Quorum examples.
   1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
   1. Install [Vagrant](https://www.vagrantup.com/downloads.html)
 
-(If you are behind a proxy server, please see https://github.com/jpmorganchase/quorum/issues/23.)
+(If you are behind a proxy server, please see https://github.com/jpmorganchase/quorum/issues/23)
 
 ### Running
 
