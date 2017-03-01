@@ -43,7 +43,8 @@ PRIVATE_CONFIG=tm6.conf nohup geth --datadir qdata/dd6 $GLOBAL_ARGS --rpcport 22
 echo "[*] Starting node 7"
 PRIVATE_CONFIG=tm7.conf nohup geth --datadir qdata/dd7 $GLOBAL_ARGS --rpcport 22006 --port 21006 2>>qdata/logs/7.log &
 
-sleep 5
+echo "[*] Waiting for nodes to start"
+sleep 10
 echo "[*] Sending first transaction"
 PRIVATE_CONFIG=tm1.conf geth --exec 'loadScript("script1.js")' attach ipc:qdata/dd1/geth.ipc
 
