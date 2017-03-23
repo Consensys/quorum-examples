@@ -8,8 +8,8 @@ This example configures 7 nodes, each with their own PrivateTransactionManager. 
 
 There are corresponding commands for running in Raft mode (`stop.sh` stays the same).
 
-  - `init-raft.sh`
-  - `start-raft.sh`
+  - `raft-init.sh`
+  - `raft-start.sh`
 
 All logs and temporary data will be written to the `qdata` folder.
 
