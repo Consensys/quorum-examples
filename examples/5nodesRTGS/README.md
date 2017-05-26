@@ -13,15 +13,22 @@ RTGS systems are very dependent of a central entity, but this design creates a s
 
 ## Smart contracts
 There are two smart contracts in this example, both stored in the contracts.sol file and lightly commented:
+
 1- bankContract
+
 This contract implements the main logic of the RTGS system. One PRIVATE instance of the contract must be deployed for EACH participating bank on the network and it will store private transaction data and balance. It has many verification steps to avoid bank personification, fraud and overdraft transactions. Most of the checks are made by the contract itself, but the overdraft protection must be made by an active regulator node. 
+
 2- regulatorTransactionList
+
 This contract stores and serves the public data to the private contracts. Examples of the public data are transactions hashes and participating banks information.
 
 ## Transaction confirmation logic
 Transactions are published privately by the sender bank and must only be sent to the recipient and to the regulator nodes (privateFor parameter). They are created in an UNCONFIRMED state and are only final if they are confirmed. After publishing the private transaction, the sender bank must publish the same transaction hash in the public transaction log (regulatorTransactionList public contract) to ensure that all the parts are aware of the transaction. Transactions can only be confirmed and reflect on bank balances if they are stored in the public transaction log and they can be confirmed by two ways:
+
 1- By the regulator calling the confirmTransactionRegulator function
+
 2- By the sender bank calling confirmTransactionBank function. This function ensures that the confirmation timer has expired before confirming the transaction. 
+
 This two phase commit is needed because there is no overdraft protecting in the bankContract code because different bank instances have different data. For example, bank1 smart contract published in the bank1 node has the balance variable set, but the same contract with the same address in the bank2 node has no value in the balance data because this data is private to bank1 and the regulator. The regulator node´s contracts have all the data as it must be part of every private transaction. The logic behind this proccess is that, after a transaction is published, the regulator can check the sender balance against the newly published transaction. If the value intended for the transfer is higher than the bank balance, the regulator must block this transaction during the confirmation time. If the value is below the balance OR if the regulator is offline, the sender bank can confirm its own transaction after the confirmation time. This is a resiliency feature to ensure that the RTGS system endures a regulator outage.
 
 ##Environment setup
@@ -47,7 +54,8 @@ Terminal 1-3 are banks 1-3, terminal 4 is the regulator and terminal 5 is the ob
 ``loadScript("deploy-bankContract-0-3-6.js");``
 
 The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82.
-4.1- If you receive an error 500, wait for the constellation nodes to know their peers. In my low end lab it can take a while (some minutes).
+
+4.1- If you receive an error like "Error: Non-200 status code: &{Status:500 Internal Server Error", wait for the constellation nodes to know their peers. In my low end lab it can take a while (some minutes).
 
 5- Take note of the 3 bank contract addresses. These are bank1, bank2 and bank3 private contracts instances addresses.
 
@@ -155,7 +163,7 @@ Terminal 4 (regulator) output must be:
 ## Testing transactions confirmed by the regulator
 Testing a transaction where bank1 sends 10 to bank2:
 1- Issue the command below on terminal 1:
-''contract1.sendValue(address2,10,"random1",{from:eth.coinbase,gas:500000,privateFor:["R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY=","QfeDAys9MPDs2XHExtc84jKGHxZg/aj52DTh0vtA3Xc="]});''
+``contract1.sendValue(address2,10,"random1",{from:eth.coinbase,gas:500000,privateFor:["R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY=","QfeDAys9MPDs2XHExtc84jKGHxZg/aj52DTh0vtA3Xc="]});``
 
 2- Wait until this transaction is mined. After some seconds, you should see a non zero hash after issuing: ``contract1.transactionIDs(0)`` on terminal 1.
 
@@ -163,7 +171,7 @@ Testing a transaction where bank1 sends 10 to bank2:
 
 4- Check that only bank1, bank2 and the regulator can see the private transaction data issuing ``contract1.transactionIDs(0)`` on all terminals. Bank3 and observer nodes have no private data of this transaction.
 
-5- Check that the public transaction data is available to all nodes issuing contracttr.transactions(contract1.transactionIDs(0)) on all nodes. They all have knowledge of the existance of a transaction with this hash, but have no access to the private data.
+5- Check that the public transaction data is available to all nodes issuing ``contracttr.transactions(contract1.transactionIDs(0))`` on all nodes. They all have knowledge of the existance of a transaction with this hash, but have no access to the private data.
 
 6- The regulator transaction confirmation: Issue the command below in the regulator node (terminal 4):
 ``contract1.confirmTransactionRegulator(contract1.transactionIDs(0),{from:eth.coinbase,gas:500000,privateFor:["QfeDAys9MPDs2XHExtc84jKGHxZg/aj52DTh0vtA3Xc=","BULeR8JyUWhiuuCMU/HLA0Q5pzkYT+cHII3ZKBey3Bo="]});``
