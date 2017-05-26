@@ -62,7 +62,6 @@ var addresstr = <COPY HERE THE PUBLIC TRANSACTION LOG CONTRACT ADDRESS>
 var address1 = <COPY HERE THE BANK1 CONTRACT ADDRESS>
 var address2 = <COPY HERE THE BANK1 CONTRACT ADDRESS>
 var address3 = <COPY HERE THE BANK3 CONTRACT ADDRESS>
-```
 
 var abi = [{"constant":false,"inputs":[{"name":"_transactionID","type":"bytes32"}],"name":"confirmTransactionRegulator","outputs":[],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_seconds","type":"uint256"}],"name":"setConfirmationTime","outputs":[],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_value","type":"uint256"},{"name":"_random","type":"string"}],"name":"receiveValue","outputs":[],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_transactionID","type":"bytes32"}],"name":"confirmTransactionBank","outputs":[],"type":"function","payable":true},{"constant":true,"inputs":[{"name":"","type":"bytes32"}],"name":"transactions","outputs":[{"name":"value","type":"uint256"},{"name":"senderContract","type":"address"},{"name":"destinationContract","type":"address"},{"name":"confirmed","type":"bool"},{"name":"senderBalanceAtTransfer","type":"uint256"}],"type":"function","payable":true},{"constant":true,"inputs":[],"name":"confirmationTime","outputs":[{"name":"","type":"uint256"}],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_contractAddress","type":"address"}],"name":"setTransactionListAddress","outputs":[],"type":"function","payable":true},{"constant":true,"inputs":[],"name":"isRegulatorNode","outputs":[{"name":"","type":"bool"}],"type":"function","payable":true},{"constant":true,"inputs":[],"name":"TransactionListAddress","outputs":[{"name":"","type":"address"}],"type":"function","payable":true},{"constant":true,"inputs":[],"name":"thisBankContract","outputs":[{"name":"","type":"address"}],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_thisBankContract","type":"address"}],"name":"setThisBankContract","outputs":[],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_destination","type":"address"},{"name":"_value","type":"uint256"},{"name":"_random","type":"string"}],"name":"sendValue","outputs":[],"type":"function","payable":true},{"constant":false,"inputs":[],"name":"setRegulatorNode","outputs":[],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_transactionID","type":"bytes32"}],"name":"confirmTransactionPair","outputs":[],"type":"function","payable":true},{"constant":true,"inputs":[],"name":"balance","outputs":[{"name":"","type":"uint256"}],"type":"function","payable":true},{"constant":true,"inputs":[],"name":"totalTransactions","outputs":[{"name":"","type":"uint256"}],"type":"function","payable":true},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"transactionIDs","outputs":[{"name":"","type":"bytes32"}],"type":"function","payable":true},{"constant":true,"inputs":[],"name":"regulator","outputs":[{"name":"","type":"address"}],"type":"function","payable":true},{"constant":false,"inputs":[{"name":"_balance","type":"uint256"}],"name":"setBalance","outputs":[],"type":"function","payable":true},{"inputs":[],"type":"constructor","payable":true},{"type":"fallback","payable":true}]
 
@@ -84,13 +83,13 @@ var regulator="0x0638e1574728b6d862dd5d3a3e0942c3be47d996"
 contract1.balance()
 contract2.balance()
 contract3.balance()
-``
+```
 
 9- You should see "0" as return to all contract balances calls on every node. It is fine, the contracts are still empty.
 
 10- Run the script below ONLY on regulator node (node 4), it will initialize all the basic data in all contracts like the public transaction log address, who is the regulator node, etc.
 
-``
+```
 var bank1InitialBalance=10000;
 var bank2InitialBalance=20000;
 var bank3InitialBalance=30000;
@@ -122,30 +121,36 @@ contract3.setThisBankContract(contract3.address,{from:eth.coinbase,privateFor:["
 contracttr.addBank("Bank1",contract1.address,bank1,{from:eth.coinbase});
 contracttr.addBank("Bank2",contract2.address,bank2,{from:eth.coinbase});
 contracttr.addBank("Bank3",contract3.address,bank3,{from:eth.coinbase});
-``
+```
 
 ## Testing Privacy
 
 1- Run the script below on every terminal.
-``contract1.balance()
+```
+contract1.balance()
 contract2.balance()
-contract3.balance()``
+contract3.balance()
+```
 
 2- Terminals 1-3 should only have its respective bank balance, i.e., terminal 1 output must be:
-``contract1.balance()
-10000
-contract2.balance()
-0
-contract3.balance()
-0``
+```
+> contract1.balance()
+> 10000
+> contract2.balance()
+> 0
+> contract3.balance()
+> 0
+```
 
 Terminal 4 (regulator) output must be:
-``contract1.balance()
-10000
-contract2.balance()
-20000
-contract3.balance()
-30000``
+```
+> contract1.balance()
+> 10000
+> contract2.balance()
+> 20000
+> contract3.balance()
+> 30000
+```
 
 ## Testing transactions confirmed by the regulator
 Testing a transaction where bank1 sends 10 to bank2:
@@ -164,8 +169,10 @@ Testing a transaction where bank1 sends 10 to bank2:
 ``contract1.confirmTransactionRegulator(contract1.transactionIDs(0),{from:eth.coinbase,gas:500000,privateFor:["QfeDAys9MPDs2XHExtc84jKGHxZg/aj52DTh0vtA3Xc=","BULeR8JyUWhiuuCMU/HLA0Q5pzkYT+cHII3ZKBey3Bo="]});``
 
 7- Check that the balances of bank1 and bank2 are updated privately by inter private contracts function calls.
-``contract1.balance()``
-``contract2.balance()``
+```
+contract1.balance()
+contract2.balance()
+```
 
 ## Testing transactions confirmed by the sender bank
 1- Repeat steps 1-5 above. Remember that the index of the transaction is updated, so commands like ``contract1.transactionIDs(0)`` must be changed to ``contract1.transactionIDs(1)``.
