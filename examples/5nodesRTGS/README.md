@@ -31,14 +31,20 @@ This two phase commit is needed because there is no overdraft protecting in the 
 
 3- Connect to the nodes calling:
 terminal 1: ``$ geth attach ipc:qdata/dd1/geth.ipc``
+
 terminal 2: ``$ geth attach ipc:qdata/dd2/geth.ipc``
+
 terminal 3: ``$ geth attach ipc:qdata/dd3/geth.ipc``
+
 terminal 4: ``$ geth attach ipc:qdata/dd4/geth.ipc``
+
 terminal 5: ``$ geth attach ipc:qdata/dd5/geth.ipc``
 
 Terminal 1-3 are banks 1-3, terminal 4 is the regulator and terminal 5 is the observer used to test privacy.
 
-4- Run the following command three times in the javascript quorum console on terminal 4 (regulator): ``loadScript("deploy-bankContract-0-3-6.js");``. The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82.
+4- Run the following command three times in the javascript quorum console on terminal 4 (regulator): 
+``loadScript("deploy-bankContract-0-3-6.js");``
+The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82.
 4.1- If you receive an error 500, wait for the constellation nodes to know their peers. In my low end lab it can take a while (some minutes).
 
 5- Take note of the 3 bank contract addresses. These are bank1, bank2 and bank3 private contracts instances addresses.
