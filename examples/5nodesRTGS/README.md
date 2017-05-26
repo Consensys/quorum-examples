@@ -53,7 +53,7 @@ Terminal 1-3 are banks 1-3, terminal 4 is the regulator and terminal 5 is the ob
 4- Run the following command three times in the javascript quorum console on terminal 4 (regulator): 
 ``loadScript("deploy-bankContract-0-3-6.js");``
 
-The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82.
+The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82 (https://github.com/jpmorganchase/quorum/issues/82).
 
 4.1- If you receive an error like "Error: Non-200 status code: &{Status:500 Internal Server Error", wait for the constellation nodes to know their peers. In my low end lab it can take a while (some minutes).
 
