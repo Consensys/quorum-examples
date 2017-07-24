@@ -1,6 +1,6 @@
 # 5 nodes Real-time Gross Setlement 
 
-This example configures 7 nodes, each with their own PrivateTransactionManager. Usage:
+This example configures 5 nodes, each with their own PrivateTransactionManager. Usage:
 
   - `init.sh`: Initialize accounts and keystores
   - `start.sh`: Launch `constellation` and `geth` nodes, then send a private transaction
