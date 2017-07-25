@@ -33,14 +33,16 @@ cd quorum-examples
 vagrant up
 # (should take 5 or so minutes)
 vagrant ssh
+# Once in the VM environment:
+cd quorum-examples 
+#then simply follow the instructions for the demo you'd like to run.
 ```
 
 (*macOS note*: If you get an error saying that the ubuntu/xenial64 image doesn't
 exist, please run `sudo rm -r /opt/vagrant/embedded/bin/curl`. This is usually due to
 issues with the version of curl bundled with Vagrant.)
 
-Once in the VM environment, `cd quorum-examples` then simply follow the
-instructions for the demo you'd like to run.
+
 
 To shut down the Vagrant instance, run `vagrant suspend`. To delete it, run
 `vagrant destroy`. To start from scratch, run `vagrant up` after destroying the
