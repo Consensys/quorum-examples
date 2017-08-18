@@ -63,11 +63,11 @@ Started Unpermissioned node 8 with enode://375d1b75c230ff7434a4b2534fb1eb6482a6
 *** All Unpermissoned nodes Started. Please check the output for any errors ****
 
 **** Update permissions config on each node ***
-copying permissioned-nodes.json to pdata/1
-copying permissioned-nodes.json to pdata/2
-copying permissioned-nodes.json to pdata/3
-copying permissioned-nodes.json to pdata/4
-copying permissioned-nodes.json to pdata/5
+copying permissioned-nodes.json to qdata/1
+copying permissioned-nodes.json to qdata/2
+copying permissioned-nodes.json to qdata/3
+copying permissioned-nodes.json to qdata/4
+copying permissioned-nodes.json to qdata/5
 ```
 
 * ### Verify only permissioned nodes are connected to the network.
@@ -76,7 +76,7 @@ copying permissioned-nodes.json to pdata/5
 	`geth attach ipc:/path/to/geth.ipc` and use `admin.peers` to check the connected nodes.
 
 ```
-geth attach ipc:./pdata/1/geth.ipc
+geth attach ipc:./qdata/1/geth.ipc
 instance: Geth/node_1/v1.5.0-unstable-42adaae1/darwin/go1.6.2
 > admin.peers
 [{
