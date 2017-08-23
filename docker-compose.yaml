@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  base:
+    container_name: quorum-base
+    network_mode: bridge
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image:
+      quorum/nodea:dev
+    volumes:
+      - .:/quorum-examples
+    ports:
+      - "22000:22000"
+      - "22001:22001"
+      - "22002:22002"
+      - "22003:22003"
+      - "22004:22004"
+      - "22005:22005"
+      - "22006:22006"
+    # command: tail -f /dev/null  # keeps it running for manually testing stuff
+    command: ./start.sh
