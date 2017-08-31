@@ -11,6 +11,11 @@ There are corresponding commands for running in Raft mode (`stop.sh` stays the s
   - `raft-init.sh`
   - `raft-start.sh`
 
+There are corresponding commands for running in Istanbul mode (`stop.sh` stays the same).
+
+  - `istanbul-init.sh`
+  - `istanbul-start.sh`
+
 All logs and temporary data will be written to the `qdata` folder.
 
 ## Testing Privacy
