@@ -2,7 +2,7 @@
 set -u
 set -e
 
-GLOBAL_ARGS="--mine --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul"
+GLOBAL_ARGS="--syncmode full --mine --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul"
 
 echo "[*] Starting Constellation nodes"
 nohup constellation-node tm1.conf 2>> qdata/logs/constellation1.log &
