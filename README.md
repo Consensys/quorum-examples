@@ -1,3 +1,18 @@
+# ZSL on Quorum Example
+
+This repository contains a modified 7nodes example to demonstrate [ZSL on Quroum](https://github.com/jpmorganchase/zsl-q/blob/master/README.md)
+
+The following changes have been made:
+
+* ZSL precompiles added to `genesis.json` between address 0x8801 - 0x8804
+* Node 2 is unlocked in `raft-start.sh`
+* Symbolic links added for accessing ZSL parameters (proving and verification keys) when the example is run inside Vagrant.  These symbolic links can be replaced with actual parameter files if running from the local host machine, and not inside Vagrant.
+* New file `tracker.js` contains note tracking and other helper functions.
+
+There are examples of using ZSL on 7nodes documented in [ZSL on Quorum](https://github.com/jpmorganchase/zsl-q/tree/master/README.md)
+
+Original README follows.
+
 # Quorum Examples
 
 This repository contains setup examples for Quorum.

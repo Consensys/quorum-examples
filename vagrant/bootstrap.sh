@@ -23,14 +23,25 @@ rm -f $GOREL
 PATH=$PATH:/usr/local/go/bin
 echo 'PATH=$PATH:/usr/local/go/bin' >> /home/ubuntu/.bashrc
 
+# ZSL START
+# During the development phase, there is no public access to the repository
+# so we compile geth and bootnode locally and place them in the /vagrant
+# shared folder which the VM can access.
+
 # make/install quorum
-git clone https://github.com/getamis/quorum.git
-pushd quorum >/dev/null
-git checkout feature/istanbul
-make all
-cp build/bin/geth /usr/local/bin
-cp build/bin/bootnode /usr/local/bin
-popd >/dev/null
+# git clone https://github.com/getamis/quorum.git
+# pushd quorum >/dev/null
+# git checkout feature/istanbul
+# make all
+# cp build/bin/geth /usr/local/bin
+# cp build/bin/bootnode /usr/local/bin
+# popd >/dev/null
+
+echo 'Copying geth and bootnode from /vagrant/zsl-tmp into the VM /usr/local/bin'
+cp /vagrant/zsl-tmp/geth /usr/local/bin
+cp /vagrant/zsl-tmp/bootnode /usr/local/bin
+mkdir /home/ubuntu/quorum
+#ZSL END
 
 # install Porosity
 wget -q https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity

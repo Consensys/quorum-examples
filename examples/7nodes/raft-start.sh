@@ -20,7 +20,7 @@ echo "[*] Starting node 1"
 PRIVATE_CONFIG=tm1.conf nohup geth --datadir qdata/dd1 $GLOBAL_ARGS --raftport 50401 --rpcport 22000 --port 21000 --unlock 0 --password passwords.txt 2>>qdata/logs/1.log &
 
 echo "[*] Starting node 2"
-PRIVATE_CONFIG=tm2.conf nohup geth --datadir qdata/dd2 $GLOBAL_ARGS --raftport 50402 --rpcport 22001 --port 21001 2>>qdata/logs/2.log &
+PRIVATE_CONFIG=tm2.conf nohup geth --datadir qdata/dd2 $GLOBAL_ARGS --raftport 50402 --rpcport 22001 --port 21001 --unlock 0 --password passwords.txt 2>>qdata/logs/2.log &
 
 echo "[*] Starting node 3"
 PRIVATE_CONFIG=tm3.conf nohup geth --datadir qdata/dd3 $GLOBAL_ARGS --raftport 50403 --rpcport 22002 --port 21002 2>>qdata/logs/3.log &
