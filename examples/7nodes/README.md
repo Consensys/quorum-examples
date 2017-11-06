@@ -2,16 +2,11 @@
 
 This example configures 7 nodes, each with their own PrivateTransactionManager. Usage:
 
-  - `init.sh`: Initialize accounts and keystores
-  - `start.sh`: Launch `constellation` and `geth` nodes, then send a private transaction
+  - `raft-init.sh`: Initialize accounts and keystores
+  - `raft-start.sh`: Launch `constellation` and `geth` nodes, then send a private transaction
   - `stop.sh`: Stop all `constellation` and `geth` nodes
 
-There are corresponding commands for running in Raft mode (`stop.sh` stays the same).
-
-  - `raft-init.sh`
-  - `raft-start.sh`
-
-There are corresponding commands for running in Istanbul mode (`stop.sh` stays the same).
+There are corresponding commands for running in Istanbul BFT mode (`stop.sh` stays the same).
 
   - `istanbul-init.sh`
   - `istanbul-start.sh`
