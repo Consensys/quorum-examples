@@ -17,25 +17,25 @@ nohup constellation-node tm7.conf 2>> qdata/logs/constellation7.log &
 sleep 1
 
 echo "[*] Starting node 1"
-PRIVATE_CONFIG=tm1.conf nohup geth --nousb --datadir qdata/dd1 $GLOBAL_ARGS --rpcport 22000 --port 21000 --unlock 0 --password passwords.txt 2>>qdata/logs/1.log &
+PRIVATE_CONFIG=tm1.conf nohup geth --datadir qdata/dd1 $GLOBAL_ARGS --rpcport 22000 --port 21000 --unlock 0 --password passwords.txt 2>>qdata/logs/1.log &
 
 echo "[*] Starting node 2"
-PRIVATE_CONFIG=tm2.conf nohup geth --nousb --datadir qdata/dd2 $GLOBAL_ARGS --rpcport 22001 --port 21001 2>>qdata/logs/2.log &
+PRIVATE_CONFIG=tm2.conf nohup geth --datadir qdata/dd2 $GLOBAL_ARGS --rpcport 22001 --port 21001 2>>qdata/logs/2.log &
 
 echo "[*] Starting node 3"
-PRIVATE_CONFIG=tm3.conf nohup geth --nousb --datadir qdata/dd3 $GLOBAL_ARGS --rpcport 22002 --port 21002 2>>qdata/logs/3.log &
+PRIVATE_CONFIG=tm3.conf nohup geth --datadir qdata/dd3 $GLOBAL_ARGS --rpcport 22002 --port 21002 2>>qdata/logs/3.log &
 
 echo "[*] Starting node 4"
-PRIVATE_CONFIG=tm4.conf nohup geth --nousb --datadir qdata/dd4 $GLOBAL_ARGS --rpcport 22003 --port 21003 2>>qdata/logs/4.log &
+PRIVATE_CONFIG=tm4.conf nohup geth --datadir qdata/dd4 $GLOBAL_ARGS --rpcport 22003 --port 21003 2>>qdata/logs/4.log &
 
 echo "[*] Starting node 5"
-PRIVATE_CONFIG=tm5.conf nohup geth --nousb --datadir qdata/dd5 $GLOBAL_ARGS --rpcport 22004 --port 21004 2>>qdata/logs/5.log &
+PRIVATE_CONFIG=tm5.conf nohup geth --datadir qdata/dd5 $GLOBAL_ARGS --rpcport 22004 --port 21004 2>>qdata/logs/5.log &
 
 echo "[*] Starting node 6"
-PRIVATE_CONFIG=tm6.conf nohup geth --nousb --datadir qdata/dd6 $GLOBAL_ARGS --rpcport 22005 --port 21005 2>>qdata/logs/6.log &
+PRIVATE_CONFIG=tm6.conf nohup geth --datadir qdata/dd6 $GLOBAL_ARGS --rpcport 22005 --port 21005 2>>qdata/logs/6.log &
 
 echo "[*] Starting node 7"
-PRIVATE_CONFIG=tm7.conf nohup geth --nousb --datadir qdata/dd7 $GLOBAL_ARGS --rpcport 22006 --port 21006 2>>qdata/logs/7.log &
+PRIVATE_CONFIG=tm7.conf nohup geth --datadir qdata/dd7 $GLOBAL_ARGS --rpcport 22006 --port 21006 2>>qdata/logs/7.log &
 
 echo "[*] Waiting for nodes to start"
 sleep 10
