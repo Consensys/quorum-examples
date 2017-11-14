@@ -19,7 +19,7 @@ display_usage() {
 validate_inputs()
 {
   if [ ! -x $1  ]; then
-      echo " Geth $1 does exist. Please specify a valid geth executable"
+      echo " Geth $1 does not exist. Please specify a valid geth executable"
       exit 1
   else:
       echo "Will use $1 for geth exectuable"
@@ -107,7 +107,7 @@ run_permissioned_nodes()
         $DATADIR/start.sh
         sleep 5
         ERROR=`awk '/Fatal/ {print $1}' $LOGFILE`
-        NODE_ID=`awk '/Listening, enode/{ print $5 }' $LOGFILE`
+        NODE_ID=`cat $LOGFILE | awk '/UDP listener up/{ print $6 }' | sed -Ee 's/self=//'`
         printf "Started Permissioned node $NODE_NUM with ${NODE_ID}\n"
         ALL_NODES+="\"$NODE_ID\","
         if [ ${NODE_NUM} == ${END} ]; then
