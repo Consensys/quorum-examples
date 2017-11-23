@@ -65,7 +65,7 @@ The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82
 
 4.1- If you receive an error like "Error: Non-200 status code: &{Status:500 Internal Server Error", wait for the constellation nodes to know their peers. In my low end lab it can take a while (some minutes).
 
-5- Take note of the 3 bank contract addresses. These are bank1, bank2 and bank3 private contracts instances addresses.
+5- Take note of the 3 bank contract addresses. It can take some seconds, but the geth console will eventually provide an output like "Contract mined! address: 0x...". These are bank1, bank2 and bank3 private contracts instances addresses.
 
 6- Run the following command one time in the javascript console on terminal 4 (regulator): 
 
