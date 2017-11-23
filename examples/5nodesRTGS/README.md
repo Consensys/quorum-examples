@@ -57,7 +57,8 @@ terminal 5: ``$ geth attach ipc:qdata/dd5/geth.ipc``
 Terminal 1-3 are banks 1-3, terminal 4 is the regulator and terminal 5 is the observer used to test privacy.
 
 ##Running 5nodesRTGS example
-4- Run the following command three times in the javascript quorum console on terminal 4 (regulator): 
+4- Run the following command three times in the javascript quorum console on terminal 4 (regulator):
+ 
 ``loadScript("deploy-bankContract-0-3-6.js");``
 
 The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82 (https://github.com/jpmorganchase/quorum/issues/82).
@@ -66,7 +67,9 @@ The script uses a solidity 0.3.6 precompiled bytecode because of quorum issue 82
 
 5- Take note of the 3 bank contract addresses. These are bank1, bank2 and bank3 private contracts instances addresses.
 
-6- Run the following command one time in the javascript console on terminal 4 (regulator): ``loadScript("deploy-regulatorTransactionList-0-3-6.js");``
+6- Run the following command one time in the javascript console on terminal 4 (regulator): 
+
+``loadScript("deploy-regulatorTransactionList-0-3-6.js");``
 
 7- Take note of the contract address. It is the public transaction log contract address.
 
