@@ -18,5 +18,5 @@ cd quorum-examples
 cd examples
 cd 5nodesRTGS
 ./bootstrap.sh
-# (should take some user confirmations, requires internet connection)
+# (run as root, should take some user confirmations, requires internet connection)
 ```
