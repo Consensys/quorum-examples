@@ -2,8 +2,8 @@
 
 This example configures 5 nodes, each with their own PrivateTransactionManager. Usage:
 
-  - `init.sh`: Initialize accounts and keystores
-  - `start.sh`: Launch `constellation` and `geth` nodes, then send a private transaction
+  - `raft-init.sh`: Initialize accounts and keystores
+  - `raft-start.sh`: Launch `constellation` and `geth` nodes, then send a private transaction
   - `stop.sh`: Stop all `constellation` and `geth` nodes
 
 All logs and temporary data will be written to the `qdata` folder.
@@ -31,7 +31,13 @@ Transactions are published privately by the sender bank and must only be sent to
 
 This two phase commit is needed because there is no overdraft protecting in the bankContract code because different bank instances have different data. For example, bank1 smart contract published in the bank1 node has the balance variable set, but the same contract with the same address in the bank2 node has no value in the balance data because this data is private to bank1 and the regulator. The regulator node´s contracts have all the data as it must be part of every private transaction. The logic behind this proccess is that, after a transaction is published, the regulator can check the sender balance against the newly published transaction. If the value intended for the transfer is higher than the bank balance, the regulator must block this transaction during the confirmation time. If the value is below the balance OR if the regulator is offline, the sender bank can confirm its own transaction after the confirmation time. This is a resiliency feature to ensure that the RTGS system endures a regulator outage.
 
-##Environment setup
+## Environment setup
+## Virtual machine Quorum and Constellation install
+1- Start with a clean Ubuntu 16.04 virtual machine install
+
+2- Run "bootstrap.sh" script to install Constellation, GO and Quorum
+ 
+## Quorum set up and start
 1- call init.sh to initialize accounts and keystores
 
 2- Bring the 5 nodes up calling start.sh
@@ -50,6 +56,7 @@ terminal 5: ``$ geth attach ipc:qdata/dd5/geth.ipc``
 
 Terminal 1-3 are banks 1-3, terminal 4 is the regulator and terminal 5 is the observer used to test privacy.
 
+##Running 5nodesRTGS example
 4- Run the following command three times in the javascript quorum console on terminal 4 (regulator): 
 ``loadScript("deploy-bankContract-0-3-6.js");``
 
