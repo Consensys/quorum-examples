@@ -56,7 +56,7 @@ terminal 5: ``$ geth attach ipc:qdata/dd5/geth.ipc``
 
 Terminal 1-3 are banks 1-3, terminal 4 is the regulator and terminal 5 is the observer used to test privacy.
 
-##Running 5nodesRTGS example
+## Running 5nodesRTGS example
 4- Run the following command three times in the javascript quorum console on terminal 4 (regulator):
  
 ``loadScript("deploy-bankContract-0-3-6.js");``
