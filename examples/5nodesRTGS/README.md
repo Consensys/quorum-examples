@@ -38,7 +38,7 @@ This two phase commit is needed because there is no overdraft protecting in the 
 2- Run "bootstrap.sh" script to install Constellation, GO and Quorum
  
 ## Quorum set up and start
-1- call init.sh to initialize accounts and keystores
+1- call raft-init.sh to initialize accounts and keystores
 
 2- Bring the 5 nodes up calling start.sh
 
