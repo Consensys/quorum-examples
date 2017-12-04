@@ -24,7 +24,7 @@ echo "[*] Starting node 3 - Bank 3"
 PRIVATE_CONFIG=tm3.conf nohup geth --datadir qdata/dd3 $GLOBAL_ARGS --raftport 50403 --rpcport 22002 --port 21002 2>>qdata/logs/3.log &
 
 echo "[*] Starting node 4 - Regulator"
-PRIVATE_CONFIG=tm4.conf nohup geth --datadir qdata/dd4 $GLOBAL_ARGS --raftport 50404 --rpcport 22003 --port 21003 2>>qdata/logs/4.log &
+PRIVATE_CONFIG=tm4.conf nohup geth --rpccorsdomain "*" --datadir qdata/dd4 $GLOBAL_ARGS --raftport 50404 --rpcport 22003 --port 21003 2>>qdata/logs/4.log &
 
 echo "[*] Starting node 5 - Observer"
 PRIVATE_CONFIG=tm5.conf nohup geth --datadir qdata/dd5 $GLOBAL_ARGS --raftport 50405 --rpcport 22004 --port 21004 2>>qdata/logs/5.log &

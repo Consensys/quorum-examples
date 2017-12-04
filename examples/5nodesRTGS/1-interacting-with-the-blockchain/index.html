@@ -1,0 +1,59 @@
+<html>
+<header>
+  <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+  <style>
+    .container { width: 100% !important; }
+    #transaction-hash { color: grey; font-size: 12px; }
+    #errors { background-color: #ffd6c8; color: darkred; }
+    #accounts { list-style: none; }
+    .balance { color: grey; width: 70px; }
+    .from, .to { color: blue !important; }
+    #transaction-info { background-color: darkgrey; border: grey 1px solid; margin-top: 10px; }
+    #transaction-info p { margin: -15px 2px; }
+  </style>
+</header>
+<body>
+  <div id="app" class="container">
+    <div id="errors"></div>
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Accounts</h3>
+        <pre id="accounts"></pre>
+      </div>
+      <div class="col-sm-6">
+        <h3>Transaction Information</h3>
+        <pre id="transaction-info">
+          <p><b>Hash:</b> <span id="hash"></span></p>
+          <p><b>Nonce:</b> <span id="nonce"></span></p>
+          <p><b>Gas usage:</b> <span id="gas-usage"></span></p>
+          <p><b>Block Number:</b> <span id="block-number"></span></p>
+          <p><b>Block Hash:</b> <span id="block-hash"></span></p>
+          <p><b>Tx Index:</b> <span id="transaction-index"></span></p>
+          <p><b>From:</b> <span id="from"></span></p>
+          <p><b>To:</b> <span id="to"></span></p>
+          <p><b>Value:</b> <span id="value"></span></p>
+        </pre>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6" id="get-balance-form">
+        <h3>Get a Bank Balance</h3>
+        
+        <div class="form-group row">
+          <label for="bank-address" class="col-sm-3 col-form-label">Bank contract (address)</label>
+          <div class="col-sm-9"><input class="form-control" id="bank-address"></div>
+        </div>
+        <p id="bank-balance">Bank Balance: </p>
+        <button id="get-bank-balance" class="btn btn-primary">Get Bank Balance</button>
+      </div>
+    </div>
+
+    
+
+  </div>
+  <script type="application/javascript" src="./bundle.js"></script>
+</body>
+</html>
