@@ -4,3 +4,5 @@
 3. Run `npm start`
 4. Open `index.html` 
 5. Enter a Bank Contract address and press the button. The bank balance will be shown.
+
+Thanks to https://github.com/facuspagnuolo/ethereum-spiking from where I copied almost all the code.
