@@ -57,6 +57,7 @@ bool public isRegulatorNode = false;
 uint public confirmationTime = 60;
 
 address public TransactionListAddress;
+address public regulator;
 
 //totalTransactions: counts all the transactions that the bank is part of, 
 //confirmed or not.
@@ -75,8 +76,7 @@ mapping (uint => bytes32) public transactionIDs;
 
 
 modifier onlyRegulator() { 
-    regulatorTransactionList transactionListContractModifier = regulatorTransactionList(TransactionListAddress);
-    if (msg.sender != transactionListContractModifier.getRegulator()) throw;_
+    if (msg.sender != regulator) throw;_
 } 
 
 //This modifier ensures that the msg.sender is a valid bank contract address
@@ -92,6 +92,10 @@ modifier authorizedSender() {
     regulatorTransactionList transactionListContractModifier = regulatorTransactionList(TransactionListAddress);
     if (transactionListContractModifier.getBankSender(address(this))!= msg.sender) throw;_
 } 
+
+function bankContract() {
+    regulator = msg.sender;
+}
 
 function setTransactionListAddress (address _contractAddress) onlyRegulator {
     TransactionListAddress = _contractAddress;
