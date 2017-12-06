@@ -95,7 +95,7 @@ var contract3=eth.contract(abi).at(address3)
 
 var bank1="0xed9d02e382b34818e88b88a309c7fe71e65f419d"
 var bank2="0xca843569e3427144cead5e4d5999a3d0ccf92b8e"
-var bank3="0x9186eb3d20cbd1f5f992a950d808c4495153abd5"
+var bank3="0x0fbdc686b912d7722dc86510934589e0aaf3b55a"
 var regulator="0x0638e1574728b6d862dd5d3a3e0942c3be47d996"
 
 contract1.balance()
