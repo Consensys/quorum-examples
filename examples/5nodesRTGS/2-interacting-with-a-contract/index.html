@@ -1,0 +1,149 @@
+<html>
+<header>
+  <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <style>
+    .container { width: 100% !important; }
+    #gas-price, #transaction-hash { color: grey; font-size: 12px; }
+    #errors { background-color: #ffd6c8; color: darkred; }
+    #accounts { list-style: none; }
+    .balance { color: grey; width: 70px; }
+    .from, .to, .transaction { color: blue !important; }
+    #transaction-info { background-color: darkgrey; border: grey 1px solid; margin-top: 30px; }
+    #transaction-info p { margin: -13px 2px; }
+  </style>
+</header>
+<body>
+  <div id="app" class="container">
+    <div id="errors"></div>
+    <div class="row">
+      <div class="col-sm-6">
+        <h4>Regulator Account</h4>
+        <p id="regulator-account"></p>    
+        <h4>Bank1 Account</h4>
+        <p id="bank1-account"></p>
+        <h4>Bank2 Account</h4>
+        <p id="bank2-account"></p>
+        <h4>Bank3 Account</h4>
+        <p id="bank3-account"></p>
+      </div>
+
+
+
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Bank1</h3>
+        <div class="form-group row">
+          <label for="bank1-contract-address" class="col-sm-3 col-form-label">Bank1 Contract (address)</label>
+          <div class="col-sm-9"><input class="form-control" id="bank1-contract-address" value="0x180893a0ec847fa8c92786791348d7d65916acbb"></div>
+        </div>
+        <p id="bank1-balance"> Balance:
+        </p>
+        <h3>Bank2</h3>
+        <div class="form-group row">
+          <label for="bank2-contract-address" class="col-sm-3 col-form-label">Bank2 Contract (address)</label>
+          <div class="col-sm-9"><input class="form-control" id="bank2-contract-address" value="0xf9a2cb34b6b5fd7a2ac0c2e9b2b9406d6daffbd4"></div>
+        </div>
+        <p id="bank2-balance"> Balance:
+        </p><h3>Bank3</h3>
+        <div class="form-group row">
+          <label for="bank3-contract-address" class="col-sm-3 col-form-label">Bank3 Contract (address)</label>
+          <div class="col-sm-9"><input class="form-control" id="bank3-contract-address" value="0xc8f717ba9593dc9d45c4518cf444d2cbd08af24d"></div>
+        </div>
+        <p id="bank3-balance"> Balance:
+        </p><h3>Public Transaction Log</h3>
+        <div class="form-group row">
+          <label for="tr-contract-address" class="col-sm-3 col-form-label">Public Transaction Log Contract (address)</label>
+          <div class="col-sm-9"><input class="form-control" id="tr-contract-address" value="0x4df0f115551f6f36d753dc0ecf6832715bdd7001"></div>
+          <p id="tr-contract-addr"> Address:
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-sm-6">
+        <h3>Get Bank1 Transaction Hash</h3>
+        <div class="form-group row">
+          <label for="bank1-transaction-id" class="col-sm-3 col-form-label">Bank1 Transaction ID (integer)</label>
+          <div class="col-sm-9"><input class="form-control" id="bank1-transaction-id" value="0"></div>
+        </div>
+        <p id="bank1-tr-hash"> Transaction Hash:
+        </p>
+        <h3>Get Bank2 Transaction Hash</h3>
+        <div class="form-group row">
+          <label for="bank2-transaction-id" class="col-sm-3 col-form-label">Bank2 Transaction ID (integer)</label>
+          <div class="col-sm-9"><input class="form-control" id="bank2-transaction-id" value="0"></div>
+        </div>
+        <p id="bank2-tr-hash"> Transaction Hash:
+        </p><h3>Get Bank3 Transaction Hash</h3>
+        <div class="form-group row">
+          <label for="bank3-transaction-id" class="col-sm-3 col-form-label">Bank3 Transaction ID (integer)</label>
+          <div class="col-sm-9"><input class="form-control" id="bank3-transaction-id" value="0"></div>
+        </div>
+        <p id="bank3-tr-hash"> Transaction Hash:
+        </p>
+      </div>
+
+      <div class="col-sm-6">
+        
+        <h3>Search Public Transaction Log</h3>
+        <div class="form-group row">
+          <label for="tr-search-hash" class="col-sm-3 col-form-label">TX Hash:</label>
+          <div class="col-sm-9"><input class="form-control" id="tr-search-hash"></div>
+        </div>
+        <pre id="transaction-log">
+        </pre>
+        <h3>Add Private Money Transfer TX Hash to the Public Transaction Log</h3>
+        <div class="form-group row">
+          <label for="tr-add-hash" class="col-sm-3 col-form-label">TX Hash:</label>
+          <div class="col-sm-9"><input class="form-control" id="tr-add-hash"></div>
+        </div>
+        <button id="tr-add-button" class="btn btn-primary">Add TX</button>
+        <p id="tr-add-result">Result: </p>
+        <h3>Confirm Transaction (Regulator)</h3>
+        <div class="form-group row">
+          <label for="tr-conf-hash" class="col-sm-3 col-form-label">TX Hash:</label>
+          <div class="col-sm-9"><input class="form-control" id="tr-conf-hash"></div>
+          <label for="tr-sender" class="col-sm-3 col-form-label">Sender Contract (address):</label>
+          <div class="col-sm-9"><input class="form-control" id="tr-sender"></div>
+        </div>
+        <button id="tr-conf-button" class="btn btn-primary">Confirm TX</button>
+        <p id="tr-conf-result">Result: </p>
+        
+      </div>
+      <div class="col-sm-6" id="send-transaction-form">
+        <h3>Create a Private Money Transfer</h3>
+        <div class="form-group row">
+          <label for="sender-address" class="col-sm-3 col-form-label">Sender Bank (address)</label>
+          <div class="col-sm-9"><input class="form-control" id="sender-address"></div>
+        </div>
+        <div class="form-group row">
+          <label for="destination-address" class="col-sm-3 col-form-label">Destination Bank (address)</label>
+          <div class="col-sm-9"><input class="form-control" id="destination-address"></div>
+        </div>
+        <div class="form-group row">
+          <label for="sent-value" class="col-sm-3 col-form-label">Value (integer)</label>
+          <div class="col-sm-9"><input class="form-control" id="sent-value"></div>
+        </div>
+        
+        <button id="send" class="btn btn-primary">Create Transaction</button>
+        <p id="transaction-hash">Private Money Transfer </p>
+      </div>
+
+
+
+
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <h3>Quorum Transactions List</h3>
+        <pre id="transactions-list">
+        </pre>
+      </div>
+    </div>
+  </div>
+  <script type="application/javascript" src="./bundle.js"></script>
+</body>
+</html>
