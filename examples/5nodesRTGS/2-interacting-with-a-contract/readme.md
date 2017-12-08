@@ -7,6 +7,6 @@
 5. Run `npm start`
 6. Open `index.html` and start playing
 
-
+It still has a lot of bugs and it is FAR from well written, however it is a good example of a javascript page interactiong with Quorum using private transactions.
 
 Thanks to https://github.com/facuspagnuolo/ethereum-spiking from where I copied almost all the code.
