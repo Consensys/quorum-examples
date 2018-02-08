@@ -10,7 +10,7 @@ The easiest way to get started with running the examples is to use the vagrant e
 
 **Important note**: Any account/encryption keys contained in this repository are for
 demonstration and testing purposes only. Before running a real environment, you should
-generate new ones using Geth's `account` tool and `constellation-enclave-keygen`.
+generate new ones using Geth's `account` tool and `constellation-node --generate-keys`.
 
 ## Vagrant Usage
 
@@ -20,7 +20,7 @@ Quorum examples.
 ### Requirements
 
   1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-  1. Install [Vagrant](https://www.vagrantup.com/downloads.html)
+  2. Install [Vagrant](https://www.vagrantup.com/downloads.html)
 
 (If you are behind a proxy server, please see https://github.com/jpmorganchase/quorum/issues/23)
 
@@ -40,8 +40,6 @@ cd quorum-examples
 (*macOS note*: If you get an error saying that the ubuntu/xenial64 image doesn't
 exist, please run `sudo rm -r /opt/vagrant/embedded/bin/curl`. This is usually due to
 issues with the version of curl bundled with Vagrant.)
-
-
 
 To shut down the Vagrant instance, run `vagrant suspend`. To delete it, run
 `vagrant destroy`. To start from scratch, run `vagrant up` after destroying the
