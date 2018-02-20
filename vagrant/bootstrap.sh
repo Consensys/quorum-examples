@@ -7,7 +7,7 @@ apt-get update
 apt-get install -y build-essential unzip libdb-dev libleveldb-dev libsodium-dev zlib1g-dev libtinfo-dev solc sysvbanner wrk
 
 # install constellation
-CVER="0.3.0"
+CVER="0.3.1"
 CREL="constellation-$CVER-ubuntu1604"
 wget -q https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz
 tar xfJ $CREL.tar.xz
