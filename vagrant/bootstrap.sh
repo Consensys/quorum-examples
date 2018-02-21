@@ -7,7 +7,7 @@ apt-get update
 apt-get install -y build-essential unzip libdb-dev libleveldb-dev libsodium-dev zlib1g-dev libtinfo-dev solc sysvbanner wrk
 
 # install constellation
-CVER="0.3.1"
+CVER="0.3.2"
 CREL="constellation-$CVER-ubuntu1604"
 wget -q https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz
 tar xfJ $CREL.tar.xz
@@ -26,7 +26,7 @@ echo 'PATH=$PATH:/usr/local/go/bin' >> /home/vagrant/.bashrc
 # make/install quorum
 git clone https://github.com/jpmorganchase/quorum.git
 pushd quorum >/dev/null
-git checkout tags/v2.0.1-pre
+git checkout tags/v2.0.1
 make all
 cp build/bin/geth /usr/local/bin
 cp build/bin/bootnode /usr/local/bin
