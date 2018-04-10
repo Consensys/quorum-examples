@@ -32,10 +32,10 @@ Why?
 Consequences:
 
 * C can not see the new data `13` after step 2.
-* C can probably not be sure that the data `13` at step 3 is actually the same it was at step 2.
 * but C can now see the data `13` after step 3.
+* C can probably not be sure that the data `13` at step 3 is actually the same data that it was after step 2. (anyone got a good idea, for how to solve this?)
 
-Correct thinking? If not please [add to issue #90](https://github.com/jpmorganchase/quorum-examples/issues/90#issuecomment-378327035).
+Correct thinking? If not please [add to issue #90](https://github.com/jpmorganchase/quorum-examples/issues/90#issuecomment-378327035), thx.
 
 ## Step by Step
 
@@ -122,7 +122,7 @@ answers should be:
 
 so Carol still sees the OLD value.
 
-###### step 3.  Alice calls `set(get())` with `privateFor: [Bob, Carol]`
+### step 3.  Alice calls `set(get())` with `privateFor: [Bob, Carol]`
 
 `set(get())` from Alice (node 1)
 ```
