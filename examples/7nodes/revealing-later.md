@@ -12,6 +12,7 @@ see https://github.com/jpmorganchase/quorum-examples/issues/90#issuecomment-3796
 ## files added to this repo
 
 * [revealing-later.md](revealing-later.md) = these instructions
+* [init-private.js](init-private.js) = shortcut to initialize JSRE var with recently deployed contract
 * [script2.js](script2.js) because:
 
 > When you deploy the contract for the first time, you should update the privateFor fields in script1.js to include both keys: [...]
@@ -34,7 +35,7 @@ Consequences:
 * C can probably not be sure that the data `13` at step 3 is actually the same it was at step 2.
 * but C can now see the data `13` after step 3.
 
-Correct thinking? Please [contribute to the issue #90](https://github.com/jpmorganchase/quorum-examples/issues/90).
+Correct thinking? If not please [add to issue #90](https://github.com/jpmorganchase/quorum-examples/issues/90#issuecomment-378327035).
 
 ## Step by Step
 
