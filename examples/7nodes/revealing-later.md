@@ -60,14 +60,19 @@ vagrant ssh
 cd quorum-examples/7nodes
 ./raft-init.sh
 ./raft-start.sh
+```
 
+### step 1
+
+```
 ./runscript.sh script2.js
+exit
 ```
 
 now we have the newly deployed (`script2.js`) contract from block 1 tx 0, with an access structure that includes Bob AND Carol.
 
 
-Get three terminals, and start the JSRE console for Alice, Bob, and Carol
+Get three terminals, and (within `vagrant ssh`) start the JSRE consoles for Alice, Bob, and Carol:
 
 ```
 for node in 1 7 5 
@@ -76,10 +81,10 @@ do
 done
 ```
 
-or manually 3 times with `dd1`, `dd7`, `dd5`:
+or manually 3 times, with `dd1`, `dd7`, `dd5`:
 ```
 vagrant ssh
-geth attach ipc:/home/vagrant/quorum-examples/7nodes/qdata/dd5/geth.ipc 
+geth attach ipc:/home/vagrant/quorum-examples/7nodes/qdata/dd1/geth.ipc 
 ```
 
 in *each* JSRE now:
@@ -95,7 +100,7 @@ answers should be:
 42 Carol  
 
 
-###### step 2.  Alice calls `set(13)` with `privateFor: [Bob]` - but not `Carol`
+### step 2.  Alice calls `set(13)` with `privateFor: [Bob]` - but not `Carol`
 
 `set` from Alice (node 1)
 ```
