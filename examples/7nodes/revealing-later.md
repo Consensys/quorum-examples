@@ -89,6 +89,7 @@ geth attach ipc:/home/vagrant/quorum-examples/7nodes/qdata/dd1/geth.ipc
 
 in *each* JSRE now:
 ```
+web3.admin.datadir
 var BLOCKNUMBER = null; loadScript('quorum-examples/7nodes/init-private.js')
 private.get()
 ```
