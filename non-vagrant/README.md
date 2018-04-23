@@ -1,4 +1,4 @@
-# running quroum on host machine, not in vagrant VB
+# running quorum on host machine, not in vagrant VB
 because [suggested here](https://github.com/jpmorganchase/quorum/issues/346).
 
 Better move away the vanilla `geth` (if there is one)
@@ -11,15 +11,14 @@ sudo mv $(which geth) $(which geth)_vanilla
 ### toolchain for quorum
 (modelled after [../vagrant/bootstrap.sh](../vagrant/bootstrap.sh))
 
+#### dependencies
 ```
 sudo apt-get update
 sudo apt-get install -y build-essential unzip libdb-dev libleveldb-dev libsodium-dev zlib1g-dev libtinfo-dev sysvbanner wrk wget
 ```
 
 #### solc
-... for installing on Debian / any Linux.
-
-See [releases](https://github.com/ethereum/solidity/releases), I am choosing [Version 0.4.23](https://github.com/ethereum/solidity/releases/tag/v0.4.23).
+... for installing on Debian / any Linux.  See [releases](https://github.com/ethereum/solidity/releases), I am choosing [Version 0.4.23](https://github.com/ethereum/solidity/releases/tag/v0.4.23).
 
 ```
 wget https://github.com/ethereum/solidity/releases/download/v0.4.23/solc-static-linux
@@ -85,7 +84,7 @@ git clone https://github.com/drandreaskrueger/quorum-examples
 cd quorum-examples
 ```
 
-Kill all virtualmachine `geth` instances (to e.g. free the ports 2200x)
+Possibly kill all virtualmachine `geth` instances (to e.g. free the ports 2200x) from previous attempts in vagrant VB:
 ```
 vagrant destroy
 ```
