@@ -1,4 +1,4 @@
-// same as script1.js but 'privateFor' not only for node 7 but also for node 5 ("R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY=" = examples/7nodes/keys/tm5.pub)
+// same as script1.js but no 'privateFor' field; as not targeted towards private transactions, but benchmarking consensus algorithms
 
 a = eth.accounts[0]
 web3.eth.defaultAccount = a;
