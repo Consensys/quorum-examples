@@ -98,6 +98,7 @@ vagrant suspend
 cd examples/7nodes/
 rm qdata -rf
 
+./stop.sh
 ./raft-init.sh
 ./raft-start.sh
 ```
