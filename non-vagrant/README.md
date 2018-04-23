@@ -66,7 +66,7 @@ go version
 cd ..
 git clone https://github.com/jpmorganchase/quorum.git
 cd quorum
-git checkout tags/v2.0.2
+git checkout tags/v2.0.1
 make all
 sudo cp build/bin/bootnode /usr/local/bin
 sudo cp build/bin/geth /usr/local/bin/geth_quorum
@@ -82,7 +82,7 @@ geth version
 
 ```
 git clone https://github.com/drandreaskrueger/quorum-examples
-cd quorum-examples/non-vagrant
+cd quorum-examples
 ```
 
 Kill all virtualmachine `geth` instances (to e.g. free the ports 2200x)
@@ -94,9 +94,15 @@ or
 vagrant suspend
 ```
 
+#### start raft
+```
+cd examples/7nodes/
+rm qdata -rf
 
-```
 ./raft-init.sh
+./raft-start.sh
 ```
+
+It is NOT starting up, error message is documented in [this issue](https://github.com/jpmorganchase/quorum/issues/352).
 
 
