@@ -18,11 +18,12 @@
   },
   "coinbase": "0x0000000000000000000000000000000000000000",
   "config": {
-    "homesteadBlock": 0,
+    "byzantiumBlock": 1,
     "chainId": 1,
-    "eip155Block": null,
-    "eip158Block": null,
-    "isQuorum": true
+    "eip150Block": 1,
+    "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "eip158Block": 1,
+    "isQuorum":true
   },
   "difficulty": "0x0",
   "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000",
