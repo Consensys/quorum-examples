@@ -56,7 +56,7 @@ which go
 go version
 ```
 > /usr/local/go/bin/go  
-> go version go1.7.3 linux/amd64  
+> go version go1.9.3 linux/amd64
 
 
 #### quorum
@@ -65,7 +65,7 @@ go version
 cd ..
 git clone https://github.com/jpmorganchase/quorum.git
 cd quorum
-git checkout tags/v2.0.1
+git checkout tags/v2.0.2
 make all
 sudo cp build/bin/bootnode /usr/local/bin
 sudo cp build/bin/geth /usr/local/bin/geth_quorum
@@ -76,6 +76,10 @@ geth version
 > Git Commit: df4267a25637a5497a3db9fbde4603a3dcd6aa14  
 > Quorum Version: 2.0.1  
 > ...
+
+N.B.: 2.0.1 == 2.0.2, see issue [#351](https://github.com/jpmorganchase/quorum/issues/351)
+
+
 
 ### start 7 nodes
 
