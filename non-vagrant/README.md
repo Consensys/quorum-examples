@@ -107,6 +107,9 @@ rm qdata -rf
 ./raft-start.sh
 ```
 
+##### Bug
+
 It is NOT starting up, error message is documented in [this issue](https://github.com/jpmorganchase/quorum/issues/352).
 
 
+On [AWS Ubuntu, it does not](https://github.com/jpmorganchase/quorum/issues/352#issuecomment-387299453) seem to have the same problem.
