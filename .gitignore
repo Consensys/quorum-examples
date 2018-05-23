@@ -1,10 +1,9 @@
 
 # temp
-examples/permissions/all_nodes
-examples/permissions/permissioned-nodes.json
 qdata
 
 # vagrant
 .vagrant
 *.log
 
+*node_modules*

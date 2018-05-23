@@ -75,3 +75,73 @@ You can check the log files in ~7nodes/qdata/logs directory to see each node val
 4
 ```
 And there you have it. All 7 nodes are validating the same blockchain of transactions, the private transactions carrying nothing other than a 512 bit hash, and only parties to private transactions are able to view and update the state of private contracts.
+
+## Permissions
+
+Node Permissioning is a feature in Quorum that allows only a pre-defined set of nodes (as identified by their remotekey/enodes) to connect to the permissioned network.
+
+This example demonstrates the following:
+* Sets up a network with a combination of permissioned and non-permissioned nodes in the cluster.
+* Details of permissioned-nodes.json file.
+* Demonstrate that only the nodes that are specified in permissioned-nodes.json can connect to the network.
+
+### Verify only permissioned nodes are connected to the network.
+
+Attach to the individual nodes via
+	`geth attach path/to/geth.ipc` and use `admin.peers` to check the connected nodes.
+
+```
+❯ geth attach qdata/dd1/geth.ipc
+Welcome to the Geth JavaScript console!
+
+instance: Geth/v1.7.2-stable/darwin-amd64/go1.9.2
+coinbase: 0xed9d02e382b34818e88b88a309c7fe71e65f419d
+at block: 1 (Mon, 29 Oct 47909665359 22:09:51 EST)
+ datadir: /Users/joel/jpm/quorum-examples/examples/7nodes/qdata/dd1
+ modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 raft:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+> admin.peers
+[{
+    caps: ["eth/63"],
+    id: "0ba6b9f606a43a95edc6247cdb1c1e105145817be7bcafd6b2c0ba15d58145f0dc1a194f70ba73cd6f4cdd6864edc7687f311254c7555cc32e4d45aeb1b80416",
+    name: "Geth/v1.7.2-stable/darwin-amd64/go1.9.2",
+    network: {
+      localAddress: "127.0.0.1:65188",
+      remoteAddress: "127.0.0.1:21001"
+    },
+    protocols: {
+      eth: {
+        difficulty: 0,
+        head: "0xc23b4ebccc79e2636d66939924d46e618269ca1beac5cf1ec83cc862b88b1b71",
+        version: 63
+      }
+    }
+},
+...
+]
+```
+
+You can also inspect the log files under `qdata/logs/*.log` for further diagnostics messages around incoming / outgoing connection requests. Grep for `ALLOWED-BY` or `DENIED-BY`. Please be sure to enable verobsity for p2p module.
+
+### Permissioning configuration
+
+Permissioning is granted based on the remote key of the geth node. The remote keys are specified in the permissioned-nodes.json and is placed under individual nodes <datadir>.
+
+The below sample permissioned-nodes.json provides a list of nodes permissioned to join the network ( node ids truncated for clarity)
+
+```
+[
+   "enode://8475a01f22a1f48116dc1f0d22ecaaaf77e@127.0.0.1:30301",
+   "enode://b5660501f496e60e59ded734a889c97b7da@127.0.0.1:30302",
+   "enode://54bd7ff4bd971fb80493cf4706455395917@127.0.0.1:30303"
+]
+```
+
+### Enabling/Disabling permissions
+
+An individual node can enable/disable permissioning by passing the `-permissioned` command line flag. If enabled, then only the nodes that are in the `<datadir>/permissioned-nodes.json` can connect to it. Further, these are the only nodes that this node can make outbound connections to as well.
+
+```
+MISCELLANEOUS OPTIONS:
+--permissioned          If enabled, the node will allow only a defined list of nodes to connect
+```
