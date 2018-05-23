@@ -6,3 +6,4 @@ qdata
 .vagrant
 *.log
 
+*node_modules*
