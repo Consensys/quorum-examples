@@ -27,7 +27,7 @@ mkdir -p qdata/dd3/{keystore,geth}
 cp permissioned-nodes.json qdata/dd3/static-nodes.json
 cp permissioned-nodes.json qdata/dd3/
 cp keys/key6 qdata/dd3/keystore
-cp keys/key3 qdata/dd2/keystore
+cp keys/key3 qdata/dd3/keystore
 cp raft/nodekey3 qdata/dd3/geth/nodekey
 geth --datadir qdata/dd3 init genesis.json
 
