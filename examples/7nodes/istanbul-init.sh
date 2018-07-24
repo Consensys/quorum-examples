@@ -50,6 +50,7 @@ echo "[*] Configuring node 6"
 mkdir -p qdata/dd6/{keystore,geth}
 cp permissioned-nodes.json qdata/dd6/static-nodes.json
 cp permissioned-nodes.json qdata/dd6/
+cp keys/key6 qdata/dd6/keystore
 cp raft/nodekey6 qdata/dd6/geth/nodekey
 geth --datadir qdata/dd6 init istanbul-genesis.json
 
@@ -57,5 +58,6 @@ echo "[*] Configuring node 7"
 mkdir -p qdata/dd7/{keystore,geth}
 cp permissioned-nodes.json qdata/dd7/static-nodes.json
 cp permissioned-nodes.json qdata/dd7/
+cp keys/key7 qdata/dd7/keystore
 cp raft/nodekey7 qdata/dd7/geth/nodekey
 geth --datadir qdata/dd7 init istanbul-genesis.json
