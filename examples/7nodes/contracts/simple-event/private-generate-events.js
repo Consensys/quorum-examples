@@ -1,6 +1,5 @@
-// From geth console run
-//   $> loadScript('event_test_priv.js')
-// From console test node 1 & 7 to see if the events were recorded
+// From the console test nodes 1 & 7 to see if the events were recorded
+// seth is a cool cli tool that can be used see: https://github.com/dapphub/dapptools
 //   $> seth events 0x1932c48b2bf8102ba33b4a6b545c32236e342f34 | wc -l
 var address="0x1932c48b2bf8102ba33b4a6b545c32236e342f34"
 
