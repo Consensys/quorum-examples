@@ -76,6 +76,9 @@ You can check the log files in ~7nodes/qdata/logs directory to see each node val
 ```
 And there you have it. All 7 nodes are validating the same blockchain of transactions, the private transactions carrying nothing other than a 512 bit hash, and only parties to private transactions are able to view and update the state of private contracts.
 
+#### Disabling Transaction Manager
+To start Quorum node without associated transaction manager, please provide PRIVATE_CONFIG=ignore
+
 ## Permissions
 
 Node Permissioning is a feature in Quorum that allows only a pre-defined set of nodes (as identified by their remotekey/enodes) to connect to the permissioned network.
