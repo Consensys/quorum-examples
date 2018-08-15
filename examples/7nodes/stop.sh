@@ -1,7 +1,7 @@
 #!/bin/bash
 killall geth bootnode constellation-node
 
-if [ "`jps | grep tessera-app`" != "" ]
+if [ "`jps | grep tessera`" != "" ]
 then
   jps | grep tessera-app | cut -d " " -f1 | xargs kill
 else

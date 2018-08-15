@@ -15,13 +15,10 @@ cp $CREL/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constell
 rm -rf $CREL
 
 # install tessera
-pushd /home/vagrant >/dev/null
-git clone https://github.com/jpmorganchase/tessera.git
-pushd tessera >/dev/null
-mvn --batch-mode -DskipTests install
-popd >/dev/null
-popd >/dev/null
-
+wget -q https://github.com/jpmorganchase/tessera/releases/download/tessera-0.6/tessera-app-0.6-app.jar
+mkdir -p /home/vagrant/tessera
+cp ./tessera-app-0.6-app.jar /home/vagrant/tessera/tessera.jar
+echo "TESSERA_JAR=/home/vagrant/tessera/tessera.jar" >> /home/vagrant/.profile
 
 # install golang
 GOREL=go1.9.3.linux-amd64.tar.gz

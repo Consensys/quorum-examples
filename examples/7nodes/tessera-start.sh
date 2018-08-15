@@ -18,7 +18,7 @@ function usage() {
   exit -1
 }
 
-defaultTesseraJarExpr="/home/vagrant/tessera/tessera-app/target/tessera-app-*-SNAPSHOT-app.jar"
+defaultTesseraJarExpr="/home/vagrant/tessera/tessera.jar"
 set +e
 defaultTesseraJar=`find ${defaultTesseraJarExpr} 2>/dev/null`
 set -e
