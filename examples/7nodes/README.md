@@ -22,9 +22,9 @@ We can inspect any of the Quorum nodes by using `geth attach` to open the Geth J
 It is recommended to use separate terminal windows for each node we are inspecting.  In each terminal, ensure you are in the `path/to/7nodes` directory, then:
 
 - If you aren't already running the 7nodes example, in terminal 1 run `./{consensus}-init.sh` followed by `./{consensus}-start.sh`
-- In terminal 1 run `geth attach ipc:qdata/dd1/geth.ipc`
-- In terminal 2 run `geth attach ipc:qdata/dd4/geth.ipc`
-- In terminal 3 run `geth attach ipc:qdata/dd7/geth.ipc`
+- In terminal 1 run `geth attach ipc:qdata/dd1/geth.ipc` to attach to node 1
+- In terminal 2 run `geth attach ipc:qdata/dd4/geth.ipc` to attach to node 4
+- In terminal 3 run `geth attach ipc:qdata/dd7/geth.ipc` to attach to node 7
 
 To look at the private transaction that was just sent, run the following command in one of the terminals:
 ```sh
