@@ -4,7 +4,7 @@ set -eu -o pipefail
 # install build deps
 add-apt-repository ppa:ethereum/ethereum
 apt-get update
-apt-get install -y build-essential unzip libdb-dev libleveldb-dev libsodium-dev zlib1g-dev libtinfo-dev solc sysvbanner wrk
+apt-get install -y build-essential unzip libdb-dev libleveldb-dev libsodium-dev zlib1g-dev libtinfo-dev solc sysvbanner wrk software-properties-common default-jdk maven
 
 # install constellation
 CVER="0.3.2"
@@ -13,6 +13,12 @@ wget -q https://github.com/jpmorganchase/constellation/releases/download/v$CVER/
 tar xfJ $CREL.tar.xz
 cp $CREL/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node
 rm -rf $CREL
+
+# install tessera
+wget -q https://github.com/jpmorganchase/tessera/releases/download/tessera-0.6/tessera-app-0.6-app.jar
+mkdir -p /home/vagrant/tessera
+cp ./tessera-app-0.6-app.jar /home/vagrant/tessera/tessera.jar
+echo "TESSERA_JAR=/home/vagrant/tessera/tessera.jar" >> /home/vagrant/.profile
 
 # install golang
 GOREL=go1.9.3.linux-amd64.tar.gz
