@@ -61,3 +61,6 @@ cp permissioned-nodes.json qdata/dd7/
 cp keys/key7 qdata/dd7/keystore
 cp raft/nodekey7 qdata/dd7/geth/nodekey
 geth --datadir qdata/dd7 init istanbul-genesis.json
+
+#Initialise Tessera configuration
+./tessera-init.sh
