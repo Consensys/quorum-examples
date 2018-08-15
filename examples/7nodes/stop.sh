@@ -5,5 +5,5 @@ if [ "`jps | grep tessera`" != "" ]
 then
   jps | grep tessera | cut -d " " -f1 | xargs kill
 else
-  echo "tessera-app: no process found"
+  echo "tessera: no process found"
 fi
