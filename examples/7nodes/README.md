@@ -9,7 +9,7 @@ The 7nodes example comes with some simple contracts to demonstrate the privacy f
 
 ### Sending a private transaction
 
-First start running the 7nodes example by follow the instructions in the [quorum-examples README](../../README.md), then send an example private contract from Node 1 to Node 7 (this is denoted by the public key passed via `privateFor: ["ROAZBWtSacxXQrOe3FGAqJDyJjFePR5ce4TSIzmJ0Bc="]` in `private-contract.js`):
+First start running the 7nodes example by following the instructions in the [quorum-examples README](../../README.md), then send an example private contract from Node 1 to Node 7 (this is denoted by the public key passed via `privateFor: ["ROAZBWtSacxXQrOe3FGAqJDyJjFePR5ce4TSIzmJ0Bc="]` in `private-contract.js`):
 ```sh
 ./runscript.sh private-contract.js
 ```
