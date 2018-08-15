@@ -10,7 +10,7 @@ sudo apt-get install -y default-jdk maven
 
 echo "========== Install Tessera =========="
 pushd /home/vagrant >/dev/null
-git clone https://github.com/QuorumEngineering/tessera.git
+git clone https://github.com/jpmorganchase/tessera.git
 pushd tessera >/dev/null
 git checkout master
 #git pull
