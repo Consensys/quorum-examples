@@ -8,7 +8,7 @@ Current examples include:
 
 **Important note**: Any account/encryption keys contained in this repository are for
 demonstration and testing purposes only. Before running a real environment, you should
-generate new ones using Geth's `account` tool and Tessera's `-keygen` option.
+generate new ones using Geth's `account` tool and the `--generate-keys` option for Constellation (or `-keygen` option for Tessera).
 
 ## Getting Started
 The 7nodes example can be run in two ways:
@@ -26,11 +26,7 @@ The 7nodes example can be run in two ways:
     vagrant up
     vagrant ssh
     ```
-4. If running with Tessera and connecting to the Vagrant instance via ssh for the first time, install and build Tessera by running the following:
-    ```
-    cd quorum-examples/7nodes
-    ./tessera-install.sh
-    ```
+    
 4. To shutdown the Vagrant instance, run `vagrant suspend`. To delete it, run
    `vagrant destroy`. To start from scratch, run `vagrant up` after destroying the
    instance.
