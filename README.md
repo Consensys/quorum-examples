@@ -6,6 +6,8 @@ Current examples include:
 * [7nodes](examples/7nodes): Starts up a fully-functioning Quorum environment consisting of 7 independent nodes. From this example one can test consensus, privacy, and all the expected functionality of an Ethereum platform.
 * [5nodesRTGS](https://github.com/bacen/quorum-examples/tree/master/examples/5nodesRTGS): [__Note__: This links to an external repo which you will need to clone, thanks to @rsarres for this contribution!] Starts up a set of 5 nodes that simulates a Real-time Gross Setlement environment with 3 banks, one regulator (typically a central bank) and an observer that cannot access the private data.
 
+The easiest way to get started with running the examples is to use the vagrant environment (see below).
+
 **Important note**: Any account/encryption keys contained in this repository are for
 demonstration and testing purposes only. Before running a real environment, you should
 generate new ones using Geth's `account` tool and the `--generate-keys` option for Constellation (or `-keygen` option for Tessera).
@@ -107,3 +109,6 @@ stop.sh
 
 ### Next steps: Sending transactions
 Some simple transaction contracts are included in quorum-examples to demonstrate the privacy features of Quorum.  To learn how to use them see the [7nodes README](examples/7nodes/README.md).
+
+# Getting Help
+Stuck at some step? Have no fear, the help is here: <a href="https://clh7rniov2.execute-api.us-east-1.amazonaws.com/Express/" target="_blank" rel="noopener"><img title="Quorum Slack" src="https://clh7rniov2.execute-api.us-east-1.amazonaws.com/Express/badge.svg" alt="Quorum Slack" /></a>
