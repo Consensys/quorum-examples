@@ -42,12 +42,12 @@ while (( "$#" )); do
     esac
 done
 
-NETWORK_ID=$(cat genesis.json | grep chainId | awk -F " " '{print $2}' | awk -F "," '{print $1}')
+NETWORK_ID=$(cat istanbul-genesis.json | grep chainId | awk -F " " '{print $2}' | awk -F "," '{print $1}')
 
 if [ $NETWORK_ID -eq 1 ]
 then
     echo "  Quorum should not be run with a chainId of 1 (Ethereum mainnet)"
-    echo "  please set the chainId in the genensis.json to another value "
+    echo "  please set the chainId in the istanbul-genesis.json to another value "
     echo "  1337 is the recommend ChainId for Geth private clients."
 fi
 
