@@ -107,6 +107,15 @@ istanbul-start.sh tessera
 stop.sh
 ```
 
+#### Using Clique POA consensus
+To run the example using __Clique POA__ consensus use the corresponding commands:
+```sh
+clique-init.sh
+clique-start.sh
+clique-start.sh tessera
+stop.sh
+```
+
 ### Next steps: Sending transactions
 Some simple transaction contracts are included in quorum-examples to demonstrate the privacy features of Quorum.  To learn how to use them see the [7nodes README](examples/7nodes/README.md).
 
