@@ -56,4 +56,9 @@ while (( "$#" )); do
     esac
 done
 
+if [ "$consensus" == "" ]; then
+    echo "Error: consensus not selected"
+    exit 1
+fi
+
 ./$consensus-start.sh $privacyImpl $tesseraOptions
