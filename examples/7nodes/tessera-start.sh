@@ -104,7 +104,7 @@ while ${DOWN}; do
         set +e
         #NOTE: if using https, change the scheme
         #NOTE: if using the IP whitelist, change the host to an allowed host
-        result=$(curl -s --connect-timeout 1 qdata/c${i}/tm.ipc http://localhost:900${i}/upcheck)
+        result=$(curl -s http://localhost:900${i}/upcheck)
         set -e
         if [ ! "${result}" == "I'm up!" ]; then
             echo "Node ${i} is not yet listening on http"
