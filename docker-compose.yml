@@ -1,0 +1,339 @@
+# The following environment variables are substituted if present
+# * CONSENSUS: default to raft
+# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:latest
+# * TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:latest
+version: "3.6"
+x-quorum-def:
+  &quorum-def
+  restart: "no"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:latest}"
+  expose:
+    - "30303"
+    - "50401"
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      while [ ! -S /qdata/tm/tm.ipc ]; do
+        echo "Waiting for tx engine to be up"
+        sleep 3
+      done
+      DDIR=/qdata/dd
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}/keystore
+      mkdir -p $${DDIR}/geth
+      cp /config/raft/nodekey$${NODE_ID} $${DDIR}/geth/nodekey
+      cp /config/keys/key1 $${DDIR}/keystore/
+      cp /config/permissioned-nodes.json $${DDIR}/static-nodes.json
+      NETWORK_ID=$$(cat /config/genesis.json | grep chainId | awk -F " " '{print $$2}' | awk -F "," '{print $$1}')
+      geth --datadir $${DDIR} init /config/genesis.json
+      geth \
+        --identity node$${NODE_ID} \
+        --datadir $${DDIR} \
+        --permissioned \
+        --nodiscover \
+        --verbosity 5 \
+        --networkid $$NETWORK_ID \
+        --raft \
+        --rpc \
+        --rpcaddr 0.0.0.0 \
+        --rpcport 8545 \
+        --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft \
+        --emitcheckpoints \
+        --raftport 50401 \
+        --port 30303 \
+        --unlock 0 \
+        --password /config/passwords.txt
+x-tx-engine-def:
+  &tx-engine-def
+  image: "${TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:latest}"
+  expose:
+    - "9000"
+  restart: "no"
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      apk update
+      apk add curl
+      DDIR=/qdata/tm
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}
+      cp /config/keys/tm$${NODE_ID}.pub $${DDIR}/tm.pub
+      cp /config/keys/tm$${NODE_ID}.key $${DDIR}/tm.key
+      cat <<EOF > $${DDIR}/tessera-config.json
+      {
+          "useWhiteList": false,
+          "jdbc": {
+              "username": "sa",
+              "password": "",
+              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0"
+          },
+          "server": {
+              "port": 9000,
+              "hostName": "http://$$(hostname -i)",
+              "sslConfig": {
+                  "tls": "OFF",
+                  "generateKeyStoreIfNotExisted": true,
+                  "serverKeyStore": "$${DDIR}/server-keystore",
+                  "serverKeyStorePassword": "quorum",
+                  "serverTrustStore": "$${DDIR}/server-truststore",
+                  "serverTrustStorePassword": "quorum",
+                  "serverTrustMode": "TOFU",
+                  "knownClientsFile": "$${DDIR}/knownClients",
+                  "clientKeyStore": "$${DDIR}/client-keystore",
+                  "clientKeyStorePassword": "quorum",
+                  "clientTrustStore": "$${DDIR}/client-truststore",
+                  "clientTrustStorePassword": "quorum",
+                  "clientTrustMode": "TOFU",
+                  "knownServersFile": "$${DDIR}/knownServers"
+              }
+          },
+          "peer": [
+              {
+                  "url": "http://172.16.239.101:9000"
+              },
+              {
+                  "url": "http://172.16.239.102:9000"
+              },
+              {
+                  "url": "http://172.16.239.103:9000"
+              },
+              {
+                  "url": "http://172.16.239.104:9000"
+              },
+              {
+                  "url": "http://172.16.239.105:9000"
+              },
+              {
+                  "url": "http://172.16.239.106:9000"
+              },
+              {
+                  "url": "http://172.16.239.107:9000"
+              }
+          ],
+          "keys": {
+              "passwords": [],
+              "keyData": [
+                  {
+                      "config": $$(cat $${DDIR}/tm.key),
+                      "publicKey": "$$(cat $${DDIR}/tm.pub)"
+                  }
+              ]
+          },
+          "alwaysSendTo": [],
+          "unixSocketFile": "$${DDIR}/tm.ipc"
+      }
+      EOF
+      java -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config.json
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:9000/upcheck"]
+    interval: 3s
+    timeout: 30s
+    retries: 10
+    start_period: 5s
+services:
+  node1:
+    << : *quorum-def
+    hostname: node1
+    ports:
+      - "22001:8545"
+    volumes:
+      - 1:/qdata
+      - ./examples/7nodes:/config
+    depends_on:
+      - tx-manager-1
+    environment:
+      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - NODE_ID=1
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.11
+  node2:
+    << : *quorum-def
+    hostname: node2
+    ports:
+      - "22002:8545"
+    volumes:
+      - 2:/qdata
+      - ./examples/7nodes:/config
+    depends_on:
+      - tx-manager-2
+    environment:
+      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - NODE_ID=2
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.12
+  node3:
+    << : *quorum-def
+    hostname: node3
+    ports:
+      - "22003:8545"
+    volumes:
+      - 3:/qdata
+      - ./examples/7nodes:/config
+    depends_on:
+      - tx-manager-3
+    environment:
+      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - NODE_ID=3
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.13
+  node4:
+    << : *quorum-def
+    hostname: node4
+    ports:
+      - "22004:8545"
+    volumes:
+      - 4:/qdata
+      - ./examples/7nodes:/config
+    depends_on:
+      - tx-manager-4
+    environment:
+      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - NODE_ID=4
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.14
+  node5:
+    << : *quorum-def
+    hostname: node5
+    ports:
+      - "22005:8545"
+    volumes:
+      - 5:/qdata
+      - ./examples/7nodes:/config
+    depends_on:
+      - tx-manager-5
+    environment:
+      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - NODE_ID=5
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.15
+  node6:
+    << : *quorum-def
+    hostname: node6
+    ports:
+      - "22006:8545"
+    volumes:
+      - 6:/qdata
+      - ./examples/7nodes:/config
+    depends_on:
+      - tx-manager-6
+    environment:
+      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - NODE_ID=6
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.16
+  node7:
+    << : *quorum-def
+    hostname: node7
+    ports:
+      - "22007:8545"
+    volumes:
+      - 7:/qdata
+      - ./examples/7nodes:/config
+    depends_on:
+      - tx-manager-7
+    environment:
+      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - NODE_ID=7
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.17
+  tx-manager-1:
+    << : *tx-engine-def
+    hostname: tx-manager-1
+    volumes:
+      - 1:/qdata
+      - ./examples/7nodes:/config
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.101
+    environment:
+      - NODE_ID=1
+  tx-manager-2:
+    << : *tx-engine-def
+    hostname: tx-manager-2
+    volumes:
+      - 2:/qdata:z
+      - ./examples/7nodes:/config
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.102
+    environment:
+      - NODE_ID=2
+  tx-manager-3:
+    << : *tx-engine-def
+    hostname: tx-manager-3
+    volumes:
+      - 3:/qdata:z
+      - ./examples/7nodes:/config
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.103
+    environment:
+      - NODE_ID=3
+  tx-manager-4:
+    << : *tx-engine-def
+    hostname: tx-manager-4
+    volumes:
+      - 4:/qdata:z
+      - ./examples/7nodes:/config
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.104
+    environment:
+      - NODE_ID=4
+  tx-manager-5:
+    << : *tx-engine-def
+    hostname: tx-manager-5
+    volumes:
+      - 5:/qdata:z
+      - ./examples/7nodes:/config
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.105
+    environment:
+      - NODE_ID=5
+  tx-manager-6:
+    << : *tx-engine-def
+    hostname: tx-manager-6
+    volumes:
+      - 6:/qdata:z
+      - ./examples/7nodes:/config
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.106
+    environment:
+      - NODE_ID=6
+  tx-manager-7:
+    << : *tx-engine-def
+    hostname: tx-manager-7
+    volumes:
+      - 7:/qdata:z
+      - ./examples/7nodes:/config
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.107
+    environment:
+      - NODE_ID=7
+networks:
+  quorum-examples-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.239.0/24
+volumes:
+  "1":
+  "2":
+  "3":
+  "4":
+  "5":
+  "6":
+  "7":
