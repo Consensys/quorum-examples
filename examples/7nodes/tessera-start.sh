@@ -102,8 +102,9 @@ while ${DOWN}; do
         fi
 
         set +e
-        #note that the "http://c" scheme and host is irrelevant, but cURL needs a valid uri to work
-        result=$(curl -s --connect-timeout 1 --unix-socket qdata/c${i}/tm.ipc http://c/upcheck)
+        #NOTE: if using https, change the scheme
+        #NOTE: if using the IP whitelist, change the host to an allowed host
+        result=$(curl -s --connect-timeout 1 qdata/c${i}/tm.ipc http://localhost:900${i}/upcheck)
         set -e
         if [ ! "${result}" == "I'm up!" ]; then
             echo "Node ${i} is not yet listening on http"
