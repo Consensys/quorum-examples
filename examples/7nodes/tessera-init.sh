@@ -5,11 +5,11 @@ echo "[*] Initialising Tessera configuration"
 currentDir=$(pwd)
 for i in {1..7}
 do
-    DDIR="qdata/c$i"
+    DDIR="${currentDir}/qdata/c${i}"
     mkdir -p ${DDIR}
     mkdir -p qdata/logs
-    cp "keys/tm$i.pub" "${DDIR}/tm.pub"
-    cp "keys/tm$i.key" "${DDIR}/tm.key"
+    cp "keys/tm${i}.pub" "${DDIR}/tm.pub"
+    cp "keys/tm${i}.key" "${DDIR}/tm.key"
     rm -f "${DDIR}/tm.ipc"
 
     #change tls to "strict" to enable it (don't forget to also change http -> https)
@@ -19,7 +19,7 @@ do
     "jdbc": {
         "username": "sa",
         "password": "",
-        "url": "jdbc:h2:./${DDIR}/db${i};MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0"
+        "url": "jdbc:h2:${DDIR}/db${i};MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0"
     },
     "server": {
         "port": 900${i},
@@ -27,18 +27,18 @@ do
         "sslConfig": {
             "tls": "OFF",
             "generateKeyStoreIfNotExisted": true,
-            "serverKeyStore": "${currentDir}/qdata/c${i}/server${i}-keystore",
+            "serverKeyStore": "${DDIR}/server${i}-keystore",
             "serverKeyStorePassword": "quorum",
-            "serverTrustStore": "${currentDir}/qdata/c${i}/server-truststore",
+            "serverTrustStore": "${DDIR}/server-truststore",
             "serverTrustStorePassword": "quorum",
             "serverTrustMode": "TOFU",
-            "knownClientsFile": "${currentDir}/qdata/c${i}/knownClients",
-            "clientKeyStore": "${currentDir}/qdata/c${i}/client${i}-keystore",
+            "knownClientsFile": "${DDIR}/knownClients",
+            "clientKeyStore": "${DDIR}/client${i}-keystore",
             "clientKeyStorePassword": "quorum",
-            "clientTrustStore": "${currentDir}/qdata/c${i}/client-truststore",
+            "clientTrustStore": "${DDIR}/client-truststore",
             "clientTrustStorePassword": "quorum",
             "clientTrustMode": "TOFU",
-            "knownServersFile": "${currentDir}/qdata/c${i}/knownServers"
+            "knownServersFile": "${DDIR}/knownServers"
         }
     },
     "peer": [
@@ -68,13 +68,13 @@ do
         "passwords": [],
         "keyData": [
             {
-                "config": $(cat ${currentDir}/qdata/c${i}/tm.key),
-                "publicKey": "$(cat ${currentDir}/qdata/c${i}/tm.pub)"
+                "privateKeyPath": "${DDIR}/tm.key",
+                "publicKeyPath": "${DDIR}/tm.pub"
             }
         ]
     },
     "alwaysSendTo": [],
-    "unixSocketFile": "${currentDir}/qdata/c${i}/tm.ipc"
+    "unixSocketFile": "${DDIR}/tm.ipc"
 }
 EOF
 
