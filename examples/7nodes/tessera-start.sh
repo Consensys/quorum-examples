@@ -102,7 +102,9 @@ while ${DOWN}; do
         fi
 
         set +e
-        result=$(printf 'GET /upcheck HTTP/1.0\r\n\r\n' | nc -Uv qdata/c${i}/tm.ipc | tail -n 1)
+        #NOTE: if using https, change the scheme
+        #NOTE: if using the IP whitelist, change the host to an allowed host
+        result=$(curl -s http://localhost:900${i}/upcheck)
         set -e
         if [ ! "${result}" == "I'm up!" ]; then
             echo "Node ${i} is not yet listening on http"
