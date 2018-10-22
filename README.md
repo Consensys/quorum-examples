@@ -13,9 +13,10 @@ demonstration and testing purposes only. Before running a real environment, you 
 generate new ones using Geth's `account` tool and the `--generate-keys` option for Constellation (or `-keygen` option for Tessera).
 
 ## Getting Started
-The 7nodes example can be run in two ways:
+The 7nodes example can be run in three ways:
 1. By running a preconfigured Vagrant environment which comes complete with Quorum, Constellation, Tessera and the 7nodes example (__works on any machine__).
-2. By downloading and locally running Quorum, Tessera and the examples (__requires an Ubuntu-based/macOS machine; note that Constellation does not support running locally__) 
+1. By running [`docker-compose`](https://docs.docker.com/compose/) against a preconfigured [compose file](docker-compose.yml) which starts 7nodes example (__works on any machine__).
+1. By downloading and locally running Quorum, Tessera and the examples (__requires an Ubuntu-based/macOS machine; note that Constellation does not support running locally__)
 
 ### Setting up Vagrant
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
@@ -28,7 +29,7 @@ The 7nodes example can be run in two ways:
     vagrant up
     vagrant ssh
     ```
-    
+
 4. To shutdown the Vagrant instance, run `vagrant suspend`. To delete it, run
    `vagrant destroy`. To start from scratch, run `vagrant up` after destroying the
    instance.
@@ -44,9 +45,43 @@ issues with the version of curl bundled with Vagrant.
 * The Vagrant instance is allocated 6 GB of memory.  This is defined in the `Vagrantfile`, `v.memory = 6144`.  This has been deemed a suitable value to allow the VM and examples to run as expected.  The memory allocation can be changed by updating this value and running `vagrant reload` to apply the change.
 
 * If the machine you are using has less than 8 GB memory you will likely encounter system issues such as slow down and unresponsiveness when starting the Vagrant instance as your machine will not have the capacity to run the VM.  There are several steps that can be taken to overcome this:
-    1. Shutdown any running processes that are not required 
+    1. Shutdown any running processes that are not required
     1. If running the [7nodes example](examples/7nodes), reduce the number of nodes started up.  See the [7nodes README: Reducing the number of nodes](examples/7nodes/README.md#reducing-the-number-of-nodes) for info on how to do this.
     1. Set up and run the examples locally.  Running locally reduces the load on your memory compared to running in Vagrant.
+
+### Setting up Docker
+
+1. Install Docker (https://www.docker.com/get-started)
+   * If your Docker distribution does not contain `docker-compose`, follow [this](https://docs.docker.com/compose/install/) to install Docker Compose
+   * Make sure your Docker daemon has at least 4G memory
+1. Download and run `docker-compose`
+   ```sh
+   git clone https://github.com/jpmorganchase/quorum-examples
+   cd quorum-examples
+   docker-compose up -d
+   ```
+1. By default, Quorum Network is created using Tessera transaction manager and Istanbul BFT consensus. If you wish to change consensus configuration to Raft, set the environment variable `QUORUM_CONSENSUS=raft` before running `docker-compose`
+   ```sh
+   QUORUM_CONSENSUS=raft docker-compose up -d
+   ```
+1. Run `docker ps` to verify that all quorum-examples containers (7 nodes and 7 tx managers) are **healthy**
+1. __Note__: to run the 7nodes demo, use the following snippet to open `geth` Javascript console to a desired node (using container name from `docker ps`) and send a private transaction
+   ```sh
+   $ docker exec -it quorum-examples_node1_1 geth attach /qdata/dd/geth.ipc
+   Welcome to the Geth JavaScript console!
+
+   instance: Geth/node1-istanbul/v1.7.2-stable/linux-amd64/go1.9.7
+   coinbase: 0xd8dba507e85f116b1f7e231ca8525fc9008a6966
+   at block: 70 (Thu, 18 Oct 2018 14:49:47 UTC)
+    datadir: /qdata/dd
+    modules: admin:1.0 debug:1.0 eth:1.0 istanbul:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+   > loadScript('/examples/private-contract.js')
+   ```
+1. Shutdown Quorum Network
+   ```sh
+   docker-compose down
+   ```
 
 ### Setting up locally
 > This is only possible with Tessera. Constellation is not supported when running the examples locally. To use Constellation, the examples must be run in Vagrant.
@@ -88,14 +123,14 @@ All logs and temporary data are written to the `qdata` folder.
         ./raft-start.sh tessera
         ```
         By default, `raft-start.sh` will look in `/home/vagrant/tessera/tessera-app/target/tessera-app-{version}-app.jar` for the Tessera jar.
-    
+
     - If running locally with Tessera:
         ```
         ./raft-start.sh tessera --tesseraOptions "--tesseraJar /path/to/tessera-app.jar"
-        ``` 
-    
+        ```
+
         The Tessera jar location can also be specified by setting the environment variable `TESSERA_JAR`.
-    
+
 3. You are now ready to start sending private/public transactions between the nodes
 
 #### Using Istanbul BFT consensus
