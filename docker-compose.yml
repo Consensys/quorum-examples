@@ -61,10 +61,10 @@ x-tx-manager-tessera-def:
     - "9000"
   restart: "no"
   healthcheck:
-    test: ["CMD", "wget", "--spider", "http://localhost:9000/upcheck"]
+    test: ["CMD-SHELL", "[ -S /qdata/tm/tm.ipc ] || exit 1"]
     interval: 3s
     timeout: 3s
-    retries: 10
+    retries: 20
     start_period: 5s
   entrypoint:
     - /bin/sh
