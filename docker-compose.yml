@@ -1,12 +1,14 @@
 # The following environment variables are substituted if present
 # * QUORUM_CONSENSUS: default to istanbul
-# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:latest
-# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:latest
+# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:2.1.1
+# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.7.3
+# To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
+# e.g.: QUORUM_TX_MANAGER_DOCKER_IMAGE=quorumengineering/constellation:0.3.2 docker-compose up -d
 version: "3.7"
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:latest}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:2.1.1}"
   expose:
     - "21000"
     - "50400"
@@ -54,9 +56,9 @@ x-quorum-def:
         --unlock 0 \
         --password /examples/passwords.txt \
         $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
-x-tx-manager-tessera-def:
-  &tx-manager-tessera-def
-  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:latest}"
+x-tx-manager-def:
+  &tx-manager-def
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.7.3}"
   expose:
     - "9000"
   restart: "no"
@@ -73,102 +75,97 @@ x-tx-manager-tessera-def:
       DDIR=/qdata/tm
       rm -rf $${DDIR}
       mkdir -p $${DDIR}
-      cp /examples/keys/tm$${NODE_ID}.pub $${DDIR}/tm.pub
-      cp /examples/keys/tm$${NODE_ID}.key $${DDIR}/tm.key
-      cat <<EOF > $${DDIR}/tessera-config.json
-      {
-          "useWhiteList": false,
-          "jdbc": {
-              "username": "sa",
-              "password": "",
-              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0"
-          },
-          "server": {
-              "port": 9000,
-              "hostName": "http://$$(hostname -i)",
-              "sslConfig": {
-                  "tls": "OFF",
-                  "generateKeyStoreIfNotExisted": true,
-                  "serverKeyStore": "$${DDIR}/server-keystore",
-                  "serverKeyStorePassword": "quorum",
-                  "serverTrustStore": "$${DDIR}/server-truststore",
-                  "serverTrustStorePassword": "quorum",
-                  "serverTrustMode": "TOFU",
-                  "knownClientsFile": "$${DDIR}/knownClients",
-                  "clientKeyStore": "$${DDIR}/client-keystore",
-                  "clientKeyStorePassword": "quorum",
-                  "clientTrustStore": "$${DDIR}/client-truststore",
-                  "clientTrustStorePassword": "quorum",
-                  "clientTrustMode": "TOFU",
-                  "knownServersFile": "$${DDIR}/knownServers"
-              }
-          },
-          "peer": [
-              {
-                  "url": "http://txmanager1:9000"
+      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.7.3}"
+      TX_MANAGER=$$(echo $${DOCKER_IMAGE} | sed 's/^.*\/\(.*\):.*$$/\1/g')
+      echo "TxManager: $${TX_MANAGER}"
+      case $${TX_MANAGER}
+      in
+        tessera)
+          cp /examples/keys/tm$${NODE_ID}.pub $${DDIR}/tm.pub
+          cp /examples/keys/tm$${NODE_ID}.key $${DDIR}/tm.key
+          cat <<EOF > $${DDIR}/tessera-config.json
+          {
+              "useWhiteList": false,
+              "jdbc": {
+                  "username": "sa",
+                  "password": "",
+                  "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0"
               },
-              {
-                  "url": "http://txmanager2:9000"
-              },
-              {
-                  "url": "http://txmanager3:9000"
-              },
-              {
-                  "url": "http://txmanager4:9000"
-              },
-              {
-                  "url": "http://txmanager5:9000"
-              },
-              {
-                  "url": "http://txmanager6:9000"
-              },
-              {
-                  "url": "http://txmanager7:9000"
-              }
-          ],
-          "keys": {
-              "passwords": [],
-              "keyData": [
-                  {
-                      "config": $$(cat $${DDIR}/tm.key),
-                      "publicKey": "$$(cat $${DDIR}/tm.pub)"
+              "server": {
+                  "port": 9000,
+                  "hostName": "http://$$(hostname -i)",
+                  "sslConfig": {
+                      "tls": "OFF",
+                      "generateKeyStoreIfNotExisted": true,
+                      "serverKeyStore": "$${DDIR}/server-keystore",
+                      "serverKeyStorePassword": "quorum",
+                      "serverTrustStore": "$${DDIR}/server-truststore",
+                      "serverTrustStorePassword": "quorum",
+                      "serverTrustMode": "TOFU",
+                      "knownClientsFile": "$${DDIR}/knownClients",
+                      "clientKeyStore": "$${DDIR}/client-keystore",
+                      "clientKeyStorePassword": "quorum",
+                      "clientTrustStore": "$${DDIR}/client-truststore",
+                      "clientTrustStorePassword": "quorum",
+                      "clientTrustMode": "TOFU",
+                      "knownServersFile": "$${DDIR}/knownServers"
                   }
-              ]
-          },
-          "alwaysSendTo": [],
-          "unixSocketFile": "$${DDIR}/tm.ipc"
-      }
+              },
+              "peer": [
+                  {
+                      "url": "http://txmanager1:9000"
+                  },
+                  {
+                      "url": "http://txmanager2:9000"
+                  },
+                  {
+                      "url": "http://txmanager3:9000"
+                  },
+                  {
+                      "url": "http://txmanager4:9000"
+                  },
+                  {
+                      "url": "http://txmanager5:9000"
+                  },
+                  {
+                      "url": "http://txmanager6:9000"
+                  },
+                  {
+                      "url": "http://txmanager7:9000"
+                  }
+              ],
+              "keys": {
+                  "passwords": [],
+                  "keyData": [
+                      {
+                          "config": $$(cat $${DDIR}/tm.key),
+                          "publicKey": "$$(cat $${DDIR}/tm.pub)"
+                      }
+                  ]
+              },
+              "alwaysSendTo": [],
+              "unixSocketFile": "$${DDIR}/tm.ipc"
+          }
       EOF
-      java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config.json
-x-tx-manager-constellation-def:
-  &tx-manager-constellation-def
-  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/constellation:latest}"
-  expose:
-    - "9000"
-  restart: "no"
-  healthcheck:
-    test: ["CMD", "wget", "--spider", "http://localhost:9000"]
-    interval: 3s
-    timeout: 3s
-    retries: 10
-    start_period: 5s
-  entrypoint:
-    - /bin/sh
-    - -c
-    - |
-      DDIR=/qdata/tm
-      rm -rf $${DDIR}
-      mkdir -p $${DDIR}
-      echo "socket=\"$${DDIR}/tm.ipc\"\npublickeys=[\"/examples/keys/tm$${NODE_ID}.pub\"]\n" > $${DDIR}/tm.conf
-      constellation-node \
-        --url=http://$$(hostname -i):9000/ \
-        --port=9000 \
-        --socket=$${DDIR}/tm.ipc \
-        --othernodes=http://172.16.239.101:9000/,http://172.16.239.102:9000/,http://172.16.239.103:9000/,http://172.16.239.104:9000/,http://172.16.239.105:9000/ \
-        --publickeys=/examples/keys/tm$${NODE_ID}.pub \
-        --privatekeys=/examples/keys/tm$${NODE_ID}.key \
-        --storage=$${DDIR} \
-        --verbosity=4
+          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config.json
+          ;;
+        constellation)
+          echo "socket=\"$${DDIR}/tm.ipc\"\npublickeys=[\"/examples/keys/tm$${NODE_ID}.pub\"]\n" > $${DDIR}/tm.conf
+          constellation-node \
+            --url=http://$$(hostname -i):9000/ \
+            --port=9000 \
+            --socket=$${DDIR}/tm.ipc \
+            --othernodes=http://172.16.239.101:9000/,http://172.16.239.102:9000/,http://172.16.239.103:9000/,http://172.16.239.104:9000/,http://172.16.239.105:9000/ \
+            --publickeys=/examples/keys/tm$${NODE_ID}.pub \
+            --privatekeys=/examples/keys/tm$${NODE_ID}.key \
+            --storage=$${DDIR} \
+            --verbosity=4
+          ;;
+        *)
+          echo "Invalid Transaction Manager"
+          exit 1
+          ;;
+      esac
 services:
   node1:
     << : *quorum-def
@@ -187,7 +184,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.11
   txmanager1:
-    << : *tx-manager-tessera-def
+    << : *tx-manager-def
     hostname: txmanager1
     volumes:
       - 1:/qdata
@@ -214,7 +211,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.12
   txmanager2:
-    << : *tx-manager-tessera-def
+    << : *tx-manager-def
     hostname: txmanager2
     volumes:
       - 2:/qdata
@@ -241,7 +238,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.13
   txmanager3:
-    << : *tx-manager-tessera-def
+    << : *tx-manager-def
     hostname: txmanager3
     volumes:
       - 3:/qdata
@@ -268,7 +265,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.14
   txmanager4:
-    << : *tx-manager-tessera-def
+    << : *tx-manager-def
     hostname: txmanager4
     volumes:
       - 4:/qdata
@@ -295,7 +292,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.15
   txmanager5:
-    << : *tx-manager-tessera-def
+    << : *tx-manager-def
     hostname: txmanager5
     volumes:
       - 5:/qdata
@@ -322,7 +319,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.16
   txmanager6:
-    << : *tx-manager-tessera-def
+    << : *tx-manager-def
     hostname: txmanager6
     volumes:
       - 6:/qdata
@@ -349,7 +346,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.17
   txmanager7:
-    << : *tx-manager-tessera-def
+    << : *tx-manager-def
     hostname: txmanager7
     volumes:
       - 7:/qdata
