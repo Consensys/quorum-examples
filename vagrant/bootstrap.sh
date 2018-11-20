@@ -15,9 +15,9 @@ cp $CREL/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constell
 rm -rf $CREL
 
 # install tessera
-wget -q https://github.com/jpmorganchase/tessera/releases/download/tessera-0.7/tessera-app-0.7-app.jar
+wget -q https://github.com/jpmorganchase/tessera/releases/download/tessera-0.7.3/tessera-app-0.7.3-app.jar
 mkdir -p /home/vagrant/tessera
-cp ./tessera-app-0.7-app.jar /home/vagrant/tessera/tessera.jar
+cp ./tessera-app-0.7.3-app.jar /home/vagrant/tessera/tessera.jar
 echo "TESSERA_JAR=/home/vagrant/tessera/tessera.jar" >> /home/vagrant/.profile
 
 # install golang
