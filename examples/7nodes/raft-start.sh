@@ -42,7 +42,7 @@ while (( "$#" )); do
     esac
 done
 
-NETWORK_ID=$(cat genesis.json | grep chainId | awk -F " " '{print $2}' | awk -F "," '{print $1}')
+NETWORK_ID=$(cat genesis.json | tr -d '\r' | grep chainId | awk -F " " '{print $2}' | awk -F "," '{print $1}')
 
 if [ $NETWORK_ID -eq 1 ]
 then
