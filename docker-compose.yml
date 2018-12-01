@@ -30,8 +30,8 @@ x-quorum-def:
         if [ -S /qdata/tm/tm.ipc ];
         then break
         else
-        sleep $${UDS_WAIT}
           echo "Sleep $${UDS_WAIT} seconds to avoid race conditon for unix domain socket"
+          sleep $${UDS_WAIT}
         fi
       done
       DDIR=/qdata/dd
