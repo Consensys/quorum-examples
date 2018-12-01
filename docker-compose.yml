@@ -24,8 +24,16 @@ x-quorum-def:
     - /bin/sh
     - -c
     - |
-      echo Sleep to avoid race conditon for unix domain socket
-      sleep 120
+      UDS_WAIT=10
+      for i in $$(seq 1 100)
+      do
+        if [ -S /qdata/tm/tm.ipc ];
+        then break
+        else
+        sleep $${UDS_WAIT}
+          echo "Sleep $${UDS_WAIT} seconds to avoid race conditon for unix domain socket"
+        fi
+      done
       DDIR=/qdata/dd
       rm -rf $${DDIR}
       mkdir -p $${DDIR}/keystore
