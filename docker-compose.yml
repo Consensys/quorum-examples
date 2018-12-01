@@ -24,6 +24,8 @@ x-quorum-def:
     - /bin/sh
     - -c
     - |
+      echo Sleep to avoid race conditon for unix domain socket
+      sleep 120
       DDIR=/qdata/dd
       rm -rf $${DDIR}
       mkdir -p $${DDIR}/keystore
@@ -173,7 +175,7 @@ services:
     ports:
       - "22000:8545"
     volumes:
-      - 1:/qdata
+      - vol1:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
       - txmanager1
@@ -187,7 +189,7 @@ services:
     << : *tx-manager-def
     hostname: txmanager1
     volumes:
-      - 1:/qdata
+      - vol1:/qdata
       - ./examples/7nodes:/examples:ro
     networks:
       quorum-examples-net:
@@ -200,7 +202,7 @@ services:
     ports:
       - "22001:8545"
     volumes:
-      - 2:/qdata
+      - vol2:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
       - txmanager2
@@ -214,7 +216,7 @@ services:
     << : *tx-manager-def
     hostname: txmanager2
     volumes:
-      - 2:/qdata
+      - vol2:/qdata
       - ./examples/7nodes:/examples:ro
     networks:
       quorum-examples-net:
@@ -227,7 +229,7 @@ services:
     ports:
       - "22002:8545"
     volumes:
-      - 3:/qdata
+      - vol3:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
       - txmanager3
@@ -241,7 +243,7 @@ services:
     << : *tx-manager-def
     hostname: txmanager3
     volumes:
-      - 3:/qdata
+      - vol3:/qdata
       - ./examples/7nodes:/examples:ro
     networks:
       quorum-examples-net:
@@ -254,7 +256,7 @@ services:
     ports:
       - "22003:8545"
     volumes:
-      - 4:/qdata
+      - vol4:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
       - txmanager4
@@ -268,7 +270,7 @@ services:
     << : *tx-manager-def
     hostname: txmanager4
     volumes:
-      - 4:/qdata
+      - vol4:/qdata
       - ./examples/7nodes:/examples:ro
     networks:
       quorum-examples-net:
@@ -281,7 +283,7 @@ services:
     ports:
       - "22004:8545"
     volumes:
-      - 5:/qdata
+      - vol5:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
       - txmanager5
@@ -295,7 +297,7 @@ services:
     << : *tx-manager-def
     hostname: txmanager5
     volumes:
-      - 5:/qdata
+      - vol5:/qdata
       - ./examples/7nodes:/examples:ro
     networks:
       quorum-examples-net:
@@ -308,7 +310,7 @@ services:
     ports:
       - "22005:8545"
     volumes:
-      - 6:/qdata
+      - vol6:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
       - txmanager6
@@ -322,7 +324,7 @@ services:
     << : *tx-manager-def
     hostname: txmanager6
     volumes:
-      - 6:/qdata
+      - vol6:/qdata
       - ./examples/7nodes:/examples:ro
     networks:
       quorum-examples-net:
@@ -335,7 +337,7 @@ services:
     ports:
       - "22006:8545"
     volumes:
-      - 7:/qdata
+      - vol7:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
       - txmanager7
@@ -349,7 +351,7 @@ services:
     << : *tx-manager-def
     hostname: txmanager7
     volumes:
-      - 7:/qdata
+      - vol7:/qdata
       - ./examples/7nodes:/examples:ro
     networks:
       quorum-examples-net:
@@ -364,10 +366,10 @@ networks:
       config:
       - subnet: 172.16.239.0/24
 volumes:
-  "1":
-  "2":
-  "3":
-  "4":
-  "5":
-  "6":
-  "7":
+  "vol1":
+  "vol2":
+  "vol3":
+  "vol4":
+  "vol5":
+  "vol6":
+  "vol7":
