@@ -85,7 +85,8 @@ EOF
     "jdbc": {
         "username": "sa",
         "password": "",
-        "url": "jdbc:h2:${DDIR}/db${i};MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0"
+        "url": "jdbc:h2:${DDIR}/db${i};MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+        "autoCreateTables": true
     },
     "serverConfigs":[
         {
