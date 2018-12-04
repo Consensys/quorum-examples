@@ -27,7 +27,7 @@ x-quorum-def:
       UDS_WAIT=10
       for i in $$(seq 1 100)
       do
-        if [ -S /qdata/tm/tm.ipc ];
+        if [ -S $${PRIVATE_CONFIG} ];
         then break
         else
         sleep $${UDS_WAIT}
