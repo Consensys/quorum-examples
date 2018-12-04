@@ -63,6 +63,22 @@ elif [  ! -f "${tesseraJar}" ]; then
   usage
 fi
 
+#extract the tessera version from the jar
+TESSERA_VERSION=$(unzip -p $tesseraJar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+echo "Tessera version (extracted from manifest file): $TESSERA_VERSION"
+#we're going to do a lexicographic comparison further down so we need "0.8" to be bigger than "0.8 " - thus adding -suffix
+TESSERA_VERSION="$TESSERA_VERSION-suffix"
+
+TESSERA_CONFIG_TYPE=
+
+#the space in "0.8 " is important in the lexicographic comparison (space is lower value than most printable chars)
+#TODO - this will break when we get to version 0.10 (hopefully we would have moved to 1.x by then)
+if [ "$TESSERA_VERSION" \> "0.8 " ]; then
+    TESSERA_CONFIG_TYPE="-enhanced-"
+fi
+
+echo Config type $TESSERA_CONFIG_TYPE
+
 currentDir=`pwd`
 for i in {1..7}
 do
@@ -82,7 +98,7 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    CMD="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar} -configfile $DDIR/tessera-config$i.json"
+    CMD="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar} -configfile $DDIR/tessera-config$TESSERA_CONFIG_TYPE$i.json"
     echo "$CMD >> qdata/logs/tessera$i.log 2>&1 &"
     ${CMD} >> "qdata/logs/tessera$i.log" 2>&1 &
     sleep 1

@@ -61,6 +61,7 @@ x-tx-manager-def:
   image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.7.3}"
   expose:
     - "9000"
+    - "9080"
   restart: "no"
   healthcheck:
     test: ["CMD-SHELL", "[ -S /qdata/tm/tm.ipc ] || exit 1"]
@@ -83,6 +84,23 @@ x-tx-manager-def:
         tessera)
           cp /examples/keys/tm$${NODE_ID}.pub $${DDIR}/tm.pub
           cp /examples/keys/tm$${NODE_ID}.key $${DDIR}/tm.key
+          #extract the tessera version from the jar
+          TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+          echo "Tessera version (extracted from manifest file): $${TESSERA_VERSION}"
+          #we're going to do a lexicographic comparison further down so we need "0.8" to be bigger than "0.8 " - thus adding -suffix
+          TESSERA_VERSION="$${TESSERA_VERSION}-suffix"
+
+          TESSERA_CONFIG_TYPE=
+
+          #the space in "0.8 " is important in the lexicographic comparision (space is lower value than most printable chars)
+          #TODO - this will break when we get to version 0.10 (hopefully we would have moved to 1.x by then)
+          if [ "$${TESSERA_VERSION}" \> "0.8 " ]; then
+              TESSERA_CONFIG_TYPE="-enhanced"
+          fi
+
+          echo Config type $${TESSERA_CONFIG_TYPE}
+
+          #generating the two config flavors
           cat <<EOF > $${DDIR}/tessera-config.json
           {
               "useWhiteList": false,
@@ -148,7 +166,99 @@ x-tx-manager-def:
               "unixSocketFile": "$${DDIR}/tm.ipc"
           }
       EOF
-          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config.json
+
+          cat <<EOF > $${DDIR}/tessera-config-enhanced.json
+          {
+            "useWhiteList": false,
+            "jdbc": {
+              "username": "sa",
+              "password": "",
+              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0"
+            },
+            "serverConfigs":[
+            {
+              "app":"ThirdParty",
+              "enabled": true,
+              "serverSocket":{
+                "type":"INET",
+                "port": 9080,
+                "hostName": "http://$$(hostname -i)"
+              },
+              "communicationType" : "REST"
+            },
+            {
+              "app":"Q2T",
+              "enabled": true,
+              "serverSocket":{
+                "type":"UNIX",
+                "path":"$${DDIR}/tm.ipc"
+              },
+              "communicationType" : "UNIX_SOCKET"
+            },
+            {
+              "app":"P2P",
+              "enabled": true,
+              "serverSocket":{
+                "type":"INET",
+                "port": 9000,
+                "hostName": "http://$$(hostname -i)"
+              },
+              "sslConfig": {
+                "tls": "OFF",
+                "generateKeyStoreIfNotExisted": true,
+                "serverKeyStore": "$${DDIR}/server-keystore",
+                "serverKeyStorePassword": "quorum",
+                "serverTrustStore": "$${DDIR}/server-truststore",
+                "serverTrustStorePassword": "quorum",
+                "serverTrustMode": "TOFU",
+                "knownClientsFile": "$${DDIR}/knownClients",
+                "clientKeyStore": "$${DDIR}/client-keystore",
+                "clientKeyStorePassword": "quorum",
+                "clientTrustStore": "$${DDIR}/client-truststore",
+                "clientTrustStorePassword": "quorum",
+                "clientTrustMode": "TOFU",
+                "knownServersFile": "$${DDIR}/knownServers"
+              },
+              "communicationType" : "REST"
+            }
+            ],
+            "peer": [
+               {
+                   "url": "http://txmanager1:9000"
+               },
+               {
+                   "url": "http://txmanager2:9000"
+               },
+               {
+                   "url": "http://txmanager3:9000"
+               },
+               {
+                   "url": "http://txmanager4:9000"
+               },
+               {
+                   "url": "http://txmanager5:9000"
+               },
+               {
+                   "url": "http://txmanager6:9000"
+               },
+               {
+                   "url": "http://txmanager7:9000"
+               }
+            ],
+            "keys": {
+              "passwords": [],
+              "keyData": [
+                {
+                  "config": $$(cat $${DDIR}/tm.key),
+                  "publicKey": "$$(cat $${DDIR}/tm.pub)"
+                }
+              ]
+            },
+            "alwaysSendTo": []
+          }
+      EOF
+
+          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
           ;;
         constellation)
           echo "socket=\"$${DDIR}/tm.ipc\"\npublickeys=[\"/examples/keys/tm$${NODE_ID}.pub\"]\n" > $${DDIR}/tm.conf
