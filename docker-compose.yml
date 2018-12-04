@@ -298,6 +298,8 @@ services:
   txmanager1:
     << : *tx-manager-def
     hostname: txmanager1
+    ports:
+      - "9081:9080"
     volumes:
       - 1:/qdata
       - ./examples/7nodes:/examples:ro
@@ -325,6 +327,8 @@ services:
   txmanager2:
     << : *tx-manager-def
     hostname: txmanager2
+    ports:
+      - "9082:9080"
     volumes:
       - 2:/qdata
       - ./examples/7nodes:/examples:ro
@@ -352,6 +356,8 @@ services:
   txmanager3:
     << : *tx-manager-def
     hostname: txmanager3
+    ports:
+      - "9083:9080"
     volumes:
       - 3:/qdata
       - ./examples/7nodes:/examples:ro
@@ -379,6 +385,8 @@ services:
   txmanager4:
     << : *tx-manager-def
     hostname: txmanager4
+    ports:
+      - "9084:9080"
     volumes:
       - 4:/qdata
       - ./examples/7nodes:/examples:ro
@@ -406,6 +414,8 @@ services:
   txmanager5:
     << : *tx-manager-def
     hostname: txmanager5
+    ports:
+      - "9085:9080"
     volumes:
       - 5:/qdata
       - ./examples/7nodes:/examples:ro
@@ -433,6 +443,8 @@ services:
   txmanager6:
     << : *tx-manager-def
     hostname: txmanager6
+    ports:
+      - "9086:9080"
     volumes:
       - 6:/qdata
       - ./examples/7nodes:/examples:ro
@@ -460,6 +472,8 @@ services:
   txmanager7:
     << : *tx-manager-def
     hostname: txmanager7
+    ports:
+      - "9087:9080"
     volumes:
       - 7:/qdata
       - ./examples/7nodes:/examples:ro
