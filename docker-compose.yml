@@ -27,10 +27,12 @@ x-quorum-def:
       UDS_WAIT=10
       for i in $$(seq 1 100)
       do
-        if [ -S $${PRIVATE_CONFIG} ];
+        set -e
+        if [ -S $${PRIVATE_CONFIG} ] && \
+          [ "I'm up!" == "$$(wget -qO- 172.16.239.10$${NODE_ID}:9000/upcheck)" ];
         then break
         else
-          echo "Sleep $${UDS_WAIT} seconds to avoid race conditon for unix domain socket"
+          echo "Sleep $${UDS_WAIT} seconds. Waiting for TxManager."
           sleep $${UDS_WAIT}
         fi
       done
