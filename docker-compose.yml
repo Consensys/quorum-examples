@@ -29,7 +29,7 @@ x-quorum-def:
       do
         set -e
         if [ -S $${PRIVATE_CONFIG} ] && \
-          [ "I'm up!" == "$$(wget -qO- 172.16.239.10$${NODE_ID}:9000/upcheck)" ];
+          [ "I'm up!" == "$$(wget --timeout $${UDS_WAIT} -qO- 172.16.239.10$${NODE_ID}:9000/upcheck)" ];
         then break
         else
           echo "Sleep $${UDS_WAIT} seconds. Waiting for TxManager."
