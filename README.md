@@ -15,7 +15,7 @@ generate new ones using Geth's `account` tool and the `--generate-keys` option f
 ## Getting Started
 The 7nodes example can be run in three ways:
 1. By running a preconfigured Vagrant environment which comes complete with Quorum, Constellation, Tessera and the 7nodes example (__works on any machine__).
-1. By running [`docker-compose`](https://docs.docker.com/compose/) against a preconfigured [compose file](docker-compose.yml) which starts 7nodes example (__Windows is not supported__).
+1. By running [`docker-compose`](https://docs.docker.com/compose/) against a preconfigured [compose file](docker-compose.yml) which starts 7nodes example (tested on Windows 10, macOS Mojave & Ubuntu 18.04).
 1. By downloading and locally running Quorum, Tessera and the examples (__requires an Ubuntu-based/macOS machine; note that Constellation does not support running locally__)
 
 ### Setting up Vagrant
