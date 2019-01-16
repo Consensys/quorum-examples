@@ -15,9 +15,8 @@ cp $CREL/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constell
 rm -rf $CREL
 
 # install tessera
-wget -q https://github.com/jpmorganchase/tessera/releases/download/tessera-0.7.3/tessera-app-0.7.3-app.jar
 mkdir -p /home/vagrant/tessera
-cp ./tessera-app-0.7.3-app.jar /home/vagrant/tessera/tessera.jar
+wget -O /home/vagrant/tessera/tessera.jar -q https://github.com/jpmorganchase/tessera/blob/releases/com/jpmorgan/quorum/tessera-app/0.8/tessera-app-0.8-app.jar\?raw\=true
 echo "TESSERA_JAR=/home/vagrant/tessera/tessera.jar" >> /home/vagrant/.profile
 
 # install golang
@@ -32,7 +31,7 @@ echo 'PATH=$PATH:/usr/local/go/bin' >> /home/vagrant/.bashrc
 # make/install quorum
 git clone https://github.com/jpmorganchase/quorum.git
 pushd quorum >/dev/null
-git checkout tags/v2.2.0
+git checkout tags/v2.2.1
 make all
 cp build/bin/geth /usr/local/bin
 cp build/bin/bootnode /usr/local/bin
