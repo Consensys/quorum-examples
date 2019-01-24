@@ -13,7 +13,7 @@ $> tmux kill-session -t quorum
 # Creating Contracts 
 ```
 $> cd quorum-examples/examples/7nodes
-$> ./runscript.sh contracts/simple-event/private-contract-events.js
+$> ./runscript.sh examples/simple-event/private-contract-events.js
 
 
 ```
@@ -25,6 +25,6 @@ $> ./runscript.sh contracts/simple-event/private-contract-events.js
 
 ```
 $> cd quorum-examples/examples/7nodes
-$> ./runscript.sh contracts/simple-event/private-generate-events.js
+$> ./runscript.sh examples/simple-event/private-generate-events.js
 ```
 

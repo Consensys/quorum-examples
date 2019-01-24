@@ -5,6 +5,11 @@ const Web3 = require('web3');
 const fs = require('fs');
 
 
+if (!argv.node) {
+  argv.node = 1
+}
+
+
 // connect to block chain
 console.log('using node', argv.node);
 const providerURL = "http://127.0.0.1";
