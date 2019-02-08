@@ -83,6 +83,17 @@ issues with the version of curl bundled with Vagrant.
    docker-compose down
    ```
 
+#### Troubleshooting Docker
+
+1. Docker is frozen
+   * Check if your Docker daemon is allocated enough memory (minimum 4G)
+1. Tessera is crashed due to missing file/directory
+   * This is due to the location of `quorum-examples` folder is not shared
+   * Please refer to Docker documentation for more details:
+     * [Docker Desktop for Windows](https://docs.docker.com/docker-for-windows/troubleshoot/#shared-drives)
+     * [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/#file-sharing)
+     * [Docker Machine](https://docs.docker.com/machine/overview/): this depends on what Docker machine provider is used. Please refer to its documentation on how to configure shared folders/drives
+
 ### Setting up locally
 > This is only possible with Tessera. Constellation is not supported when running the examples locally. To use Constellation, the examples must be run in Vagrant.
 
