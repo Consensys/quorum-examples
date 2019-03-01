@@ -13,7 +13,7 @@ x-quorum-def:
     - "21000"
     - "50400"
   healthcheck:
-    test: ["CMD", "wget", "--spider", "http://localhost:8545"]
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
     interval: 3s
     timeout: 3s
     retries: 10
@@ -29,7 +29,7 @@ x-quorum-def:
       do
         set -e
         if [ -S $${PRIVATE_CONFIG} ] && \
-          [ "I'm up!" == "$$(wget --timeout $${UDS_WAIT} -qO- 172.16.239.10$${NODE_ID}:9000/upcheck)" ];
+          [ "I'm up!" == "$$(wget --timeout $${UDS_WAIT} -qO- --proxy off 172.16.239.10$${NODE_ID}:9000/upcheck)" ];
         then break
         else
           echo "Sleep $${UDS_WAIT} seconds. Waiting for TxManager."
