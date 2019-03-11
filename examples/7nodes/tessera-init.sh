@@ -92,30 +92,19 @@ EOF
         {
             "app":"ThirdParty",
             "enabled": true,
-            "serverSocket":{
-                "type":"INET",
-                "port": 908${i},
-                "hostName": "http://localhost"
-            },
+            "serverAddress": "http://localhost:908${i}",
             "communicationType" : "REST"
         },
         {
             "app":"Q2T",
             "enabled": true,
-            "serverSocket":{
-                "type":"UNIX",
-                "path":"${DDIR}/tm.ipc"
-            },
-            "communicationType" : "UNIX_SOCKET"
+             "serverAddress":"unix:${DDIR}/tm.ipc",
+            "communicationType" : "REST"
         },
         {
             "app":"P2P",
             "enabled": true,
-            "serverSocket":{
-                "type":"INET",
-                "port": 900${i},
-                "hostName": "http://localhost"
-            },
+            "serverAddress":"http://localhost:900${i}",
             "sslConfig": {
                 "tls": "OFF",
                 "generateKeyStoreIfNotExisted": true,
