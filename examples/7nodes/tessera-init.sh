@@ -92,6 +92,98 @@ EOF
         {
             "app":"ThirdParty",
             "enabled": true,
+            "serverSocket":{
+                "type":"INET",
+                "port": 908${i},
+                "hostName": "http://localhost"
+            },
+            "communicationType" : "REST"
+        },
+        {
+            "app":"Q2T",
+            "enabled": true,
+            "serverSocket":{
+                "type":"UNIX",
+                "path":"${DDIR}/tm.ipc"
+            },
+            "communicationType" : "UNIX_SOCKET"
+        },
+        {
+            "app":"P2P",
+            "enabled": true,
+            "serverSocket":{
+                "type":"INET",
+                "port": 900${i},
+                "hostName": "http://localhost"
+            },
+            "sslConfig": {
+                "tls": "OFF",
+                "generateKeyStoreIfNotExisted": true,
+                "serverKeyStore": "${DDIR}/server${i}-keystore",
+                "serverKeyStorePassword": "quorum",
+                "serverTrustStore": "${DDIR}/server-truststore",
+                "serverTrustStorePassword": "quorum",
+                "serverTrustMode": "TOFU",
+                "knownClientsFile": "${DDIR}/knownClients",
+                "clientKeyStore": "${DDIR}/client${i}-keystore",
+                "clientKeyStorePassword": "quorum",
+                "clientTrustStore": "${DDIR}/client-truststore",
+                "clientTrustStorePassword": "quorum",
+                "clientTrustMode": "TOFU",
+                "knownServersFile": "${DDIR}/knownServers"
+            },
+            "communicationType" : "REST"
+        }
+    ],
+    "peer": [
+        {
+            "url": "http://localhost:9001"
+        },
+        {
+            "url": "http://localhost:9002"
+        },
+        {
+            "url": "http://localhost:9003"
+        },
+        {
+            "url": "http://localhost:9004"
+        },
+        {
+            "url": "http://localhost:9005"
+        },
+        {
+            "url": "http://localhost:9006"
+        },
+        {
+            "url": "http://localhost:9007"
+        }
+    ],
+    "keys": {
+        "passwords": [],
+        "keyData": [
+            {
+                "privateKeyPath": "${DDIR}/tm.key",
+                "publicKeyPath": "${DDIR}/tm.pub"
+            }
+        ]
+    },
+    "alwaysSendTo": []
+}
+EOF
+
+cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
+{
+    "useWhiteList": false,
+    "jdbc": {
+        "username": "sa",
+        "password": "",
+        "url": "jdbc:h2:${DDIR}/db${i};MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+        "autoCreateTables": true
+    },
+    "serverConfigs":[
+        {
+            "app":"ThirdParty",
+            "enabled": true,
             "serverAddress": "http://localhost:908${i}",
             "communicationType" : "REST"
         },
