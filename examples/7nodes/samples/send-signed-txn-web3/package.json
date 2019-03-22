@@ -14,6 +14,6 @@
     "keythereum": "^1.0.4",
     "minimist": "^1.2.0",
     "truffle": "^4.1.15",
-    "web3": "^1.0.0-beta.34"
+    "web3": "1.0.0-beta.36"
   }
 }
