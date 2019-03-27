@@ -1,7 +1,7 @@
 # The following environment variables are substituted if present
 # * QUORUM_CONSENSUS: default to istanbul
 # * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:2.2.1
-# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.7.3
+# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.8
 # To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
 # e.g.: QUORUM_TX_MANAGER_DOCKER_IMAGE=quorumengineering/constellation:0.3.2 docker-compose up -d
 version: "3.6"
@@ -99,12 +99,18 @@ x-tx-manager-def:
           #extract the tessera version from the jar
           TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
           echo "Tessera version (extracted from manifest file): $${TESSERA_VERSION}"
-          # sorting versions to use enhanced config for >=0.8
-          export V=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
+          # sorting versions to target correct configuration
+          V08=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
+          V09=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
           TESSERA_CONFIG_TYPE=
-          if [ "$${V}" == "$${TESSERA_VERSION}" ]; then
-              TESSERA_CONFIG_TYPE="-enhanced"
-          fi
+          case "$${TESSERA_VERSION}" in
+              "$${V09}")
+                  TESSERA_CONFIG_TYPE="-09"
+                  ;;
+              "$${V08}")
+                  TESSERA_CONFIG_TYPE="-enhanced"
+                  ;;
+          esac
 
           echo Config type $${TESSERA_CONFIG_TYPE}
 
@@ -267,6 +273,87 @@ x-tx-manager-def:
           }
       EOF
 
+          cat <<EOF > $${DDIR}/tessera-config-09.json
+          {
+            "useWhiteList": false,
+            "jdbc": {
+              "username": "sa",
+              "password": "",
+              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+              "autoCreateTables": true
+            },
+            "serverConfigs":[
+            {
+              "app":"ThirdParty",
+              "enabled": true,
+              "serverAddress": "http://$$(hostname -i):9080",
+              "communicationType" : "REST"
+            },
+            {
+              "app":"Q2T",
+              "enabled": true,
+              "serverAddress": "unix:$${DDIR}/tm.ipc",
+              "communicationType" : "REST"
+            },
+            {
+              "app":"P2P",
+              "enabled": true,
+              "serverAddress": "http://$$(hostname -i):9000",
+              "sslConfig": {
+                "tls": "OFF",
+                "generateKeyStoreIfNotExisted": true,
+                "serverKeyStore": "$${DDIR}/server-keystore",
+                "serverKeyStorePassword": "quorum",
+                "serverTrustStore": "$${DDIR}/server-truststore",
+                "serverTrustStorePassword": "quorum",
+                "serverTrustMode": "TOFU",
+                "knownClientsFile": "$${DDIR}/knownClients",
+                "clientKeyStore": "$${DDIR}/client-keystore",
+                "clientKeyStorePassword": "quorum",
+                "clientTrustStore": "$${DDIR}/client-truststore",
+                "clientTrustStorePassword": "quorum",
+                "clientTrustMode": "TOFU",
+                "knownServersFile": "$${DDIR}/knownServers"
+              },
+              "communicationType" : "REST"
+            }
+            ],
+            "peer": [
+               {
+                   "url": "http://txmanager1:9000"
+               },
+               {
+                   "url": "http://txmanager2:9000"
+               },
+               {
+                   "url": "http://txmanager3:9000"
+               },
+               {
+                   "url": "http://txmanager4:9000"
+               },
+               {
+                   "url": "http://txmanager5:9000"
+               },
+               {
+                   "url": "http://txmanager6:9000"
+               },
+               {
+                   "url": "http://txmanager7:9000"
+               }
+            ],
+            "keys": {
+              "passwords": [],
+              "keyData": [
+                {
+                  "config": $$(cat $${DDIR}/tm.key),
+                  "publicKey": "$$(cat $${DDIR}/tm.pub)"
+                }
+              ]
+            },
+            "alwaysSendTo": []
+          }
+      EOF
+          cat $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
           java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
           ;;
         constellation)
