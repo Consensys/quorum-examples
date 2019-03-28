@@ -2,8 +2,10 @@
 # * QUORUM_CONSENSUS: default to istanbul
 # * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:2.2.1
 # * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.8
+# * QUORUM_GETH_ARGS: extra geth arguments to be included when running geth
 # To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
 # e.g.: QUORUM_TX_MANAGER_DOCKER_IMAGE=quorumengineering/constellation:0.3.2 docker-compose up -d
+# To use Remix, set QUORUM_GETH_ARGS="--rpccorsdomain https://remix.ethereum.org"
 version: "3.6"
 x-quorum-def:
   &quorum-def
@@ -67,7 +69,7 @@ x-quorum-def:
         --port 21000 \
         --unlock 0 \
         --password /examples/passwords.txt \
-        $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
+        ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
 x-tx-manager-def:
   &tx-manager-def
   image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.8}"
