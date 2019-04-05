@@ -1,6 +1,6 @@
 # The following environment variables are substituted if present
 # * QUORUM_CONSENSUS: default to istanbul
-# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:2.2.2
+# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:2.2.3
 # * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.8
 # * QUORUM_GETH_ARGS: extra geth arguments to be included when running geth
 # To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
@@ -10,7 +10,7 @@ version: "3.6"
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:2.2.2}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:2.2.3}"
   expose:
     - "21000"
     - "50400"
