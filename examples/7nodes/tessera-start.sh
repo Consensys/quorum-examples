@@ -67,17 +67,9 @@ fi
 TESSERA_VERSION=$(unzip -p $tesseraJar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
 echo "Tessera version (extracted from manifest file): $TESSERA_VERSION"
 
-TESSERA_CONFIG_TYPE=
+TESSERA_CONFIG_TYPE="-09-"
 
-#TODO - this will break when we get to version 0.10 (hopefully we would have moved to 1.x by then)
-if [ "$TESSERA_VERSION" \> "0.8" ] || [ "$TESSERA_VERSION" == "0.8" ]; then
-    TESSERA_CONFIG_TYPE="-enhanced-"
-fi
-
-if [ "$TESSERA_VERSION" \> "0.9" ] || [ "$TESSERA_VERSION" == "0.9" ]; then
-    TESSERA_CONFIG_TYPE="-09-"
-fi
-
+#if the Tessera version is 0.10, use this config version
 if [ "$TESSERA_VERSION" \> "0.10" ] || [ "$TESSERA_VERSION" == "0.10" ]; then
     TESSERA_CONFIG_TYPE="-09-"
 fi

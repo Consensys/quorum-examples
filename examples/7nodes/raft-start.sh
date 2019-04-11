@@ -5,17 +5,17 @@ set -e
 function usage() {
   echo ""
   echo "Usage:"
-  echo "    $0 [tessera | constellation] [--tesseraOptions \"options for Tessera start script\"]"
+  echo "    $0 [tessera | tessera-remote | constellation] [--tesseraOptions \"options for Tessera start script\"]"
   echo ""
   echo "Where:"
-  echo "    tessera | constellation (default = constellation): specifies which privacy implementation to use"
+  echo "    tessera | tessera-remote | constellation (default = tessera): specifies which privacy implementation to use"
   echo "    --tesseraOptions: allows additional options as documented in tessera-start.sh usage which is shown below:"
   echo ""
   ./tessera-start.sh --help
   exit -1
 }
 
-privacyImpl=constellation
+privacyImpl=tessera
 tesseraOptions=
 while (( "$#" )); do
     case "$1" in
@@ -25,6 +25,10 @@ while (( "$#" )); do
             ;;
         constellation)
             privacyImpl=constellation
+            shift
+            ;;
+        tessera-remote)
+            privacyImpl="tessera-remote"
             shift
             ;;
         --tesseraOptions)
@@ -59,6 +63,9 @@ if [ "$privacyImpl" == "tessera" ]; then
 elif [ "$privacyImpl" == "constellation" ]; then
   echo "[*] Starting Constellation nodes"
   ./constellation-start.sh
+elif [ "$privacyImpl" == "tessera-remote" ]; then
+  echo "[*] Starting tessera nodes"
+  ./tessera-start-remote.sh ${tesseraOptions}
 else
   echo "Unsupported privacy implementation: ${privacyImpl}"
   usage
