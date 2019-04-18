@@ -78,6 +78,10 @@ if [ "$TESSERA_VERSION" \> "0.9" ] || [ "$TESSERA_VERSION" == "0.9" ]; then
     TESSERA_CONFIG_TYPE="-09-"
 fi
 
+if [ "$TESSERA_VERSION" \> "0.10" ] || [ "$TESSERA_VERSION" == "0.10" ]; then
+    TESSERA_CONFIG_TYPE="-09-"
+fi
+
 echo Config type $TESSERA_CONFIG_TYPE
 
 currentDir=`pwd`

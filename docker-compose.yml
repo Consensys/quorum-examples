@@ -1,7 +1,7 @@
 # The following environment variables are substituted if present
 # * QUORUM_CONSENSUS: default to istanbul
 # * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:2.2.3
-# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.8
+# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.9
 # * QUORUM_GETH_ARGS: extra geth arguments to be included when running geth
 # To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
 # e.g.: QUORUM_TX_MANAGER_DOCKER_IMAGE=quorumengineering/constellation:0.3.2 docker-compose up -d
@@ -72,7 +72,7 @@ x-quorum-def:
         ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
 x-tx-manager-def:
   &tx-manager-def
-  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.8}"
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.9}"
   expose:
     - "9000"
     - "9080"
@@ -90,7 +90,7 @@ x-tx-manager-def:
       DDIR=/qdata/tm
       rm -rf $${DDIR}
       mkdir -p $${DDIR}
-      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.8}"
+      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.9}"
       TX_MANAGER=$$(echo $${DOCKER_IMAGE} | sed 's/^.*\/\(.*\):.*$$/\1/g')
       echo "TxManager: $${TX_MANAGER}"
       case $${TX_MANAGER}
@@ -103,10 +103,10 @@ x-tx-manager-def:
           echo "Tessera version (extracted from manifest file): $${TESSERA_VERSION}"
           # sorting versions to target correct configuration
           V08=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
-          V09=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
+          V09AndAbove=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
           TESSERA_CONFIG_TYPE=
           case "$${TESSERA_VERSION}" in
-              "$${V09}")
+              "$${V09AndAbove}")
                   TESSERA_CONFIG_TYPE="-09"
                   ;;
               "$${V08}")
