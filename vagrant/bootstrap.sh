@@ -16,7 +16,7 @@ rm -rf $CREL
 
 # install tessera
 mkdir -p /home/vagrant/tessera
-wget -O /home/vagrant/tessera/tessera.jar -q https://github.com/jpmorganchase/tessera/blob/releases/com/jpmorgan/quorum/tessera-app/0.8/tessera-app-0.8-app.jar\?raw\=true
+wget -O /home/vagrant/tessera/tessera.jar -q https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/tessera-app/0.9/tessera-app-0.9-app.jar
 echo "TESSERA_JAR=/home/vagrant/tessera/tessera.jar" >> /home/vagrant/.profile
 
 # install golang
