@@ -10,21 +10,23 @@ apt-get install -y build-essential unzip libdb-dev libleveldb-dev libsodium-dev 
 CVER="0.3.2"
 CREL="constellation-$CVER-ubuntu1604"
 wget -q https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz
-tar xfJ $CREL.tar.xz
-cp $CREL/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node
-rm -rf $CREL
+tar xfJ ${CREL}.tar.xz
+cp ${CREL}/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node
+rm -rf ${CREL}
 
 # install tessera
 mkdir -p /home/vagrant/tessera
 wget -O /home/vagrant/tessera/tessera.jar -q https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/tessera-app/0.9/tessera-app-0.9-app.jar
+wget -O /home/vagrant/tessera/enclave.jar -q https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/enclave-jaxrs/0.9/enclave-jaxrs-0.9-server.jar
 echo "TESSERA_JAR=/home/vagrant/tessera/tessera.jar" >> /home/vagrant/.profile
+echo "ENCLAVE_JAR=/home/vagrant/tessera/enclave.jar" >> /home/vagrant/.profile
 
 # install golang
 GOREL=go1.9.3.linux-amd64.tar.gz
-wget -q https://dl.google.com/go/$GOREL
-tar xfz $GOREL
+wget -q https://dl.google.com/go/${GOREL}
+tar xfz ${GOREL}
 mv go /usr/local/go
-rm -f $GOREL
+rm -f ${GOREL}
 PATH=$PATH:/usr/local/go/bin
 echo 'PATH=$PATH:/usr/local/go/bin' >> /home/vagrant/.bashrc
 
