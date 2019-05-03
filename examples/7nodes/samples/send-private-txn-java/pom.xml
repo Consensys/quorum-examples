@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.quorum.example</groupId>
+    <artifactId>send-private-txn-java</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <generated.sol.dir>${project.build.directory}/generate-sources/sol</generated.sol.dir>
+
+        <web3j-quorum.version>4.0.6</web3j-quorum.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <!-- plugins -->
+        <web3j-maven-plugin.version>4.2.0</web3j-maven-plugin.version>
+    </properties>
+    <dependencies>
+
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>quorum</artifactId>
+            <version>${web3j-quorum.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.web3j</groupId>
+                <artifactId>web3j-maven-plugin</artifactId>
+                <version>${web3j-maven-plugin.version}</version>
+                <configuration>
+                    <packageName>${project.groupId}.sol</packageName>
+                    <soliditySourceFiles>
+                        <directory>${basedir}/src/main/sol</directory>
+                        <includes>
+                            <include>**/*.sol</include>
+                        </includes>
+                    </soliditySourceFiles>
+                    <sourceDestination>${generated.sol.dir}</sourceDestination>
+                    <outputFormat>java,bin,abi</outputFormat>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>01-generate-sol</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.web3j</groupId>
+                        <artifactId>codegen</artifactId>
+                        <version>4.2.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>02-add-source-folder</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${generated.sol.dir}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>02-add-sol-bin</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${generated.sol.dir}</directory>
+                                    <includes>
+                                        <include>**/*.bin</include>
+                                        <include>**/*.json</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
