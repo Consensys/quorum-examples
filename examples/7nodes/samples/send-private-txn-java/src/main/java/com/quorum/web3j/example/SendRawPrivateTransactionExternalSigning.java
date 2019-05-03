@@ -43,9 +43,9 @@ public class SendRawPrivateTransactionExternalSigning {
         Enclave enclave = new Tessera(enclaveService, quorum);
 
         // build the raw transaction payload
-        String BINARY = "608060405234801561001057600080fd5b506040516020806101018339810180604052602081101561003057600080fd5b505160005560be806100436000396000f3fe6080604052348015600f57600080fd5b5060043610604e577c0100000000000000000000000000000000000000000000000000000000600035046360fe47b1811460535780636d4ce63c14606f575b600080fd5b606d60048036036020811015606757600080fd5b50356087565b005b6075608c565b60408051918252519081900360200190f35b600055565b6000549056fea165627a7a72305820733b6551c438b5cf89595bb7fdbb0774cc9e625b7e4ca0bce5c9c3d3bac264ae0029";
+        String simpleStorageContractBytecode = "608060405234801561001057600080fd5b506040516020806101018339810180604052602081101561003057600080fd5b505160005560be806100436000396000f3fe6080604052348015600f57600080fd5b5060043610604e577c0100000000000000000000000000000000000000000000000000000000600035046360fe47b1811460535780636d4ce63c14606f575b600080fd5b606d60048036036020811015606757600080fd5b50356087565b005b6075608c565b60408051918252519081900360200190f35b600055565b6000549056fea165627a7a72305820733b6551c438b5cf89595bb7fdbb0774cc9e625b7e4ca0bce5c9c3d3bac264ae0029";
         String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.asList(new org.web3j.abi.datatypes.generated.Uint256(42)));
-        String binaryAndInitCode = BINARY + encodedConstructor;
+        String binaryAndInitCode = simpleStorageContractBytecode + encodedConstructor;
 
         // store the raw transaction payload in tessera
         SendResponse storeRawResponse = enclave.storeRawRequest(
@@ -56,7 +56,7 @@ public class SendRawPrivateTransactionExternalSigning {
 
         String tesseraTxHash = Numeric.toHexString(Base64.getDecoder().decode(storeRawResponse.getKey()));
 
-        Credentials credentials = WalletUtils.loadCredentials("", "examples/7nodes/keys/key1");
+        Credentials credentials = WalletUtils.loadCredentials("", "../../keys/key1");
         // find the current nonce for the account (for use in the next transaction)
         EthGetTransactionCount txCount = quorum.ethGetTransactionCount(credentials.getAddress(), DefaultBlockParameterName.LATEST).send();
 
@@ -78,7 +78,7 @@ public class SendRawPrivateTransactionExternalSigning {
         PollingTransactionReceiptProcessor pollingTransactionReceiptProcessor = new PollingTransactionReceiptProcessor(quorum, 1000, 10);
         TransactionReceipt transactionReceipt = pollingTransactionReceiptProcessor.waitForTransactionReceipt(txHash);
 
-        System.out.println("Contract address:" + transactionReceipt);
+        System.out.println(transactionReceipt);
     }
 
     // REPLACE THIS WITH YOUR MECHANISM FOR SIGNING TRANSACTIONS

@@ -31,7 +31,7 @@ public class SendRawPrivateTransaction {
         Enclave enclave = new Tessera(enclaveService, quorum);
 
         // load the account from the filesystem
-        Credentials credentials = WalletUtils.loadCredentials("", "examples/7nodes/keys/key1");
+        Credentials credentials = WalletUtils.loadCredentials("", "../../keys/key1");
 
         // create a quorum transaction manager
         // This object (used by the generated code) does the following:
