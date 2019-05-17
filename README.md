@@ -54,6 +54,7 @@ issues with the version of curl bundled with Vagrant.
 1. Install Docker (https://www.docker.com/get-started)
    * If your Docker distribution does not contain `docker-compose`, follow [this](https://docs.docker.com/compose/install/) to install Docker Compose
    * Make sure your Docker daemon has at least 4G memory
+   * Required Docker Engine 18.02.0+ and Docker Compose 1.21+
 1. Download and run `docker-compose`
    ```sh
    git clone https://github.com/jpmorganchase/quorum-examples
@@ -93,6 +94,7 @@ issues with the version of curl bundled with Vagrant.
      * [Docker Desktop for Windows](https://docs.docker.com/docker-for-windows/troubleshoot/#shared-drives)
      * [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/#file-sharing)
      * [Docker Machine](https://docs.docker.com/machine/overview/): this depends on what Docker machine provider is used. Please refer to its documentation on how to configure shared folders/drives
+1. If you run Docker inside Docker, make sure to run the container with `--privileged` 
 
 ### Setting up locally
 > This is only possible with Tessera. Constellation is not supported when running the examples locally. To use Constellation, the examples must be run in Vagrant.
