@@ -36,7 +36,7 @@ checkSolidityVersion(){
     if [ "$(printf '%s\n' "$rv" "$sv" | sort -V | head -n1)" == "$rv" ]; then
         echo "Soldity version is $sv"
     else
-        echo "Solidity version is $sv. Required version at least 0.5.3. Cannot proceed"
+        echo "Solidity version is $sv. Required version is 0.5.3. Cannot proceed"
         exit 0
     fi
 }
@@ -56,9 +56,10 @@ buildFiles(){
     contract=$1
     data=$2
 
+    echo "Compiling $1.sol"
     #compile and generate solc output in abi
-    solc --bin --optimize --overwrite -o ./output ./perm-contracts/$1.sol >>/dev/null
-    solc --abi --optimize --overwrite -o ./output ./perm-contracts/$1.sol >>/dev/null
+    solc --bin --optimize --overwrite -o ./output ./perm-contracts/$1.sol
+    solc --abi --optimize --overwrite -o ./output ./perm-contracts/$1.sol
 
     cd ./output
 
@@ -254,6 +255,8 @@ if [ "$consensus" == "" ]; then
     exit 1
 fi
 
+./stop.sh
+waitPortClose
 
 # check solc  & geth version if it is below 0.5.3 throw error
 displayMsg "Checking solidity and geth version compatibility"
@@ -268,12 +271,16 @@ displayMsg "Starting the network in $consensus mode"
 echo "Initializing the network"
 ./init.sh $consensus
 echo "Starting the network"
-./start.sh $consensus tessera
+./start.sh $consensus $privacyImpl
 
-if [ "$consensus" == "istanbul" ]
-then
-    sleep 60
-fi
+#if [ "$consensus" == "istanbul" ]
+#then
+#    sleep 60
+#else
+#    sleep 30
+#fi
+
+sleep 60
 
 # create deployment files upgradable contract and deploy the contract
 displayMsg "Building permissions deployables"
@@ -299,6 +306,8 @@ permInterface=`deployContract "deploy-PermissionsInterface.js"`
 # create the permissions config file
 displayMsg "Creating permission config file and copying to data directories"
 createPermConfig
+echo "created permission-config.json"
+cat ./permission-config.json
 
 #copy the permission config file to qdata/dd folders
 permissionInit
@@ -307,6 +316,7 @@ displayMsg "Creating load script for upgradable contract and initializing"
 # initialize the upgradable contracts with custodian address and link interface and implementation contarcts
 createLoadFile "PermissionsUpgradable" $upgr $permInterface $permImpl
 runInit
+echo "Network initialization completed"
 
 
 displayMsg "Restarting the network with permissions"
@@ -315,7 +325,7 @@ displayMsg "Restarting the network with permissions"
 waitPortClose
 
 # Bring the netowrk back up
-./start.sh $consensus tessera
+./start.sh $consensus $privacyImpl
 
 #clean up all temporary directories
 rm -rf ./output
