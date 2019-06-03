@@ -78,6 +78,9 @@ buildFiles(){
     if [ "$data" == "NONE" ]
     then
         echo -e "var a = simpleContract.new(\"0xed9d02e382b34818e88b88a309c7fe71e65f419d\",{from:web3.eth.accounts[0], data: bytecode, gas: 7200000}, function(e, contract) {">> ./$deployFile
+    elif [ "$data" == "IMPL" ]
+    then
+        echo -e "var a = simpleContract.new(\"$upgr\", \"$org\", \"$roles\", \"$accounts\", \"$voter\", \"$nodes\", {from:web3.eth.accounts[0], data: bytecode, gas: 7200000}, function(e, contract) {">> ./$deployFile
     else
         echo -e "var a = simpleContract.new(\"$data\", {from:web3.eth.accounts[0], data: bytecode, gas: 7200000}, function(e, contract) {">> ./$deployFile
     fi
@@ -273,13 +276,6 @@ echo "Initializing the network"
 echo "Starting the network"
 ./start.sh $consensus $privacyImpl
 
-#if [ "$consensus" == "istanbul" ]
-#then
-#    sleep 60
-#else
-#    sleep 30
-#fi
-
 sleep 60
 
 # create deployment files upgradable contract and deploy the contract
@@ -292,14 +288,16 @@ buildFiles "RoleManager" $upgr
 buildFiles "NodeManager" $upgr
 buildFiles "VoterManager" $upgr
 buildFiles "AccountManager" $upgr
-buildFiles "PermissionsImplementation" $upgr
+
+org=`deployContract "deploy-OrgManager.js"`
+roles=`deployContract "deploy-RoleManager.js"`
+nodes=`deployContract "deploy-NodeManager.js"`
+voter=`deployContract "deploy-VoterManager.js"`
+accounts=`deployContract "deploy-AccountManager.js"`
+
+buildFiles "PermissionsImplementation" "IMPL"
 buildFiles "PermissionsInterface" $upgr
 
-roles=`deployContract "deploy-RoleManager.js"`
-accounts=`deployContract "deploy-AccountManager.js"`
-voter=`deployContract "deploy-VoterManager.js"`
-nodes=`deployContract "deploy-NodeManager.js"`
-org=`deployContract "deploy-OrgManager.js"`
 permImpl=`deployContract "deploy-PermissionsImplementation.js"`
 permInterface=`deployContract "deploy-PermissionsInterface.js"`
 
@@ -328,5 +326,5 @@ waitPortClose
 ./start.sh $consensus $privacyImpl
 
 #clean up all temporary directories
-rm -rf ./output
+rm -rf ./output deploy-*.js
 rm permission-config.json
