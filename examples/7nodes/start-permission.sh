@@ -326,5 +326,6 @@ waitPortClose
 ./start.sh $consensus $privacyImpl
 
 #clean up all temporary directories
-rm -rf ./output deploy-*.js
+rm -rf ./output
+rm deploy-*.js
 rm permission-config.json
