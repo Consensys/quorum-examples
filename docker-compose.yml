@@ -104,177 +104,16 @@ x-tx-manager-def:
           # sorting versions to target correct configuration
           V08=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
           V09AndAbove=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
-          TESSERA_CONFIG_TYPE=
+          TESSERA_CONFIG_TYPE="-09"
           case "$${TESSERA_VERSION}" in
               "$${V09AndAbove}")
                   TESSERA_CONFIG_TYPE="-09"
-                  ;;
-              "$${V08}")
-                  TESSERA_CONFIG_TYPE="-enhanced"
                   ;;
           esac
 
           echo Config type $${TESSERA_CONFIG_TYPE}
 
           #generating the two config flavors
-          cat <<EOF > $${DDIR}/tessera-config.json
-          {
-              "useWhiteList": false,
-              "jdbc": {
-                  "username": "sa",
-                  "password": "",
-                  "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
-                  "autoCreateTables": true
-              },
-              "server": {
-                  "port": 9000,
-                  "hostName": "http://$$(hostname -i)",
-                  "sslConfig": {
-                      "tls": "OFF",
-                      "generateKeyStoreIfNotExisted": true,
-                      "serverKeyStore": "$${DDIR}/server-keystore",
-                      "serverKeyStorePassword": "quorum",
-                      "serverTrustStore": "$${DDIR}/server-truststore",
-                      "serverTrustStorePassword": "quorum",
-                      "serverTrustMode": "TOFU",
-                      "knownClientsFile": "$${DDIR}/knownClients",
-                      "clientKeyStore": "$${DDIR}/client-keystore",
-                      "clientKeyStorePassword": "quorum",
-                      "clientTrustStore": "$${DDIR}/client-truststore",
-                      "clientTrustStorePassword": "quorum",
-                      "clientTrustMode": "TOFU",
-                      "knownServersFile": "$${DDIR}/knownServers"
-                  }
-              },
-              "peer": [
-                  {
-                      "url": "http://txmanager1:9000"
-                  },
-                  {
-                      "url": "http://txmanager2:9000"
-                  },
-                  {
-                      "url": "http://txmanager3:9000"
-                  },
-                  {
-                      "url": "http://txmanager4:9000"
-                  },
-                  {
-                      "url": "http://txmanager5:9000"
-                  },
-                  {
-                      "url": "http://txmanager6:9000"
-                  },
-                  {
-                      "url": "http://txmanager7:9000"
-                  }
-              ],
-              "keys": {
-                  "passwords": [],
-                  "keyData": [
-                      {
-                          "config": $$(cat $${DDIR}/tm.key),
-                          "publicKey": "$$(cat $${DDIR}/tm.pub)"
-                      }
-                  ]
-              },
-              "alwaysSendTo": [],
-              "unixSocketFile": "$${DDIR}/tm.ipc"
-          }
-      EOF
-
-          cat <<EOF > $${DDIR}/tessera-config-enhanced.json
-          {
-            "useWhiteList": false,
-            "jdbc": {
-              "username": "sa",
-              "password": "",
-              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
-              "autoCreateTables": true
-            },
-            "serverConfigs":[
-            {
-              "app":"ThirdParty",
-              "enabled": true,
-              "serverSocket":{
-                "type":"INET",
-                "port": 9080,
-                "hostName": "http://$$(hostname -i)"
-              },
-              "communicationType" : "REST"
-            },
-            {
-              "app":"Q2T",
-              "enabled": true,
-              "serverSocket":{
-                "type":"UNIX",
-                "path":"$${DDIR}/tm.ipc"
-              },
-              "communicationType" : "UNIX_SOCKET"
-            },
-            {
-              "app":"P2P",
-              "enabled": true,
-              "serverSocket":{
-                "type":"INET",
-                "port": 9000,
-                "hostName": "http://$$(hostname -i)"
-              },
-              "sslConfig": {
-                "tls": "OFF",
-                "generateKeyStoreIfNotExisted": true,
-                "serverKeyStore": "$${DDIR}/server-keystore",
-                "serverKeyStorePassword": "quorum",
-                "serverTrustStore": "$${DDIR}/server-truststore",
-                "serverTrustStorePassword": "quorum",
-                "serverTrustMode": "TOFU",
-                "knownClientsFile": "$${DDIR}/knownClients",
-                "clientKeyStore": "$${DDIR}/client-keystore",
-                "clientKeyStorePassword": "quorum",
-                "clientTrustStore": "$${DDIR}/client-truststore",
-                "clientTrustStorePassword": "quorum",
-                "clientTrustMode": "TOFU",
-                "knownServersFile": "$${DDIR}/knownServers"
-              },
-              "communicationType" : "REST"
-            }
-            ],
-            "peer": [
-               {
-                   "url": "http://txmanager1:9000"
-               },
-               {
-                   "url": "http://txmanager2:9000"
-               },
-               {
-                   "url": "http://txmanager3:9000"
-               },
-               {
-                   "url": "http://txmanager4:9000"
-               },
-               {
-                   "url": "http://txmanager5:9000"
-               },
-               {
-                   "url": "http://txmanager6:9000"
-               },
-               {
-                   "url": "http://txmanager7:9000"
-               }
-            ],
-            "keys": {
-              "passwords": [],
-              "keyData": [
-                {
-                  "config": $$(cat $${DDIR}/tm.key),
-                  "publicKey": "$$(cat $${DDIR}/tm.pub)"
-                }
-              ]
-            },
-            "alwaysSendTo": []
-          }
-      EOF
-
           cat <<EOF > $${DDIR}/tessera-config-09.json
           {
             "useWhiteList": false,
@@ -302,20 +141,7 @@ x-tx-manager-def:
               "enabled": true,
               "serverAddress": "http://$$(hostname -i):9000",
               "sslConfig": {
-                "tls": "OFF",
-                "generateKeyStoreIfNotExisted": true,
-                "serverKeyStore": "$${DDIR}/server-keystore",
-                "serverKeyStorePassword": "quorum",
-                "serverTrustStore": "$${DDIR}/server-truststore",
-                "serverTrustStorePassword": "quorum",
-                "serverTrustMode": "TOFU",
-                "knownClientsFile": "$${DDIR}/knownClients",
-                "clientKeyStore": "$${DDIR}/client-keystore",
-                "clientKeyStorePassword": "quorum",
-                "clientTrustStore": "$${DDIR}/client-truststore",
-                "clientTrustStorePassword": "quorum",
-                "clientTrustMode": "TOFU",
-                "knownServersFile": "$${DDIR}/knownServers"
+                "tls": "OFF"
               },
               "communicationType" : "REST"
             }
