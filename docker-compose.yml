@@ -407,6 +407,7 @@ services:
       - NODE_ID=7
 networks:
   quorum-examples-net:
+    name: quorum-examples-net
     driver: bridge
     ipam:
       driver: default
