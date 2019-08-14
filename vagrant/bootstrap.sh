@@ -58,6 +58,10 @@ chmod 0755 ${POROSITY_OUTPUT_FILE}
 cp -r /vagrant/examples /home/vagrant/quorum-examples
 chown -R vagrant:vagrant /home/vagrant/quorum-examples
 
+# from source script
+cp /vagrant/go-source.sh /home/vagrant/go-source.sh
+chown vagrant:vagrant /home/vagrant/go-source.sh
+
 # done!
 echo "
  ____  _     ____  ____  _     _
