@@ -1,54 +1,74 @@
 #!/bin/bash
 set -eu -o pipefail
 
-# install build deps
-add-apt-repository ppa:ethereum/ethereum
 apt-get update
-apt-get install -y build-essential unzip libdb-dev libleveldb-dev libsodium-dev zlib1g-dev libtinfo-dev solc sysvbanner wrk software-properties-common default-jdk maven
+apt-get install -y default-jdk unzip parallel
 
-# install constellation
 CVER="0.3.2"
 CREL="constellation-$CVER-ubuntu1604"
-wget -q https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz
-tar xfJ ${CREL}.tar.xz
+CONSTELLATION_OUTPUT_FILE="constellation.tar.xz"
+POROSITY_OUTPUT_FILE="/usr/local/bin/porosity"
+
+TESSERA_HOME=/home/vagrant/tessera
+mkdir -p ${TESSERA_HOME}
+TESSERA_VERSION="0.10.0"
+TESSERA_OUTPUT_FILE="${TESSERA_HOME}/tessera.jar"
+TESSERA_ENCLAVE_OUTPUT_FILE="${TESSERA_HOME}/enclave.jar"
+
+QUORUM_VERSION="2.2.5"
+QUORUM_OUTPUT_FILE="geth.tar.gz"
+
+# download binaries in parallel
+echo "Downloading binaries ..."
+parallel --link wget -q -O ::: \
+    ${CONSTELLATION_OUTPUT_FILE} \
+    ${TESSERA_OUTPUT_FILE} \
+    ${TESSERA_ENCLAVE_OUTPUT_FILE} \
+    ${QUORUM_OUTPUT_FILE} \
+    ${POROSITY_OUTPUT_FILE} \
+    ::: \
+    https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz \
+    https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/tessera-app/${TESSERA_VERSION}/tessera-app-${TESSERA_VERSION}-app.jar \
+    https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/enclave-jaxrs/${TESSERA_VERSION}/enclave-jaxrs-${TESSERA_VERSION}-server.jar \
+    https://dl.bintray.com/quorumengineering/quorum/v${QUORUM_VERSION}/geth_v${QUORUM_VERSION}_linux_amd64.tar.gz \
+    https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity
+
+# install constellation
+echo "Installing Constellation ${CVER}"
+tar xfJ ${CONSTELLATION_OUTPUT_FILE}
 cp ${CREL}/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node
 rm -rf ${CREL}
+rm -f ${CONSTELLATION_OUTPUT_FILE}
 
 # install tessera
-mkdir -p /home/vagrant/tessera
-wget -O /home/vagrant/tessera/tessera.jar -q https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/tessera-app/0.9.2/tessera-app-0.9.2-app.jar
-wget -O /home/vagrant/tessera/enclave.jar -q https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/enclave-jaxrs/0.9.2/enclave-jaxrs-0.9.2-server.jar
-echo "TESSERA_JAR=/home/vagrant/tessera/tessera.jar" >> /home/vagrant/.profile
-echo "ENCLAVE_JAR=/home/vagrant/tessera/enclave.jar" >> /home/vagrant/.profile
+echo "Installing Tessera ${TESSERA_VERSION}"
+echo "TESSERA_JAR=${TESSERA_OUTPUT_FILE}" >> /home/vagrant/.profile
+echo "ENCLAVE_JAR=${TESSERA_ENCLAVE_OUTPUT_FILE}" >> /home/vagrant/.profile
 
-# install golang
-GOREL=go1.9.3.linux-amd64.tar.gz
-wget -q https://dl.google.com/go/${GOREL}
-tar xfz ${GOREL}
-mv go /usr/local/go
-rm -f ${GOREL}
-PATH=$PATH:/usr/local/go/bin
-echo 'PATH=$PATH:/usr/local/go/bin' >> /home/vagrant/.bashrc
-
-# make/install quorum
-git clone https://github.com/jpmorganchase/quorum.git
-pushd quorum >/dev/null
-git checkout tags/v2.2.4
-make all
-cp build/bin/geth /usr/local/bin
-cp build/bin/bootnode /usr/local/bin
-popd >/dev/null
+# install Quorum
+echo "Installing Quorum ${QUORUM_VERSION}"
+tar xfz ${QUORUM_OUTPUT_FILE} -C /usr/local/bin
+rm -f ${QUORUM_OUTPUT_FILE}
 
 # install Porosity
-wget -q https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity
-mv porosity /usr/local/bin && chmod 0755 /usr/local/bin/porosity
+echo "Installing Porosity"
+chmod 0755 ${POROSITY_OUTPUT_FILE}
 
 # copy examples
 cp -r /vagrant/examples /home/vagrant/quorum-examples
-chown -R vagrant:vagrant /home/vagrant/quorum /home/vagrant/quorum-examples
+chown -R vagrant:vagrant /home/vagrant/quorum-examples
 
 # done!
-banner "Quorum"
+echo "
+ ____  _     ____  ____  _     _
+/  _ \/ \ /\/  _ \/  __\/ \ /\/ \__/|
+| / \|| | ||| / \||  \/|| | ||| |\/||
+| \_\|| \_/|| \_/||    /| \_/|| |  ||
+\____\\____/\____/\_/\_\\____/\_/  \|
+--------                    ---------
+        \     Examples     /
+         ------------------
+"
 echo
 echo 'The Quorum vagrant instance has been provisioned. Examples are available in ~/quorum-examples inside the instance.'
 echo "Use 'vagrant ssh' to open a terminal, 'vagrant suspend' to stop the instance, and 'vagrant destroy' to remove it."
