@@ -63,6 +63,8 @@ x-quorum-def:
         --verbosity 5 \
         --networkid $${NETWORK_ID} \
         --rpc \
+        --rpccorsdomain "*" \
+        --rpcvhosts "*" \
         --rpcaddr 0.0.0.0 \
         --rpcport 8545 \
         --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONSENSUS:-istanbul} \
