@@ -2,7 +2,14 @@
 set -u
 set -e
 
-for i in {1..7}
+numNodes=7
+if [[ -f qdata/numberOfNodes ]]; then
+    numNodes=`cat qdata/numberOfNodes`
+fi
+
+echo "[*] Starting $numNodes Constellation node(s)"
+
+for i in `seq 1 ${numNodes}`
 do
     DDIR="qdata/c$i"
     mkdir -p $DDIR
@@ -19,7 +26,7 @@ DOWN=true
 while $DOWN; do
     sleep 0.1
     DOWN=false
-    for i in {1..7}
+    for i in `seq 1 ${numNodes}`
     do
 	if [ ! -S "qdata/c$i/tm.ipc" ]; then
             DOWN=true
