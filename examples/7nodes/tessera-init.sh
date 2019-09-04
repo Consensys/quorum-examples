@@ -1,9 +1,35 @@
 #!/usr/bin/env bash
+# Initialise data for Tessera nodes.
+# This script will normally perform initialisation for 7 nodes, however
+# if file qdata/numberOfNodes exists then the script will read number
+# of nodes from that file.
 
-echo "[*] Initialising Tessera configuration"
+numNodes=7
+if [[ -f qdata/numberOfNodes ]]; then
+    numNodes=`cat qdata/numberOfNodes`
+fi
 
+echo "[*] Initialising Tessera configuration for $numNodes node(s)"
+
+# Dynamically create the config for peers, depending on numNodes
+peerList=
+for i in `seq 1 ${numNodes}`
+do
+    if [[ $i -ne 1 ]]; then
+        peerList="$peerList,"
+    fi
+
+    portNum=$((9000 + $i))
+
+    peerList="${peerList}
+        {
+            \"url\": \"http://localhost:${portNum}\"
+        }"
+done
+
+# Write the config for the Tessera nodes
 currentDir=$(pwd)
-for i in {1..7}
+for i in `seq 1 ${numNodes}`
 do
     DDIR="${currentDir}/qdata/c${i}"
     mkdir -p ${DDIR}
@@ -11,6 +37,10 @@ do
     cp "keys/tm${i}.pub" "${DDIR}/tm.pub"
     cp "keys/tm${i}.key" "${DDIR}/tm.key"
     rm -f "${DDIR}/tm.ipc"
+
+    serverPortP2P=$((9000 + ${i}))
+    serverPortThirdParty=$((9080 + ${i}))
+    serverPortEnclave=$((9180 + ${i}))
 
     #change tls to "strict" to enable it (don't forget to also change http -> https)
 cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
@@ -26,19 +56,19 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
         {
             "app":"ThirdParty",
             "enabled": true,
-            "serverAddress": "http://localhost:908${i}",
+            "serverAddress": "http://localhost:${serverPortThirdParty}",
             "communicationType" : "REST"
         },
         {
             "app":"Q2T",
             "enabled": true,
-             "serverAddress":"unix:${DDIR}/tm.ipc",
+            "serverAddress":"unix:${DDIR}/tm.ipc",
             "communicationType" : "REST"
         },
         {
             "app":"P2P",
             "enabled": true,
-            "serverAddress":"http://localhost:900${i}",
+            "serverAddress":"http://localhost:${serverPortP2P}",
             "sslConfig": {
                 "tls": "OFF",
                 "generateKeyStoreIfNotExisted": true,
@@ -59,27 +89,7 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
         }
     ],
     "peer": [
-        {
-            "url": "http://localhost:9001"
-        },
-        {
-            "url": "http://localhost:9002"
-        },
-        {
-            "url": "http://localhost:9003"
-        },
-        {
-            "url": "http://localhost:9004"
-        },
-        {
-            "url": "http://localhost:9005"
-        },
-        {
-            "url": "http://localhost:9006"
-        },
-        {
-            "url": "http://localhost:9007"
-        }
+        ${peerList}
     ],
     "keys": {
         "passwords": [],
@@ -109,13 +119,13 @@ cat <<EOF > ${DDIR}/tessera-config-enclave-09-${i}.json
         {
             "app":"ENCLAVE",
             "enabled": true,
-            "serverAddress": "http://localhost:918${i}",
+            "serverAddress": "http://localhost:${serverPortEnclave}",
             "communicationType" : "REST"
         },
         {
             "app":"ThirdParty",
             "enabled": true,
-            "serverAddress": "http://localhost:908${i}",
+            "serverAddress": "http://localhost:${serverPortThirdParty}",
             "communicationType" : "REST"
         },
         {
@@ -127,7 +137,7 @@ cat <<EOF > ${DDIR}/tessera-config-enclave-09-${i}.json
         {
             "app":"P2P",
             "enabled": true,
-            "serverAddress":"http://localhost:900${i}",
+            "serverAddress":"http://localhost:${serverPortP2P}",
             "sslConfig": {
                 "tls": "OFF"
             },
@@ -135,27 +145,7 @@ cat <<EOF > ${DDIR}/tessera-config-enclave-09-${i}.json
         }
     ],
     "peer": [
-        {
-            "url": "http://localhost:9001"
-        },
-        {
-            "url": "http://localhost:9002"
-        },
-        {
-            "url": "http://localhost:9003"
-        },
-        {
-            "url": "http://localhost:9004"
-        },
-        {
-            "url": "http://localhost:9005"
-        },
-        {
-            "url": "http://localhost:9006"
-        },
-        {
-            "url": "http://localhost:9007"
-        }
+        ${peerList}
     ]
 }
 EOF
@@ -166,7 +156,7 @@ cat <<EOF > ${DDIR}/enclave-09-${i}.json
         {
             "app":"ENCLAVE",
             "enabled": true,
-            "serverAddress": "http://localhost:918${i}",
+            "serverAddress": "http://localhost:${serverPortEnclave}",
             "communicationType" : "REST"
         }
     ],
