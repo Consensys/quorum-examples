@@ -4,7 +4,7 @@ This repository contains setup examples for Quorum Platform.
 
 Current examples include:
 * [7nodes](examples/7nodes): Starts up a fully-functioning Quorum environment consisting of 7 independent nodes. From this example one can test consensus, privacy, and all the expected functionality of an Ethereum platform.
-* [5nodesRTGS](https://github.com/bacen/quorum-examples/tree/master/examples/5nodesRTGS): [__Note__: This links to an external repo which you will need to clone, thanks to @rsarres for this contribution!] Starts up a set of 5 nodes that simulates a Real-time Gross Setlement environment with 3 banks, one regulator (typically a central bank) and an observer that cannot access the private data.
+* [5nodesRTGS](https://github.com/bacen/quorum-examples/tree/master/examples/5nodesRTGS): [**Note:** This links to an external repo which you will need to clone, thanks to @rsarres for this contribution!] Starts up a set of 5 nodes that simulates a Real-time Gross Setlement environment with 3 banks, one regulator (typically a central bank) and an observer that cannot access the private data.
 
 
 ## Installation
@@ -23,9 +23,9 @@ A 7 node Quorum network must be running before the example can be run.  The [`qu
 
 There are 3 ways to start the sample network, each method is detailed below:
 
-1. By running a pre-configured Vagrant virtual-machine environment which comes complete with Quorum, Constellation, Tessera and the 7nodes example already installed.  Bash scripts provided in the examples are used to create the sample network.
-1. By running [`docker-compose`](https://docs.docker.com/compose/) against a [preconfigured `compose` file](https://github.com/jpmorganchase/quorum-examples/blob/master/docker-compose.yml) to create the sample network
-1. By installing Quorum and Tessera/Constellation locally and using bash scripts provided in the examples to create the sample network
+1. By running a pre-configured Vagrant virtual-machine environment which comes complete with Quorum, Constellation, Tessera and the 7nodes example already installed.  Bash scripts provided in the examples are used to create the sample network: [Running with Vagrant](#running-with-vagrant)
+1. By running [`docker-compose`](https://docs.docker.com/compose/) against a [preconfigured `compose` file](https://github.com/jpmorganchase/quorum-examples/blob/master/docker-compose.yml) to create the sample network: [Running with Docker](#running-with-docker)
+1. By installing Quorum and Tessera/Constellation locally and using bash scripts provided in the examples to create the sample network: [Running locally](#running-locally)
 
 Your environment must be prepared differently depending on the method being used to run the example.
 
@@ -114,8 +114,7 @@ issues with the version of curl bundled with Vagrant.
 
 ### Running locally
 
-!!! info
-    Quorum must be run on Ubuntu-based/macOS machines.  Constellation can only be run on Ubuntu-based machines.  Running the examples therefore requires an Ubuntu-based/macOS machine.  If running the examples using Constellation then an Ubuntu-based machine is required. 
+**Note:** Quorum must be run on Ubuntu-based/macOS machines.  Constellation can only be run on Ubuntu-based machines.  Running the examples therefore requires an Ubuntu-based/macOS machine.  If running the examples using Constellation then an Ubuntu-based machine is required. 
 
 1. Install [Golang](https://golang.org/dl/)
 2. Download and build [Quorum](https://github.com/jpmorganchase/quorum/):
