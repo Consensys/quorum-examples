@@ -2,7 +2,14 @@
 set -eu -o pipefail
 
 apt-get update
-apt-get install -y default-jdk unzip parallel
+packages=(
+    parallel       # utility
+    unzip          # tessera startup script dependency
+    default-jdk    # tessera runtime dependency
+    libleveldb-dev # constellation dependency
+    libsodium-dev  # constellation dependency
+)
+apt-get install -y ${packages[@]}
 
 CVER="0.3.2"
 CREL="constellation-$CVER-ubuntu1604"
