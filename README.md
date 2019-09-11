@@ -59,7 +59,7 @@ issues with the version of curl bundled with Vagrant.
 
 * If the machine you are using has less than 8 GB memory you will likely encounter system issues such as slow down and unresponsiveness when starting the Vagrant instance as your machine will not have the capacity to run the VM.  There are several steps that can be taken to overcome this:
     1. Shutdown any running processes that are not required
-    1. If running the [7nodes example](../7Nodes), reduce the number of nodes started up.  See the [7nodes: Reducing the number of nodes](../7Nodes-Setup#reducing-the-number-of-nodes) for info on how to do this.
+    1. If running the [7nodes example](examples/7nodes), reduce the number of nodes started up.  See the [7nodes: Reducing the number of nodes](#reducing-the-number-of-nodes) for info on how to do this.
     1. Set up and run the examples locally.  Running locally reduces the load on your memory compared to running in Vagrant.
 
 
@@ -195,10 +195,11 @@ For example, to run the example with 5 nodes instead of 7, the following changes
     1. In `{consensus}-start.sh`:
 
         Comment out the following lines used to start Quorum nodes 6 & 7
-            ```sh
-            # PRIVATE_CONFIG=qdata/c6/tm.ipc nohup geth --datadir qdata/dd6 $ARGS --raftport 50406 --rpcport 22005 --port 21005 --unlock 0 --password passwords.txt 2>>qdata/logs/6.log &
-            # PRIVATE_CONFIG=qdata/c7/tm.ipc nohup geth --datadir qdata/dd7 $ARGS --raftport 50407 --rpcport 22006 --port 21006 --unlock 0 --password passwords.txt 2>>qdata/logs/7.log &
-            ```
+        
+        ```bash
+        # PRIVATE_CONFIG=qdata/c6/tm.ipc nohup geth --datadir qdata/dd6 $ARGS --raftport 50406 --rpcport 22005 --port 21005 --unlock 0 --password passwords.txt 2>>qdata/logs/6.log &
+        # PRIVATE_CONFIG=qdata/c7/tm.ipc nohup geth --datadir qdata/dd7 $ARGS --raftport 50407 --rpcport 22006 --port 21006 --unlock 0 --password passwords.txt 2>>qdata/logs/7.log &
+        ```
     
     1. In `constellation-start.sh` or `tessera-start.sh` (depending on which privacy manager you are using): 
     
