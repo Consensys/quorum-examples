@@ -1,6 +1,6 @@
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/xenial64"
-  config.vm.box_version = "20190909.1.0"
+  config.vm.box_version = ">= 20190909.1.0"
   # config.disksize.size = "30GB"
   config.vm.provision :shell, path: "vagrant/bootstrap.sh"
 
