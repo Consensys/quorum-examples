@@ -77,12 +77,12 @@ buildFiles(){
     echo -e "var simpleContract = web3.eth.contract(abi);">> ./$deployFile
     if [ "$data" == "NONE" ]
     then
-        echo -e "var a = simpleContract.new(\"0xed9d02e382b34818e88b88a309c7fe71e65f419d\",{from:web3.eth.accounts[0], data: bytecode, gas: 7200000}, function(e, contract) {">> ./$deployFile
+        echo -e "var a = simpleContract.new(\"0xed9d02e382b34818e88b88a309c7fe71e65f419d\",{from:web3.eth.accounts[0], data: bytecode, gas: 8200000}, function(e, contract) {">> ./$deployFile
     elif [ "$data" == "IMPL" ]
     then
-        echo -e "var a = simpleContract.new(\"$upgr\", \"$org\", \"$roles\", \"$accounts\", \"$voter\", \"$nodes\", {from:web3.eth.accounts[0], data: bytecode, gas: 7200000}, function(e, contract) {">> ./$deployFile
+        echo -e "var a = simpleContract.new(\"$upgr\", \"$org\", \"$roles\", \"$accounts\", \"$voter\", \"$nodes\", {from:web3.eth.accounts[0], data: bytecode, gas: 8200000}, function(e, contract) {">> ./$deployFile
     else
-        echo -e "var a = simpleContract.new(\"$data\", {from:web3.eth.accounts[0], data: bytecode, gas: 7200000}, function(e, contract) {">> ./$deployFile
+        echo -e "var a = simpleContract.new(\"$data\", {from:web3.eth.accounts[0], data: bytecode, gas: 8200000}, function(e, contract) {">> ./$deployFile
     fi
     echo -e "\tif (e) {">> ./$deployFile
     echo -e "\t\tconsole.log(\"err creating contract\", e);">> ./$deployFile
@@ -144,8 +144,8 @@ createPermConfig(){
     echo -e "\t\"nwAdminRole\": \"$nwAdminRole\"," >> ./permission-config.json
     echo -e "\t\"orgAdminRole\": \"$orgAdminRole\"," >> ./permission-config.json
     echo -e "\t\"accounts\": [\"0xed9d02e382b34818e88b88a309c7fe71e65f419d\", \"0xca843569e3427144cead5e4d5999a3d0ccf92b8e\"]," >> ./permission-config.json
-    echo -e "\t\"subOrgBreadth\": \"$subOrgBreadth\"," >> ./permission-config.json
-    echo -e "\t\"subOrgDepth\": \"$subOrgDepth\"" >> ./permission-config.json
+    echo -e "\t\"subOrgBreadth\": $subOrgBreadth," >> ./permission-config.json
+    echo -e "\t\"subOrgDepth\": $subOrgDepth" >> ./permission-config.json
     echo -e "}" >> ./permission-config.json
 }
 
@@ -315,6 +315,7 @@ displayMsg "Creating load script for upgradable contract and initializing"
 createLoadFile "PermissionsUpgradable" $upgr $permInterface $permImpl
 runInit
 echo "Network initialization completed"
+sleep 10
 
 
 displayMsg "Restarting the network with permissions"
@@ -326,6 +327,5 @@ waitPortClose
 ./start.sh $consensus $privacyImpl
 
 #clean up all temporary directories
-rm -rf ./output
-rm deploy-*.js
+rm -rf ./output deploy-*.js
 rm permission-config.json
