@@ -189,34 +189,11 @@ The sample network can be created to run using Istanbul BFT, Raft or Clique POA 
 ### Reducing the number of nodes 
 It is easy to reduce the number of nodes used in the example network.  You may want to do this for memory usage reasons or just to experiment with a different network configuration.
 
-For example, to run the example with 5 nodes instead of 7, the following changes need to be made:
-
-1. Reduce number of nodes being started
-    1. In `{consensus}-start.sh`:
-
-        Comment out the following lines used to start Quorum nodes 6 & 7
-        
-        ```bash
-        # PRIVATE_CONFIG=qdata/c6/tm.ipc nohup geth --datadir qdata/dd6 $ARGS --raftport 50406 --rpcport 22005 --port 21005 --unlock 0 --password passwords.txt 2>>qdata/logs/6.log &
-        # PRIVATE_CONFIG=qdata/c7/tm.ipc nohup geth --datadir qdata/dd7 $ARGS --raftport 50407 --rpcport 22006 --port 21006 --unlock 0 --password passwords.txt 2>>qdata/logs/7.log &
-        ```
-    
-    1. In `constellation-start.sh` or `tessera-start.sh` (depending on which privacy manager you are using): 
-    
-        Change the 2 instances of `for i in {1..7}` to `for i in {1..5}`
-    
-1. `private-contract.js` by default sends a transaction to node 7.  As node 7 will no longer be started this must be updated to instead send to node 5:
-
-    1. Copy node 5's public key from `./keys/tm5.pub`
-    
-    2. Replace the existing `privateFor` in `private-contract.js` with the key copied from `tm5.pub` key, e.g.:
-        ``` javascript
-        var simple = simpleContract.new(42, {from:web3.eth.accounts[0], data: bytecode, gas: 0x47b760, privateFor: ["R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY="]}, function(e, contract) {...}
-        ```
+For example, to run the example with 5 nodes instead of 7, follow these steps:
 
 1. Update the list of nodes involved in consensus
     * If using Raft
-        1. Remove node 6 and node 7's enode addresses from `permissioned-nodes.json` (i.e. the entries with `raftport` `50406` and `50407`)
+        1. Remove node 6 and node 7's enode addresses from `permissioned-nodes.json` (i.e. the entries with `raftport` `50406` and `50407`).  Ensure that there is no trailing comma on the last row of enode details in the file.
     * If using IBFT
         1. Find the 20-byte address representations of node 6 and node 7's nodekey (nodekeys located at `qdata/dd{i}/geth/nodekey`).  There are many ways to do this, one is to run a script making use of `ethereumjs-wallet`:
             ```node
@@ -250,7 +227,23 @@ For example, to run the example with 5 nodes instead of 7, the following changes
             ```
         1. Update the `extraData` field in `istanbul-genesis.json` with output from the encoding 
 
-After making these changes, the `{consensus}-init.sh`, `{consensus}-start.sh`, and `./runscript.sh private-contract.js` scripts can be run as normal.  You can then follow steps described above to verify that node 5 can see the transaction payload and that nodes 2-4 are unable to see the payload.
+1. After making these changes, the relevant init/start scripts can be run (replace `{consensus}` with the relevent consensus mechanism in the following):
+
+   ```sh
+   # ./{consensus}-init.sh --numNodes 5
+   # ./{consensus}-start.sh
+   ```
+
+1. `private-contract.js` by default sends a transaction to node 7.  As node 7 will no longer be started this must be updated to instead send to node 5:
+
+    1. Copy node 5's public key from `./keys/tm5.pub`
+    
+    2. Replace the existing `privateFor` in `private-contract.js` with the key copied from `tm5.pub` key, e.g.:
+        ``` javascript
+        var simple = simpleContract.new(42, {from:web3.eth.accounts[0], data: bytecode, gas: 0x47b760, privateFor: ["R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY="]}, function(e, contract) {...}
+        ```
+
+You can then follow steps described above to verify that node 5 can see the transaction payload and that nodes 2-4 are unable to see the payload.
 
 ### Using a Tessera remote enclave
 Tessera v0.9 introduced the ability to run the privacy manager's enclave as a separate process from the Transaction Manager. This is a more secure way of being able to manage and interact with your keys.  
