@@ -22,7 +22,7 @@ TESSERA_VERSION="0.10.0"
 TESSERA_OUTPUT_FILE="${TESSERA_HOME}/tessera.jar"
 TESSERA_ENCLAVE_OUTPUT_FILE="${TESSERA_HOME}/enclave.jar"
 
-QUORUM_VERSION="2.2.5"
+QUORUM_VERSION="2.3.0"
 QUORUM_OUTPUT_FILE="geth.tar.gz"
 
 # download binaries in parallel
