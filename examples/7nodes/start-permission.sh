@@ -209,6 +209,9 @@ getInputs(){
     if [ "$consensus" == "istanbul" ]
     then
         read -p "Enter Block period as in geth start script: " blockPeriod
+    elif [ "$consensus" == "clique" ]
+    then
+        read -p "Enter Block period as given in genesis.json: " blockPeriod
     fi
     sleepTime=$(( $blockPeriod + 2 ))
 }
