@@ -1,4 +1,9 @@
 #!/bin/bash
+# Start Tessera nodes.
+# This script will normally start up 7 nodes, however
+# if file qdata/numberOfNodes exists then the script will read number
+# of nodes from that file.
+
 set -u
 set -e
 
@@ -12,8 +17,11 @@ function usage() {
   echo "    --remoteDebug enables remote debug on port 500n for each Tessera node (for use with JVisualVm etc)"
   echo "    --jvmParams specifies parameters to be used by JVM when running Tessera"
   echo "Notes:"
-  echo "    Tessera jar location defaults to ${defaultTesseraJarExpr};"
+  echo "  - Tessera jar location defaults to ${defaultTesseraJarExpr};"
   echo "    however, this can be overridden by environment variable TESSERA_JAR or by the command line option."
+  echo "  - This script will examine the file qdata/numberOfNodes to"
+  echo "    determine how many nodes to start up. If the file doesn't"
+  echo "    exist then 7 nodes will be assumed"
   echo ""
   exit -1
 }
@@ -76,8 +84,15 @@ fi
 
 echo Config type $TESSERA_CONFIG_TYPE
 
+numNodes=7
+if [[ -f qdata/numberOfNodes ]]; then
+    numNodes=`cat qdata/numberOfNodes`
+fi
+
+echo "[*] Starting $numNodes Tessera node(s)"
+
 currentDir=`pwd`
-for i in {1..7}
+for i in `seq 1 ${numNodes}`
 do
     DDIR="qdata/c$i"
     mkdir -p ${DDIR}
@@ -107,7 +122,7 @@ k=10
 while ${DOWN}; do
     sleep 1
     DOWN=false
-    for i in {1..7}
+    for i in `seq 1 ${numNodes}`
     do
         if [ ! -S "qdata/c${i}/tm.ipc" ]; then
             echo "Node ${i} is not yet listening on tm.ipc"

@@ -261,6 +261,8 @@ fi
 ./stop.sh
 waitPortClose
 
+export STARTPERMISSION=1
+
 # check solc  & geth version if it is below 0.5.3 throw error
 displayMsg "Checking solidity and geth version compatibility"
 checkSolidityVersion

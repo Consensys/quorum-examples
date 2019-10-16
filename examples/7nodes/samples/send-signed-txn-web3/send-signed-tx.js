@@ -33,7 +33,7 @@ web3.eth.getAccounts().then(re => {
   console.log('nonce: ', nonce);
 
   let txParams = {
-    nonce: '0x0'+nonce,
+    nonce: web3.utils.toHex(nonce),
     gasPrice: '0x00',
     gasLimit: '0x47b760',
     to: '0xca843569e3427144cead5e4d5999a3d0ccf92b8e', // node 2 account
