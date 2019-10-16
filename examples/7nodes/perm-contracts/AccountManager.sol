@@ -23,6 +23,7 @@ import "./PermissionsUpgradable.sol";
      When adding a new org admin account to an existing org, the existing org
      admin account will be in revoked status and can be assigned a new role
      later
+
   */
 contract AccountManager {
     PermissionsUpgradable private permUpgradable;

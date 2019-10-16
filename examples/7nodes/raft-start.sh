@@ -96,7 +96,7 @@ do
     permissioned=
     if [[ $i -le 4 ]]; then
         permissioned="--permissioned"
-    elif ! [[ -z "$STARTPERMISSION" ]] ; then
+    elif ! [[ -z "${STARTPERMISSION+x}" ]] ; then
         permissioned="--permissioned"
     fi
 

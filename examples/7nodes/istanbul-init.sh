@@ -73,7 +73,7 @@ do
         cp raft/nodekey${i} qdata/dd${i}/geth/nodekey
     fi
     cp permissioned-nodes.json qdata/dd${i}/static-nodes.json
-    if ! [[ -z "$STARTPERMISSION" ]] ; then
+    if ! [[ -z "${STARTPERMISSION+x}" ]] ; then
         cp permissioned-nodes.json qdata/dd${i}/permissioned-nodes.json
     fi
     cp keys/key${i} qdata/dd${i}/keystore

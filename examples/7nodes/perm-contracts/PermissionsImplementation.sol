@@ -11,6 +11,7 @@ import "./PermissionsUpgradable.sol";
   * @notice This contract holds implementation logic for all permissions
     related functionality. This can be called only by the interface
     contract.
+
   */
 contract PermissionsImplementation {
     AccountManager private accountManager;

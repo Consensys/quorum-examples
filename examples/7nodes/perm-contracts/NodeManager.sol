@@ -17,6 +17,7 @@ import "./PermissionsUpgradable.sol";
             status will be updated to Active (2)
      Once the node is blacklisted no further activity on the node is
      possible.
+
   */
 contract NodeManager {
     PermissionsUpgradable private permUpgradable;
