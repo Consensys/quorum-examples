@@ -26,6 +26,7 @@
       "eip155Block": 0,
       "eip158Block": 0,
       "isQuorum": true,
+      "maxCodeSize" : 35,
       "istanbul": {
         "epoch": 30000,
         "policy": 0

@@ -315,6 +315,7 @@ displayMsg "Creating load script for upgradable contract and initializing"
 createLoadFile "PermissionsUpgradable" $upgr $permInterface $permImpl
 runInit
 echo "Network initialization completed"
+sleep 10
 
 
 displayMsg "Restarting the network with permissions"
@@ -326,6 +327,5 @@ waitPortClose
 ./start.sh $consensus $privacyImpl
 
 #clean up all temporary directories
-rm -rf ./output
-rm deploy-*.js
+rm -rf ./output deploy-*.js
 rm permission-config.json
