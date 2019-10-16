@@ -78,7 +78,11 @@ public class SendRawPrivateTransactionExternalSigning {
         PollingTransactionReceiptProcessor pollingTransactionReceiptProcessor = new PollingTransactionReceiptProcessor(quorum, 1000, 10);
         TransactionReceipt transactionReceipt = pollingTransactionReceiptProcessor.waitForTransactionReceipt(txHash);
 
-        System.out.println(transactionReceipt);
+        System.out.println("Transaction receipt: " + transactionReceipt);
+
+        //call receive endoint to get original payload
+        String payload = enclave.receiveRequest(storeRawResponse.getKey(), TESSERA7_PUBLIC_KEY);
+        System.out.println("Original payload: " + payload);
     }
 
     // REPLACE THIS WITH YOUR MECHANISM FOR SIGNING TRANSACTIONS
