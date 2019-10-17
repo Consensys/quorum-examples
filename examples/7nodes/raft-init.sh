@@ -55,9 +55,13 @@ do
     if [[ $i -le 4 ]]; then
         echo "[*] Configuring node $i (permissioned)"
         cp permissioned-nodes.json qdata/dd${i}/
+    elif ! [ -z "${STARTPERMISSION+x}" ] ; then
+        echo "[*] Configuring node $i (permissioned)"
+        cp permissioned-nodes.json qdata/dd${i}/
     else
         echo "[*] Configuring node $i"
     fi
+
     cp permissioned-nodes.json qdata/dd${i}/static-nodes.json
     cp keys/key${i} qdata/dd${i}/keystore
     cp raft/nodekey${i} qdata/dd${i}/geth/nodekey
