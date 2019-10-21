@@ -91,7 +91,12 @@ for i in `seq 1 ${numNodes}`
 do
     port=$(($basePort + ${i} - 1))
     rpcPort=$(($baseRpcPort + ${i} - 1))
-    PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
+    permissioned=
+    if ! [[ -z "${STARTPERMISSION+x}" ]] ; then
+        permissioned="--permissioned"
+    fi
+
+    PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
 done
 
 set +v
