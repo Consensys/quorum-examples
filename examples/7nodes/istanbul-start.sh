@@ -19,6 +19,34 @@ function usage() {
   exit -1
 }
 
+function performValidation() {
+    # Warn the user if chainId is same as Ethereum main net (see https://github.com/jpmorganchase/quorum/issues/487)
+    genesisFile=$1
+    NETWORK_ID=$(cat $genesisFile | tr -d '\r' | grep chainId | awk -F " " '{print $2}' | awk -F "," '{print $1}')
+
+    if [ $NETWORK_ID -eq 1 ]
+    then
+        echo "  Quorum should not be run with a chainId of 1 (Ethereum mainnet)"
+        echo "  please set the chainId in the $genesisFile to another value "
+        echo "  1337 is the recommend ChainId for Geth private clients."
+    fi
+
+    # Check that the correct geth executable is on the path
+    set +e
+    if [ "`which geth`" == "" ]; then
+        echo "ERROR: geth executable not found. Ensure that Quorum geth is on the path."
+        exit -1
+    else
+        GETH_VERSION=`geth version |grep -i "Quorum Version"`
+        if [ "$GETH_VERSION" == "" ]; then
+            echo "ERROR: you appear to be running with upstream geth. Ensure that Quorum geth is on the PATH (before any other geth version)."
+            exit -1
+        fi
+        echo "  Found geth: \"$GETH_VERSION\""
+    fi
+    set -e
+}
+
 privacyImpl=tessera
 tesseraOptions=
 while (( "$#" )); do
@@ -50,14 +78,8 @@ while (( "$#" )); do
     esac
 done
 
-NETWORK_ID=$(cat istanbul-genesis.json | tr -d '\r' | grep chainId | awk -F " " '{print $2}' | awk -F "," '{print $1}')
-
-if [ $NETWORK_ID -eq 1 ]
-then
-    echo "  Quorum should not be run with a chainId of 1 (Ethereum mainnet)"
-    echo "  please set the chainId in the istanbul-genesis.json to another value "
-    echo "  1337 is the recommend ChainId for Geth private clients."
-fi
+# Perform any necessary validation
+performValidation istanbul-genesis.json
 
 mkdir -p qdata/logs
 
