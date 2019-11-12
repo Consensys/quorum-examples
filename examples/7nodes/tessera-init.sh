@@ -4,6 +4,33 @@
 # if file qdata/numberOfNodes exists then the script will read number
 # of nodes from that file.
 
+# Function to extract the IP for each peer from permissioned-nodes.json
+# Results are written to the array 'peerIPList'
+declare -a peerIPList
+function getPeerIPs() {
+    peerNum=0
+
+    numLines=`wc -l permissioned-nodes.json  | xargs | cut -f 1,1 -d " "`
+    for lineNumber in `seq 1 ${numLines}`
+    do
+        #if line contains an enode entry then process it, else ignore it
+        line=`sed -n ${lineNumber},${lineNumber}p permissioned-nodes.json`
+        if [[ "$line" =~ "enode" ]]; then
+
+            hostIP=`echo $line |cut -f 2,2 -d "@" | cut -f 1,1 -d ":" `
+            regexpIP='([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])'
+            if [[ ! ( $hostIP =~ ^$regexpIP\.$regexpIP\.$regexpIP\.$regexpIP$ || "$hostIP" == "localhost" ) ]]; then
+                hostIP="127.0.0.1"
+                echo "[*] WARNING: invalid enode IP found on line ${lineNumber} of permissioned-nodes.json, defaulting to '${hostIP}'"
+            fi
+            peerNum=$((${peerNum} + 1))
+            peerIPList[${peerNum}]="$hostIP"
+
+        fi
+    done
+}
+
+
 numNodes=7
 if [[ -f qdata/numberOfNodes ]]; then
     numNodes=`cat qdata/numberOfNodes`
@@ -12,6 +39,7 @@ fi
 echo "[*] Initialising Tessera configuration for $numNodes node(s)"
 
 # Dynamically create the config for peers, depending on numNodes
+getPeerIPs	# get list of IP addresses for peers
 peerList=
 for i in `seq 1 ${numNodes}`
 do
@@ -21,9 +49,15 @@ do
 
     portNum=$((9000 + $i))
 
+    hostIP=${peerIPList[$i]}
+    if [[ "$hostIP" == "" ]]; then
+        hostIP="127.0.0.1"
+        echo "[*] WARNING: host IP for node $i not found in permissioned-nodes.json, defaulting to '${hostIP}'"
+    fi
+
     peerList="${peerList}
         {
-            \"url\": \"http://localhost:${portNum}\"
+            \"url\": \"http://${hostIP}:${portNum}\"
         }"
 done
 
