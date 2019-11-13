@@ -280,14 +280,14 @@ public class PermissioningExample {
         	
         	//approve admin role by node2Account
         	PrivateTransaction tx17 = createTransactionFromAddress(quorum2, node2Account);
-        	ExecStatusInfo info17 = quorum2.quorumPermissionApproveAdminRole("TEST", node5Account, tx17).send();
+        	ExecStatusInfo info17 = quorum2.quorumPermissionApproveAdminRole("ORG1", node5Account, tx17).send();
         	printExecStatusDetails(info17);
         	
         	Thread.sleep(3000);
         	
         	//admin role by node1 for majority approval
         	PrivateTransaction tx17b = createTransactionFromAddress(quorum1, node1Account);
-        	ExecStatusInfo info17b = quorum1.quorumPermissionApproveAdminRole("TEST", node5Account, tx17b).send();
+        	ExecStatusInfo info17b = quorum1.quorumPermissionApproveAdminRole("ORG1", node5Account, tx17b).send();
         	printExecStatusDetails(info17b);
         	
         	Thread.sleep(3000);
