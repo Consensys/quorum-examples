@@ -79,8 +79,7 @@ public class SendRawPrivateTransactionWithQTM {
 
         // store the raw transaction payload in tessera
         SendResponse storeRawResponse = qtm.storeRawRequest(
-                Base64.getEncoder().encodeToString(Numeric.hexStringToByteArray(simpleStorageSetBytecode)),
-                TESSERA1_PUBLIC_KEY, Arrays.asList(TESSERA7_PUBLIC_KEY));
+                simpleStorageSetBytecode, TESSERA1_PUBLIC_KEY, Arrays.asList(TESSERA7_PUBLIC_KEY));
 
         System.out.println("Raw transaction hash from tessera:" + storeRawResponse.getKey());
 

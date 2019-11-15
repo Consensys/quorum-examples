@@ -81,7 +81,7 @@ public class SendRawPrivateTransactionExternalSigning {
         System.out.println("Transaction receipt: " + transactionReceipt);
 
         //call receive endoint to get original payload
-        String payload = enclave.receiveRequest(storeRawResponse.getKey(), TESSERA7_PUBLIC_KEY);
+        String payload = enclave.receiveRequest(tesseraTxHash, TESSERA7_PUBLIC_KEY);
         System.out.println("Original payload: " + payload);
     }
 
