@@ -16,6 +16,7 @@ import org.web3j.quorum.enclave.Enclave;
 import org.web3j.quorum.enclave.SendResponse;
 import org.web3j.quorum.enclave.Tessera;
 import org.web3j.quorum.enclave.protocol.EnclaveService;
+import org.web3j.quorum.tx.QuorumTransactionManager;
 import org.web3j.rlp.*;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.utils.Numeric;

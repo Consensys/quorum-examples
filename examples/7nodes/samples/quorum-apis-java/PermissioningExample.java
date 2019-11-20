@@ -38,7 +38,7 @@ public class PermissioningExample {
         String node1Account = "0xed9d02e382b34818e88b88a309c7fe71e65f419d";
         String node2Account = "0xca843569e3427144cead5e4d5999a3d0ccf92b8e";
         
-		//will be creating 3 new nodes to add to the network
+		//will be creating 3 new nodes to add to the network (node5, node6, node7)
         
         try {
         	
