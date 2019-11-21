@@ -8,14 +8,18 @@ defaultCakeshopJarExpr="/home/vagrant/cakeshop/cakeshop.war"
 set +e
 defaultCakeshopJar=`find ${defaultCakeshopJarExpr} 2>/dev/null`
 set -e
-if [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
+if [[ "${CAKESHOP_JAR:-unset}" == "unset" ]]; then
   cakeshopJar=${defaultCakeshopJar}
 else
   cakeshopJar=${CAKESHOP_JAR}
 fi
 
-remoteDebug=false
 jvmParams="-Dcakeshop.config.dir=qdata/cakeshop -Dlogging.path=qdata/logs/cakeshop"
+
+if [ ! -f qdata/cakeshop/local/application.properties ]; then
+    echo "ERROR: could not find qdata/cakeshop/application.properties. Please run one of the init scripts first."
+    exit 1
+fi
 
 if [  "${cakeshopJar}" == "" ]; then
   echo "ERROR: unable to find Cakeshop war file using CAKESHOP_JAR envvar, or using ${defaultCakeshopJarExpr}"
