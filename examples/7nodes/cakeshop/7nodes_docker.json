@@ -1,0 +1,37 @@
+[
+  {
+    "name": "node1",
+    "rpcUrl": "http://host.docker.internal:22000",
+    "transactionManagerUrl": "http://host.docker.internal:9001/partyinfo"
+  },
+  {
+    "name": "node2",
+    "rpcUrl": "http://host.docker.internal:22001",
+    "transactionManagerUrl": "http://host.docker.internal:9002/partyinfo"
+  },
+  {
+    "name": "node3",
+    "rpcUrl": "http://host.docker.internal:22002",
+    "transactionManagerUrl": "http://host.docker.internal:9003/partyinfo"
+  },
+  {
+    "name": "node4",
+    "rpcUrl": "http://host.docker.internal:22003",
+    "transactionManagerUrl": "http://host.docker.internal:9004/partyinfo"
+  },
+  {
+    "name": "node5",
+    "rpcUrl": "http://host.docker.internal:22004",
+    "transactionManagerUrl": "http://host.docker.internal:9005/partyinfo"
+  },
+  {
+    "name": "node6",
+    "rpcUrl": "http://host.docker.internal:22005",
+    "transactionManagerUrl": "http://host.docker.internal:9006/partyinfo"
+  },
+  {
+    "name": "node7",
+    "rpcUrl": "http://host.docker.internal:22006",
+    "transactionManagerUrl": "http://host.docker.internal:9007/partyinfo"
+  }
+]

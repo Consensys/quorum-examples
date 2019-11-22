@@ -8,3 +8,4 @@ mkdir -p qdata/cakeshop/local
 
 echo "[*] Copying cakeshop config to data directory"
 cp cakeshop/application.properties.template qdata/cakeshop/local/application.properties
+cp cakeshop/7nodes.json qdata/cakeshop/local/7nodes.json
