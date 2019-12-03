@@ -16,6 +16,7 @@ import org.web3j.quorum.enclave.Enclave;
 import org.web3j.quorum.enclave.SendResponse;
 import org.web3j.quorum.enclave.Tessera;
 import org.web3j.quorum.enclave.protocol.EnclaveService;
+import org.web3j.quorum.tx.QuorumTransactionManager;
 import org.web3j.rlp.*;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.utils.Numeric;
@@ -79,8 +80,7 @@ public class SendRawPrivateTransactionWithQTM {
 
         // store the raw transaction payload in tessera
         SendResponse storeRawResponse = qtm.storeRawRequest(
-                Base64.getEncoder().encodeToString(Numeric.hexStringToByteArray(simpleStorageSetBytecode)),
-                TESSERA1_PUBLIC_KEY, Arrays.asList(TESSERA7_PUBLIC_KEY));
+                simpleStorageSetBytecode, TESSERA1_PUBLIC_KEY, Arrays.asList(TESSERA7_PUBLIC_KEY));
 
         System.out.println("Raw transaction hash from tessera:" + storeRawResponse.getKey());
 
