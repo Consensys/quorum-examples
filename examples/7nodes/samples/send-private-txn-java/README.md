@@ -19,3 +19,8 @@ mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass=com.quorum.web3
 mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass=com.quorum.web3j.example.SendRawPrivateTransactionExternalSigning
 
 ```
+##### SendRawPrivateTransactionWithQTM
+```
+mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass=com.quorum.web3j.example.SendRawPrivateTransactionWithQTM
+
+```
