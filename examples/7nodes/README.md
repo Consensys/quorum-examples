@@ -191,3 +191,7 @@ MISCELLANEOUS OPTIONS:
 Additional samples can be found in `quorum-examples/examples/7nodes/samples` for you to use and edit.  You can also create your own contracts to help you understand how the nodes in a Quorum network work together.
 
 Check out some of the other examples highlighting and showcasing the functionality offered by the Quorum platform.  An up-to-date list can be found in the [Quorum Documentation](https://docs.goquorum.com/en/latest/Getting%20Started/Quorum-Examples/) site.
+
+## Adding Cakeshop
+
+[Cakeshop](https://github.com/jpmorganchase/cakeshop) is our Monitoring and Development dashboard for Quorum networks. It allows to you see the current status of the network and inspect transactions, as well as compile and deploy solidity contracts. To run an instance of Cakeshop alongside of the 7nodes example, run `./cakeshop-start.sh` and then go to http://localhost:8999 in your browser to see the UI.
