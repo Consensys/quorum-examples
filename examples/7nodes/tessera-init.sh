@@ -38,6 +38,32 @@ fi
 
 echo "[*] Initialising Tessera configuration for $numNodes node(s)"
 
+encryptorType=${ENCRYPTOR_TYPE:-NACL}
+encryptorProps=""
+
+if [ "$encryptorType" == "EC" ]; then
+    defaultTesseraJarExpr="/home/vagrant/tessera/tessera.jar"
+    set +e
+    defaultTesseraJar=`find ${defaultTesseraJarExpr} 2>/dev/null`
+    set -e
+    if [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
+      tesseraJar=${defaultTesseraJar}
+    else
+      tesseraJar=${TESSERA_JAR}
+    fi
+
+    if [  "${tesseraJar}" == "" ]; then
+      echo "ERROR: unable to find Tessera jar file using TESSERA_JAR envvar, or using ${defaultTesseraJarExpr}"
+      exit -1
+    elif [  ! -f "${tesseraJar}" ]; then
+      echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
+      exit -1
+    fi
+
+    encryptorProps=$(printf "\"symmetricCipher\":\"%s\",\n            \"ellipticCurve\":\"%s\",\n            \"nonceLength\":\"%s\",\n            \"sharedKeyLength\":\"%s\"" \
+     "${ENCRYPTOR_EC_SYMMETRIC_CIPHER:-AES/GCM/NoPadding}" "${ENCRYPTOR_EC_ELLIPTIC_CURVE:-secp256r1}" "${ENCRYPTOR_EC_NONCE_LENGTH:-24}" "${ENCRYPTOR_EC_SHARED_KEY_LENGTH:-32}" )
+fi
+
 # Dynamically create the config for peers, depending on numNodes
 getPeerIPs	# get list of IP addresses for peers
 peerList=
@@ -68,8 +94,10 @@ do
     DDIR="${currentDir}/qdata/c${i}"
     mkdir -p ${DDIR}
     mkdir -p qdata/logs
-    cp "keys/tm${i}.pub" "${DDIR}/tm.pub"
-    cp "keys/tm${i}.key" "${DDIR}/tm.key"
+    if [ "$encryptorType" == "NACL" ]; then
+        cp "keys/tm${i}.pub" "${DDIR}/tm.pub"
+        cp "keys/tm${i}.key" "${DDIR}/tm.key"
+    fi
     rm -f "${DDIR}/tm.ipc"
 
     serverPortP2P=$((9000 + ${i}))
@@ -79,6 +107,12 @@ do
     #change tls to "strict" to enable it (don't forget to also change http -> https)
 cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
 {
+    "encryptor":{
+        "type":"${encryptorType}",
+        "properties":{
+            ${encryptorProps}
+        }
+    },
     "useWhiteList": false,
     "jdbc": {
         "username": "sa",
@@ -186,6 +220,12 @@ EOF
 
 cat <<EOF > ${DDIR}/enclave-09-${i}.json
 {
+    "encryptor":{
+        "type":"${encryptorType}",
+        "properties":{
+            ${encryptorProps}
+        }
+    },
     "serverConfigs":[
         {
             "app":"ENCLAVE",
@@ -207,4 +247,37 @@ cat <<EOF > ${DDIR}/enclave-09-${i}.json
 }
 EOF
 
+    #generate tessera keys
+    if [ "$encryptorType" == "EC" ]; then
+        cat <<EOF > ${DDIR}/keygenconfig.json
+{
+    "encryptor":{
+        "type":"${encryptorType}",
+        "properties":{
+            ${encryptorProps}
+        }
+    }
+}
+EOF
+
+        cd $DDIR
+        set +e
+        java -jar $tesseraJar -configfile keygenconfig.json -keygen -filename tm < /dev/null
+        set -e
+        rm keygenconfig.json
+        cd $currentDir
+    fi
+
 done
+
+#create a copy of private-contract.js where the public nacl key of tessera node7 is replaced is replaced with the newly generated key
+if [ "$encryptorType" == "EC" ]; then
+    oldKey=$(cat keys/tm7.pub)
+    newKey=$(cat qdata/c7/tm.pub)
+    #replace all / with \/ in the newKey (otherwise sed complains about it)
+    newKey=$(echo $newKey | sed 's/\//\\\//g')
+    echo "OldKey: $oldKey NewKey: $newKey"
+    newFileName=qdata/ec-${ENCRYPTOR_EC_ELLIPTIC_CURVE:-secp256r1}-private-contract.js
+    sed  "s/\"$oldKey\"/\"$newKey\"/g" private-contract.js > $newFileName
+    echo "private-contract sample generated in $newFileName"
+fi

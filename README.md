@@ -250,6 +250,39 @@ Tessera v0.9 introduced the ability to run the privacy manager's enclave as a se
 
 To start a sample 7nodes network that uses remote enclaves run `./{consensus}-start.sh tessera-remote`. By default this will start 7 Transaction Managers, the first 4 of which use a remote enclave. If you wish to change this number, you will need to add the extra parameter `--remoteEnclaves X` in the `--tesseraOptions`, e.g. `./{consensus}-start.sh tessera-remote --tesseraOptions "--remoteEnclaves 7"`.
 
+### Experimenting with alternative curves in Tessera
+By default tessera uses the [NaCl(salt)](https://nacl.cr.yp.to/) library in order to encrypt private payloads (which uses a particular combination of Curve25519, Salsa20, and Poly1305 under the hood). 
+If you would like to experiment with/use alternative curves/symmetric ciphers you can choose to configure the EC Encryptor (which relies on JCA to perform a similar logic to NaCl). 
+The tessera initialization script uses the the following environment variables to generate the encryptor section of the tessera configuration file:
+
+Environment Variable Name|Default Value|Description
+-------------|-------------|-----------
+ENCRYPTOR_TYPE|NACL|The encryptor type. Possible values are EC or NACL.
+ENCRYPTOR_EC_ELLIPTIC_CURVE|secp256r1|The elliptic curve to use. See [SunEC provider](https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html#SunEC) for other options. Depending on te JCE provider you are using there may be additional curves available.
+ENCRYPTOR_EC_SYMMETRIC_CIPHER|AES/GCM/NoPadding|The symmetric cipher to use for encrypting data (GCM IS MANDATORY as an initialisation vector is supplied during encryption).
+ENCRYPTOR_EC_NONCE_LENGTH|24|The nonce length (used as the initialization vector - IV - for symmetric encryption).
+ENCRYPTOR_EC_SHARED_KEY_LENGTH|32|The key length used for symmetric encryption (keep in mind the key derivation operation always produces 32 byte keys - so the encryption algorithm must support it).
+
+Based on the default values above (provided ENCRYPTOR_TYPE is defined as EC) the following configuration entry is produced:
+```json
+...
+    "encryptor": {
+        "type":"EC",
+        "properties":{
+            "symmetricCipher":"AES/GCM/NoPadding",
+            "ellipticCurve":"secp256r1",
+            "nonceLength":"24",
+            "sharedKeyLength":"32"
+        }
+    }
+...
+``` 
+Example:
+```shell script
+export ENCRYPTOR_TYPE=EC
+export ENCRYPTOR_EC_ELLIPTIC_CURVE=sect571k1
+./raft-init.sh
+```
 
 ### Next steps: Sending transactions
 Some simple transaction contracts are included in quorum-examples to demonstrate the privacy features of Quorum.  To learn how to use them see the [7nodes README](examples/7nodes/README.md).
