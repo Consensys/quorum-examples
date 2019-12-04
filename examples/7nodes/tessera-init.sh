@@ -270,7 +270,7 @@ EOF
 
 done
 
-#create a copy of private-contract.js where the public nacl key of tessera node7 is replaced is replaced with the newly generated key
+#create a copy of private-contract.js where the public key of tessera node7 is replaced with the newly generated key
 if [ "$encryptorType" == "EC" ]; then
     oldKey=$(cat keys/tm7.pub)
     newKey=$(cat qdata/c7/tm.pub)
