@@ -270,10 +270,10 @@ EOF
 
 done
 
-#create a copy of private-contract.js where the public key of tessera node7 is replaced with the newly generated key
+#create a copy of private-contract.js where the public key of the tessera node (privateFor) is replaced with the newly generated key of the last node (numNodes)
 if [ "$encryptorType" == "EC" ]; then
     oldKey=$(cat keys/tm7.pub)
-    newKey=$(cat qdata/c7/tm.pub)
+    newKey=$(cat qdata/c${numNodes}/tm.pub)
     #replace all / with \/ in the newKey (otherwise sed complains about it)
     newKey=$(echo $newKey | sed 's/\//\\\//g')
     echo "OldKey: $oldKey NewKey: $newKey"
