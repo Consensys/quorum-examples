@@ -258,7 +258,7 @@ The tessera initialization script uses the the following environment variables t
 Environment Variable Name|Default Value|Description
 -------------|-------------|-----------
 ENCRYPTOR_TYPE|NACL|The encryptor type. Possible values are EC or NACL.
-ENCRYPTOR_EC_ELLIPTIC_CURVE|secp256r1|The elliptic curve to use. See [SunEC provider](https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html#SunEC) for other options. Depending on te JCE provider you are using there may be additional curves available.
+ENCRYPTOR_EC_ELLIPTIC_CURVE|secp256r1|The elliptic curve to use. See [SunEC provider](https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html#SunEC) for other options. Depending on the JCE provider you are using there may be additional curves available.
 ENCRYPTOR_EC_SYMMETRIC_CIPHER|AES/GCM/NoPadding|The symmetric cipher to use for encrypting data (GCM IS MANDATORY as an initialisation vector is supplied during encryption).
 ENCRYPTOR_EC_NONCE_LENGTH|24|The nonce length (used as the initialization vector - IV - for symmetric encryption).
 ENCRYPTOR_EC_SHARED_KEY_LENGTH|32|The key length used for symmetric encryption (keep in mind the key derivation operation always produces 32 byte keys - so the encryption algorithm must support it).
