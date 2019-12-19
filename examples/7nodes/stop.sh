@@ -15,3 +15,10 @@ then
 else
     echo "enclave: no process found"
 fi
+
+if [ "`jps | grep cakeshop`" != "" ]
+then
+    jps | grep cakeshop | cut -d " " -f1 | xargs kill
+else
+    echo "cakeshop: no process found"
+fi

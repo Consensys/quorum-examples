@@ -125,6 +125,10 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
             "app":"ThirdParty",
             "enabled": true,
             "serverAddress": "http://localhost:${serverPortThirdParty}",
+            "cors" : {
+                "allowedMethods" : ["GET", "OPTIONS"],
+                "allowedOrigins" : ["*"]
+            },
             "communicationType" : "REST"
         },
         {
@@ -152,6 +156,10 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
                 "clientTrustStorePassword": "quorum",
                 "clientTrustMode": "TOFU",
                 "knownServersFile": "${DDIR}/knownServers"
+            },
+            "cors" : {
+                "allowedMethods" : ["GET", "OPTIONS"],
+                "allowedOrigins" : ["*"]
             },
             "communicationType" : "REST"
         }

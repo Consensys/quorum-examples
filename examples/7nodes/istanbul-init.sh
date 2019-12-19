@@ -82,3 +82,6 @@ done
 
 #Initialise Tessera configuration
 ./tessera-init.sh
+
+#Initialise Cakeshop configuration
+./cakeshop-init.sh

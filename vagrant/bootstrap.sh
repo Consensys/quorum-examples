@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eu -o pipefail
 
+# nodejs source for apt
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
 apt-get update
 packages=(
     parallel       # utility
@@ -8,6 +11,7 @@ packages=(
     default-jdk    # tessera runtime dependency
     libleveldb-dev # constellation dependency
     libsodium-dev  # constellation dependency
+    nodejs         # cakeshop dependency
 )
 apt-get install -y ${packages[@]}
 
@@ -18,9 +22,15 @@ POROSITY_OUTPUT_FILE="/usr/local/bin/porosity"
 
 TESSERA_HOME=/home/vagrant/tessera
 mkdir -p ${TESSERA_HOME}
+
 TESSERA_VERSION="0.10.2"
 TESSERA_OUTPUT_FILE="${TESSERA_HOME}/tessera.jar"
 TESSERA_ENCLAVE_OUTPUT_FILE="${TESSERA_HOME}/enclave.jar"
+
+CAKESHOP_HOME=/home/vagrant/cakeshop
+mkdir -p ${CAKESHOP_HOME}
+CAKESHOP_VERSION="0.11.0-RC2"
+CAKESHOP_OUTPUT_FILE="${CAKESHOP_HOME}/cakeshop.war"
 
 QUORUM_VERSION="2.4.0"
 QUORUM_OUTPUT_FILE="geth.tar.gz"
@@ -33,12 +43,14 @@ parallel --link wget -q -O ::: \
     ${TESSERA_ENCLAVE_OUTPUT_FILE} \
     ${QUORUM_OUTPUT_FILE} \
     ${POROSITY_OUTPUT_FILE} \
+    ${CAKESHOP_OUTPUT_FILE} \
     ::: \
     https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz \
     https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/tessera-app/${TESSERA_VERSION}/tessera-app-${TESSERA_VERSION}-app.jar \
     https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/enclave-jaxrs/${TESSERA_VERSION}/enclave-jaxrs-${TESSERA_VERSION}-server.jar \
     https://dl.bintray.com/quorumengineering/quorum/v${QUORUM_VERSION}/geth_v${QUORUM_VERSION}_linux_amd64.tar.gz \
-    https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity
+    https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity \
+    https://github.com/jpmorganchase/cakeshop/releases/download/v${CAKESHOP_VERSION}/cakeshop-${CAKESHOP_VERSION}.war
 
 # install constellation
 echo "Installing Constellation ${CVER}"
@@ -60,6 +72,11 @@ rm -f ${QUORUM_OUTPUT_FILE}
 # install Porosity
 echo "Installing Porosity"
 chmod 0755 ${POROSITY_OUTPUT_FILE}
+
+# install cakeshop
+echo "Installing Cakeshop ${CAKESHOP_VERSION}"
+echo "CAKESHOP_JAR=${CAKESHOP_OUTPUT_FILE}" >> /home/vagrant/.profile
+
 
 # copy examples
 cp -r /vagrant/examples /home/vagrant/quorum-examples
