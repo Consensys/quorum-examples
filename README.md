@@ -251,7 +251,7 @@ Tessera v0.9 introduced the ability to run the privacy manager's enclave as a se
 To start a sample 7nodes network that uses remote enclaves run `./{consensus}-start.sh tessera-remote`. By default this will start 7 Transaction Managers, the first 4 of which use a remote enclave. If you wish to change this number, you will need to add the extra parameter `--remoteEnclaves X` in the `--tesseraOptions`, e.g. `./{consensus}-start.sh tessera-remote --tesseraOptions "--remoteEnclaves 7"`.
 
 ### Experimenting with alternative curves in Tessera
-By default tessera uses the [NaCl(salt)](https://nacl.cr.yp.to/) library in order to encrypt private payloads (which uses a particular combination of Curve25519, Salsa20, and Poly1305 under the hood). 
+By default tessera uses the [NaCl(salt)](https://nacl.cr.yp.to/) library in order to encrypt private payloads.
 If you would like to experiment with/use alternative curves/symmetric ciphers you can choose to configure the EC Encryptor (which relies on JCA to perform a similar logic to NaCl). 
 The tessera initialization script uses the the following environment variables to generate the encryptor section of the tessera configuration file:
 
