@@ -22,7 +22,7 @@ POROSITY_OUTPUT_FILE="/usr/local/bin/porosity"
 
 TESSERA_HOME=/home/vagrant/tessera
 mkdir -p ${TESSERA_HOME}
-TESSERA_VERSION="0.10.1"
+TESSERA_VERSION="0.10.2"
 TESSERA_OUTPUT_FILE="${TESSERA_HOME}/tessera.jar"
 TESSERA_ENCLAVE_OUTPUT_FILE="${TESSERA_HOME}/enclave.jar"
 
