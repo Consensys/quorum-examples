@@ -157,10 +157,6 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
                 "clientTrustMode": "TOFU",
                 "knownServersFile": "${DDIR}/knownServers"
             },
-            "cors" : {
-                "allowedMethods" : ["GET", "OPTIONS"],
-                "allowedOrigins" : ["*"]
-            },
             "communicationType" : "REST"
         }
     ],
