@@ -2,36 +2,36 @@
   {
     "name": "node1",
     "rpcUrl": "http://host.docker.internal:22000",
-    "transactionManagerUrl": "http://host.docker.internal:9001/partyinfo"
+    "transactionManagerUrl": "http://host.docker.internal:9081/partyinfo/keys"
   },
   {
     "name": "node2",
     "rpcUrl": "http://host.docker.internal:22001",
-    "transactionManagerUrl": "http://host.docker.internal:9002/partyinfo"
+    "transactionManagerUrl": "http://host.docker.internal:9082/partyinfo/keys"
   },
   {
     "name": "node3",
     "rpcUrl": "http://host.docker.internal:22002",
-    "transactionManagerUrl": "http://host.docker.internal:9003/partyinfo"
+    "transactionManagerUrl": "http://host.docker.internal:9083/partyinfo/keys"
   },
   {
     "name": "node4",
     "rpcUrl": "http://host.docker.internal:22003",
-    "transactionManagerUrl": "http://host.docker.internal:9004/partyinfo"
+    "transactionManagerUrl": "http://host.docker.internal:9084/partyinfo/keys"
   },
   {
     "name": "node5",
     "rpcUrl": "http://host.docker.internal:22004",
-    "transactionManagerUrl": "http://host.docker.internal:9005/partyinfo"
+    "transactionManagerUrl": "http://host.docker.internal:9085/partyinfo/keys"
   },
   {
     "name": "node6",
     "rpcUrl": "http://host.docker.internal:22005",
-    "transactionManagerUrl": "http://host.docker.internal:9006/partyinfo"
+    "transactionManagerUrl": "http://host.docker.internal:9086/partyinfo/keys"
   },
   {
     "name": "node7",
     "rpcUrl": "http://host.docker.internal:22006",
-    "transactionManagerUrl": "http://host.docker.internal:9007/partyinfo"
+    "transactionManagerUrl": "http://host.docker.internal:9087/partyinfo/keys"
   }
 ]
