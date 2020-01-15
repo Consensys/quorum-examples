@@ -27,6 +27,7 @@ x-quorum-def:
     - -c
     - |
       UDS_WAIT=10
+      if [ "$${PRIVATE_CONFIG}" != "ignore" ]; then
       for i in $$(seq 1 100)
       do
         set -e
@@ -38,6 +39,7 @@ x-quorum-def:
           sleep $${UDS_WAIT}
         fi
       done
+      fi
       DDIR=/qdata/dd
       rm -rf $${DDIR}
       mkdir -p $${DDIR}/keystore
@@ -89,6 +91,10 @@ x-tx-manager-def:
     - /bin/sh
     - -c
     - |
+      if [ "$${PRIVATE_CONFIG}" == "ignore" ]; then
+        /bin/true
+        exit 0
+      fi
       DDIR=/qdata/tm
       rm -rf $${DDIR}
       mkdir -p $${DDIR}
@@ -239,7 +245,7 @@ services:
     depends_on:
       - txmanager1
     environment:
-      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=1
     networks:
       quorum-examples-net:
@@ -256,6 +262,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.101
     environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=1
   node2:
     << : *quorum-def
@@ -268,7 +275,7 @@ services:
     depends_on:
       - txmanager2
     environment:
-      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=2
     networks:
       quorum-examples-net:
@@ -285,6 +292,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.102
     environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=2
   node3:
     << : *quorum-def
@@ -297,7 +305,7 @@ services:
     depends_on:
       - txmanager3
     environment:
-      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=3
     networks:
       quorum-examples-net:
@@ -314,6 +322,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.103
     environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=3
   node4:
     << : *quorum-def
@@ -326,7 +335,7 @@ services:
     depends_on:
       - txmanager4
     environment:
-      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=4
     networks:
       quorum-examples-net:
@@ -343,6 +352,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.104
     environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=4
   node5:
     << : *quorum-def
@@ -355,7 +365,7 @@ services:
     depends_on:
       - txmanager5
     environment:
-      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=5
     networks:
       quorum-examples-net:
@@ -372,6 +382,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.105
     environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=5
   node6:
     << : *quorum-def
@@ -384,7 +395,7 @@ services:
     depends_on:
       - txmanager6
     environment:
-      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=6
     networks:
       quorum-examples-net:
@@ -401,6 +412,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.106
     environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=6
   node7:
     << : *quorum-def
@@ -413,7 +425,7 @@ services:
     depends_on:
       - txmanager7
     environment:
-      - PRIVATE_CONFIG=/qdata/tm/tm.ipc
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=7
     networks:
       quorum-examples-net:
@@ -430,6 +442,7 @@ services:
       quorum-examples-net:
         ipv4_address: 172.16.239.107
     environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=7
   cakeshop:
     << : *cakeshop-def
