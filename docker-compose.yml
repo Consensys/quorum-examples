@@ -46,6 +46,7 @@ x-quorum-def:
       mkdir -p $${DDIR}/geth
       cp /examples/raft/nodekey$${NODE_ID} $${DDIR}/geth/nodekey
       cp /examples/keys/key$${NODE_ID} $${DDIR}/keystore/
+      cp /examples/disallowed-nodes.json $${DDIR}/
       cat /examples/permissioned-nodes.json | sed 's/^\(.*\)@.*\?\(.*\)raftport=5040\([0-9]\)\(.*\)$$/\1@172.16.239.1\3:21000?discport=0\&raftport=50400\4/g' > $${DDIR}/static-nodes.json
       cp $${DDIR}/static-nodes.json $${DDIR}/permissioned-nodes.json
       cat $${DDIR}/static-nodes.json
