@@ -35,11 +35,7 @@ own connections.
     ```
    
 2. Send in a public transaction and check it is minted.
-
-    !!! note
-        * The block creation period is set to 2 seconds, so you may have to wait upto that amount of time for the transaction to be minted.
-        * The transaction hashes will likely be different, but the contract addresses will be the same for your network.
-    
+ 
     ```bash
     # Send in the transaction
     $ docker exec -it addnode_node1_1 geth --exec 'loadScript("/examples/public-contract.js")' attach /qdata/dd/geth.ipc
@@ -66,8 +62,7 @@ connections with those peers.
 4. Let's check to see if the nodes are in sync. If they are, they will have similar block numbers, which is enough for 
 this example; there are other ways to tell if nodes are on the same chain, e.g. matching block hashes.
 
-    !!! note
-        Depending on timing, the second may have an extra block or two.
+    Depending on timing, the second may have an extra block or two.
 
     ```bash
     # Fetch the latest block number for node 1
@@ -127,9 +122,6 @@ file.
    
 2. Send in a public transaction and check it is minted.
 
-    !!! note
-        * The transaction hashes will likely be different, but the contract addresses will be the same for your network.
-    
     ```bash
     # Send in the transaction
     $ docker exec -it addnode_node1_1 geth --exec 'loadScript("/examples/public-contract.js")' attach /qdata/dd/geth.ipc
@@ -216,9 +208,6 @@ propagating transactions, the node must appear is others nodes' `permissioned-no
    
 2. Send in a public transaction and check it is minted.
 
-    !!! note
-        * The transaction hashes will likely be different, but the contract addresses will be the same for your network.
-    
     ```bash
     # Send in the transaction
     $ docker exec -it addnode_node1_1 geth --exec 'loadScript("/examples/public-contract.js")' attach /qdata/dd/geth.ipc
@@ -277,10 +266,8 @@ node 7.
     $
     ```
 
-7. Node 7 should now be synced up through node 1. Let's see if we can see the contract we made earlier.
-
-    !!! note
-        Quorum attempts to re-establish nodes every 30 seconds, so you may have to wait for the sync to happen.
+7. Node 7 should now be synced up through node 1. Let's see if we can see the contract we made earlier. Quorum attempts 
+to re-establish nodes every 30 seconds, so you may have to wait for the sync to happen.
 
     ```bash
     $ docker exec -it addnode_node7_1 geth --exec 'var private = eth.contract([{"constant":true,"inputs":[],"name":"get","outputs":[{"name":"retVal","type":"uint256"}],"payable":false,"type":"function"}]).at("0x1932c48b2bf8102ba33b4a6b545c32236e342f34"); private.get();' attach /qdata/dd/geth.ipc
