@@ -75,9 +75,9 @@ issues with the version of curl bundled with Vagrant.
    cd quorum-examples
    docker-compose up -d
    ```
-1. By default, the Quorum network is created with Tessera privacy managers and Istanbul BFT consensus. To use Raft consensus, set the environment variable `QUORUM_CONSENSUS=raft` before running `docker-compose`
+1. By default, the Quorum network is created with Tessera privacy managers and Istanbul BFT consensus. To use Raft consensus, set the environment variable `QUORUM_CONSENSUS=raft` before running `docker-compose`. To start a Quorum node without its associated privacy transaction manager, set `PRIVATE_CONFIG=ignore`. `QUORUM_CONSENSUS` and `PRIVATE_CONFIG` can be set together.
    ```sh
-   QUORUM_CONSENSUS=raft docker-compose up -d
+   PRIVATE_CONFIG=ignore QUORUM_CONSENSUS=raft docker-compose up -d
    ```
 1. Run `docker ps` to verify that all quorum-examples containers (7 nodes and 7 tx managers) are **healthy**
 1. Run `docker logs <container-name> -f` to view the logs for a particular container
