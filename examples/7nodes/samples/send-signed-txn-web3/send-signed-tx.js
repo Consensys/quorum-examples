@@ -46,7 +46,6 @@ web3.eth.getAccounts().then(re => {
   const tx = new EthereumTx(txParams);
 
   tx.sign(privateKey);
-  const serializedTx = tx.serialize();
   var rawTx = '0x' + tx.serialize().toString('hex');
 
   console.log('raw transaction: ', rawTx);
