@@ -16,7 +16,7 @@ function usage() {
   exit -1
 }
 
-privacyImpl=constellation
+privacyImpl=tessera
 tesseraOptions=
 consensus=
 while (( "$#" )); do

@@ -218,7 +218,8 @@ getInputs(){
 
 privacyImpl=tessera
 tesseraOptions=
-consensus=
+consensus=raft
+numNodes=7
 while (( "$#" )); do
     case "$1" in
         raft)
@@ -243,6 +244,15 @@ while (( "$#" )); do
             ;;
         --tesseraOptions)
             tesseraOptions=$2
+            shift 2
+            ;;
+        --numNodes)
+            re='^[0-9]+$'
+            if ! [[ $2 =~ $re ]] ; then
+                echo "ERROR: numberOfNodes value must be a number"
+                usage
+            fi
+            numNodes=$2
             shift 2
             ;;
         --help)
@@ -277,7 +287,7 @@ getInputs
 # init the network
 displayMsg "Starting the network in $consensus mode"
 echo "Initializing the network"
-./init.sh $consensus
+./init.sh $consensus --numNodes $numNodes
 echo "Starting the network"
 ./start.sh $consensus $privacyImpl
 

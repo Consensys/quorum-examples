@@ -16,6 +16,23 @@ function usage() {
   exit -1
 }
 
+function buildGenesisFile() {
+    genesisFile=$1
+    nodes=$2
+
+    extraDataLine=`awk '/extraData/{print NR; exit}' ./istanbul-genesis.json`
+    totalLines=`cat ./istanbul-genesis.json| wc -l`
+    i=$(( $extraDataLine -1 ))
+    j=$(( $totalLines - extraDataLine ))
+
+    extraData=`cat ./istanbul-extradata.txt | grep ${nodes}node | cut -f2 -d ":"`
+
+    cat ./istanbul-genesis.json | head -$i >> $genesisFile
+    echo -e "\t \"extraData\": ${extraData}," >> $genesisFile
+    cat ./istanbul-genesis.json | tail -$j >> $genesisFile
+}
+
+
 istanbulTools="false"
 numNodes=7
 while (( "$#" )); do
@@ -56,7 +73,24 @@ if [[ "$istanbulTools" == "true" ]]; then
     cp genesis.json istanbul-genesis.json
 fi
 
-numPermissionedNodes=`grep "enode" permissioned-nodes.json |wc -l`
+permNodesFile=./permissioned-nodes.json
+
+tempPermNodesFile=./permissioned-nodes-${numNodes}.json
+if test -f "$tempPermNodesFile"; then
+    permNodesFile=$tempPermNodesFile
+fi
+
+genesisFile=./istanbul-genesis.json
+tempGenesisFile=
+
+if [[ "$numNodes" -ne 7 ]] ; then
+    # number of nodes is less than 7, update genesis file
+    tempGenesisFile="istanbul-genesis-${numNodes}.json"
+    buildGenesisFile $tempGenesisFile $numNodes
+    genesisFile=$tempGenesisFile
+fi
+
+numPermissionedNodes=`grep "enode" ${permNodesFile} |wc -l`
 if [[ $numPermissionedNodes -ne $numNodes ]]; then
     echo "ERROR: $numPermissionedNodes nodes are configured in 'permissioned-nodes.json', but expecting configuration for $numNodes nodes"
     exit -1
@@ -72,12 +106,12 @@ do
     else
         cp raft/nodekey${i} qdata/dd${i}/geth/nodekey
     fi
-    cp permissioned-nodes.json qdata/dd${i}/static-nodes.json
+    cp ${permNodesFile} qdata/dd${i}/static-nodes.json
     if ! [[ -z "${STARTPERMISSION+x}" ]] ; then
-        cp permissioned-nodes.json qdata/dd${i}/permissioned-nodes.json
+        cp ${permNodesFile} qdata/dd${i}/permissioned-nodes.json
     fi
     cp keys/key${i} qdata/dd${i}/keystore
-    geth --datadir qdata/dd${i} init istanbul-genesis.json
+    geth --datadir qdata/dd${i} init $genesisFile
 done
 
 #Initialise Tessera configuration
@@ -85,3 +119,4 @@ done
 
 #Initialise Cakeshop configuration
 ./cakeshop-init.sh
+rm -f $tempGenesisFile
