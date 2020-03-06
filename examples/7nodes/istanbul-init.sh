@@ -80,20 +80,19 @@ if test -f "$tempPermNodesFile"; then
     permNodesFile=$tempPermNodesFile
 fi
 
-genesisFile=./istanbul-genesis.json
-tempGenesisFile=
-
-if [[ "$numNodes" -ne 7 ]] ; then
-    # number of nodes is less than 7, update genesis file
-    tempGenesisFile="istanbul-genesis-${numNodes}.json"
-    buildGenesisFile $tempGenesisFile $numNodes
-    genesisFile=$tempGenesisFile
-fi
-
 numPermissionedNodes=`grep "enode" ${permNodesFile} |wc -l`
 if [[ $numPermissionedNodes -ne $numNodes ]]; then
     echo "ERROR: $numPermissionedNodes nodes are configured in 'permissioned-nodes.json', but expecting configuration for $numNodes nodes"
     exit -1
+fi
+
+genesisFile=./istanbul-genesis.json
+tempGenesisFile=
+if [[ "$istanbulTools" == "false" ]] && [[ "$numNodes" -lt 7 ]] ; then
+    # number of nodes is less than 7, update genesis file
+    tempGenesisFile="istanbul-genesis-${numNodes}.json"
+    buildGenesisFile $tempGenesisFile $numNodes
+    genesisFile=$tempGenesisFile
 fi
 
 for i in `seq 1 ${numNodes}`

@@ -5,10 +5,11 @@ set -e
 function usage() {
   echo ""
   echo "Usage:"
-  echo "    $0 [raft | istanbul | clique]"
+  echo "    $0 [raft | istanbul | clique] [--numNodes numberOfNodes]"
   echo ""
   echo "Where:"
   echo "    raft | istanbul | clique (default = raft): specifies which consensus algorithm to use"
+  echo "    numberOfNodes is the number of nodes to initialise (default = $numNodes)"
   echo ""
   exit -1
 }
@@ -63,6 +64,11 @@ while (( "$#" )); do
             ;;
     esac
 done
+
+if  [[ "$numNodes" -ge 7 ]] ; then
+    echo "number of node greater than 7 not supported"
+    exit -1
+fi
 
 # check if the number of nodes is less than 7. if yes dynamically create the permissioned-nodes.json
 createPermissionedNodesJson $numNodes
