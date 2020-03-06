@@ -65,7 +65,7 @@ while (( "$#" )); do
     esac
 done
 
-if  [[ "$numNodes" -ge 7 ]] ; then
+if  [[ "$numNodes" -gt 7 ]] ; then
     echo "number of node greater than 7 not supported"
     exit -1
 fi

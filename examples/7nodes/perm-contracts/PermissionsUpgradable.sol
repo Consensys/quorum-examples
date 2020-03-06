@@ -7,7 +7,6 @@ import "./PermissionsInterface.sol";
     contract. The contract is owned by a guardian account. Only the
     guardian account can change the implementation contract address as
     business needs.
-
   */
 contract PermissionsUpgradable {
 

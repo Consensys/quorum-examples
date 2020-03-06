@@ -7,7 +7,6 @@ import "./PermissionsUpgradable.sol";
     contract only. there are few view functions exposed as public and
     can be called directly. these are invoked by quorum for populating
     permissions data in cache
-
   */
 contract RoleManager {
     PermissionsUpgradable private permUpgradable;
