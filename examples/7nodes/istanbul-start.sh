@@ -5,11 +5,13 @@ set -e
 function usage() {
   echo ""
   echo "Usage:"
-  echo "    $0 [tessera | tessera-remote | constellation] [--tesseraOptions \"options for Tessera start script\"]"
+  echo "    $0 [tessera | tessera-remote | constellation] [--tesseraOptions \"options for Tessera start script\"] [--blockPeriod blockPeriod] [--verbosity verbosity]"
   echo ""
   echo "Where:"
   echo "    tessera | tessera-remote | constellation (default = tessera): specifies which privacy implementation to use"
   echo "    --tesseraOptions: allows additional options as documented in tessera-start.sh usage which is shown below:"
+  echo "    --blockPeriod: block period default is 5 seconds"
+  echo "    --verbosity: verbosity for logging default is 3"
   echo ""
   echo "Note that this script will examine the file qdata/numberOfNodes to"
   echo "determine how many nodes to start up. If the file doesn't exist"
@@ -49,6 +51,8 @@ function performValidation() {
 
 privacyImpl=tessera
 tesseraOptions=
+blockPeriod=5
+verbosity=3
 while (( "$#" )); do
     case "$1" in
         tessera)
@@ -65,6 +69,14 @@ while (( "$#" )); do
             ;;
         --tesseraOptions)
             tesseraOptions=$2
+            shift 2
+            ;;
+        --blockPeriod)
+            blockPeriod=$2
+            shift 2
+            ;;
+        --verbosity)
+            verbosity=$2
             shift 2
             ;;
         --help)
@@ -105,7 +117,7 @@ fi
 echo "[*] Starting ${numNodes} Ethereum nodes with ChainID and NetworkId of $NETWORK_ID"
 QUORUM_GETH_ARGS=${QUORUM_GETH_ARGS:-}
 set -v
-ARGS="--nodiscover --istanbul.blockperiod 5 --networkid $NETWORK_ID --syncmode full --mine --minerthreads 1 --rpc --rpccorsdomain=* --rpcvhosts=* --rpcaddr 0.0.0.0 --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul,quorumPermission --unlock 0 --password passwords.txt $QUORUM_GETH_ARGS"
+ARGS="--nodiscover --verbosity ${verbosity} --istanbul.blockperiod ${blockPeriod} --networkid $NETWORK_ID --syncmode full --mine --minerthreads 1 --rpc --rpccorsdomain=* --rpcvhosts=* --rpcaddr 0.0.0.0 --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul,quorumPermission --unlock 0 --password passwords.txt $QUORUM_GETH_ARGS"
 
 basePort=21000
 baseRpcPort=22000

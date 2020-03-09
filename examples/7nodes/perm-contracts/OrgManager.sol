@@ -16,7 +16,6 @@ import "./PermissionsUpgradable.sol";
         4 - Org in Suspended,
      Once the node is blacklisted no further activity on the node is
      possible.
-
   */
 contract OrgManager {
     string private adminOrgId;

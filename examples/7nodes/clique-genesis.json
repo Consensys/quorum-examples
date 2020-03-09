@@ -28,6 +28,7 @@
     "eip158Block": 0,
     "isQuorum": true,
     "maxCodeSize" : 35,
+    "maxCodeSizeChangeBlock" : 0,
     "clique": {
       "period": 5,
       "epoch": 30000

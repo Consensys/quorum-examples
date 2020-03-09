@@ -7,7 +7,6 @@ import "./PermissionsUpgradable.sol";
   * @notice This contract is the interface for permissions implementation
     contract. for any call, it forwards the call to the implementation
     contract
-
   */
 contract PermissionsInterface {
     PermissionsImplementation private permImplementation;

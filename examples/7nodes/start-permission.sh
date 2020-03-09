@@ -19,12 +19,15 @@ sleepTime=1
 function usage() {
   echo ""
   echo "Usage:"
-  echo "    $0 [raft | istanbul | clique] [tessera | constellation] [--tesseraOptions \"options for Tessera start script\"]"
+  echo "    $0 [raft | istanbul | clique] [tessera | constellation] [--tesseraOptions \"options for Tessera start script\"] [--numNodes numberOfNodes] [--blockPeriod blockPeriod] [--verbosity verbosity]"
   echo ""
   echo "Where:"
   echo "    raft | istanbul | clique : specifies which consensus algorithm to use"
   echo "    tessera | constellation (default = tessera): specifies which privacy implementation to use"
   echo "    --tesseraOptions: allows additional options as documented in tessera-start.sh usage which is shown below:"
+  echo "    numberOfNodes is the number of nodes to initialise (default = $numNodes)"
+  echo "    --blockPeriod: block period default is 5 seconds for IBFT and 50ms for Raft"
+  echo "    --verbosity: verbosity for logging default is 3"
   echo ""
   ./tessera-start.sh --help
   exit -1
@@ -165,19 +168,6 @@ permissionInit(){
    done
 }
 
-waitPortClose(){
-    DOWN=true
-    while $DOWN; do
-        sleep 1
-        DOWN=false
-        i=`netstat -n | grep TIME_WAIT | grep -v 443| wc -l`
-        if [ $i -gt 1 ]
-        then
-            DOWN=true
-        fi
-    done
-}
-
 runInit(){
     cd ./output/
     x=$(geth attach ipc:$localPath/qdata/dd1/geth.ipc <<EOF
@@ -200,25 +190,32 @@ displayMsg(){
 }
 
 getInputs(){
+    blockPeriod=$1
     read -p "Enter Network Admin Org Name: "  nwAdminOrg
     read -p "Enter Network Admin Role Name: "  nwAdminRole
     read -p "Enter Org Admin Role Name: "  orgAdminRole
     echo "For Sub Orgs"
     read -p "Enter Allowed Breadth [numeric]: "  subOrgBreadth
     read -p "Enter Allowed Depth [numeric]: "  subOrgDepth
-    if [ "$consensus" == "istanbul" ]
+    if [ "$consensus" == "istanbul" ] && [ "$blockPeriod" == "" ]
     then
         read -p "Enter Block period as in geth start script: " blockPeriod
     elif [ "$consensus" == "clique" ]
     then
         read -p "Enter Block period as given in genesis.json: " blockPeriod
     fi
-    sleepTime=$(( $blockPeriod + 2 ))
+
+    if [ "$consensus" != "raft" ]; then
+        sleepTime=$(( $blockPeriod + 2 ))
+    fi
 }
 
 privacyImpl=tessera
 tesseraOptions=
-consensus=
+consensus=raft
+numNodes=7
+blockPeriod=
+verbosity=3
 while (( "$#" )); do
     case "$1" in
         raft)
@@ -245,6 +242,24 @@ while (( "$#" )); do
             tesseraOptions=$2
             shift 2
             ;;
+        --numNodes)
+            re='^[0-9]+$'
+            if ! [[ $2 =~ $re ]] ; then
+                echo "ERROR: numberOfNodes value must be a number"
+                usage
+            fi
+            numNodes=$2
+            shift 2
+            ;;
+        --blockPeriod)
+            blockPeriod=$2
+            shift 2
+            ;;
+        --verbosity)
+            verbosity=$2
+            shift 2
+            ;;
+
         --help)
             shift
             usage
@@ -261,8 +276,15 @@ if [ "$consensus" == "" ]; then
     exit 1
 fi
 
+if [ "$blockPeriod" == "" ]; then
+    if [ "$consensus" == "raft" ]; then
+        blockPeriod=50
+    elif [ "$consensus" == "istanbul" ]; then
+        blockPeriod=5
+    fi
+fi
+
 ./stop.sh
-waitPortClose
 
 export STARTPERMISSION=1
 
@@ -272,14 +294,19 @@ checkSolidityVersion
 checkQuorumVersion
 
 displayMsg "Input Permissions Specific parameters"
-getInputs
+getInputs $blockPeriod
 
 # init the network
 displayMsg "Starting the network in $consensus mode"
 echo "Initializing the network"
-./init.sh $consensus
+./init.sh $consensus --numNodes $numNodes
+
 echo "Starting the network"
-./start.sh $consensus $privacyImpl
+if [ "$blockPeriod" == "" ]; then
+    ./start.sh $consensus $privacyImpl --verbosity ${verbosity}
+else
+    ./start.sh $consensus $privacyImpl --verbosity ${verbosity} --blockPeriod ${blockPeriod}
+fi
 
 sleep 60
 
@@ -329,7 +356,11 @@ displayMsg "Restarting the network with permissions"
 waitPortClose
 
 # Bring the netowrk back up
-./start.sh $consensus $privacyImpl
+if [ "$blockPeriod" == "" ]; then
+    ./start.sh $consensus $privacyImpl --verbosity ${verbosity}
+else
+    ./start.sh $consensus $privacyImpl --verbosity ${verbosity} --blockPeriod ${blockPeriod}
+fi
 
 #clean up all temporary directories
 rm -rf ./output deploy-*.js

@@ -12,7 +12,6 @@ import "./PermissionsUpgradable.sol";
         0 - Not in list
         1 - Account pending approval
         2 - Active
-        3 - Inactive
         4 - Suspended
         5 - Blacklisted
         6 - Revoked
@@ -23,7 +22,6 @@ import "./PermissionsUpgradable.sol";
      When adding a new org admin account to an existing org, the existing org
      admin account will be in revoked status and can be assigned a new role
      later
-
   */
 contract AccountManager {
     PermissionsUpgradable private permUpgradable;
