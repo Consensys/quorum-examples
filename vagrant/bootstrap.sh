@@ -4,11 +4,12 @@ set -eu -o pipefail
 # nodejs source for apt
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
+add-apt-repository ppa:openjdk-r/ppa
 apt-get update
 packages=(
     parallel       # utility
     unzip          # tessera startup script dependency
-    default-jdk    # tessera runtime dependency
+    openjdk-11-jdk     # tessera runtime dependency
     libleveldb-dev # constellation dependency
     libsodium-dev  # constellation dependency
     nodejs         # cakeshop dependency
