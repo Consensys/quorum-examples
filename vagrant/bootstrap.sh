@@ -81,12 +81,6 @@ chmod 0755 ${POROSITY_OUTPUT_FILE}
 echo "Installing Cakeshop ${CAKESHOP_VERSION}"
 echo "CAKESHOP_JAR=${CAKESHOP_OUTPUT_FILE}" >> /home/vagrant/.profile
 
-#echo "Installing solc version 0.5.5"
-#sudo add-apt-repository ppa:ethereum/ethereum
-#sudo apt-get update
-#apt-get install solc
-
-
 # copy examples
 cp -r /vagrant/examples /home/vagrant/quorum-examples
 chown -R vagrant:vagrant /home/vagrant/quorum-examples
