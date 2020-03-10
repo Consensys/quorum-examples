@@ -86,8 +86,6 @@ mkdir -p qdata/logs
 echo "[*] Configuring for $numNodes node(s)"
 echo $numNodes > qdata/numberOfNodes
 
-permNodesFile=./permissioned-nodes.json
-
 permNodesFile=./permissioned-nodes-${numNodes}.json
 createPermissionedNodesJson $numNodes
 
