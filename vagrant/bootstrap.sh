@@ -60,9 +60,12 @@ parallel --link wget -q -O ::: \
 # install constellation
 echo "Installing Constellation ${CVER}"
 tar xfJ ${CONSTELLATION_OUTPUT_FILE}
-cp ${CREL}/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node && chmod 0755 /usr/local/bin/solc
+cp ${CREL}/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node
 rm -rf ${CREL}
 rm -f ${CONSTELLATION_OUTPUT_FILE}
+
+# make solc executable
+chmod 0755 /usr/local/bin/solc
 
 # install tessera
 echo "Installing Tessera ${TESSERA_VERSION}"
