@@ -212,7 +212,7 @@ x-tx-manager-def:
       esac
 x-cakeshop-def:
   &cakeshop-def
-  image: "${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0-RC2}"
+  image: "${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0}"
   expose:
     - "8999"
   restart: "no"
@@ -229,7 +229,7 @@ x-cakeshop-def:
       DDIR=/qdata/cakeshop/local
       rm -rf $${DDIR}
       mkdir -p $${DDIR}
-      DOCKER_IMAGE="${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0-RC2}"
+      DOCKER_IMAGE="${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0}"
       cp /examples/cakeshop/application.properties.template $${DDIR}/application.properties
       cp /examples/cakeshop/7nodes_docker.json $${DDIR}/7nodes.json
       java -Xms128M -Xmx128M -Dcakeshop.config.dir=/qdata/cakeshop -Dlogging.path=/qdata/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
