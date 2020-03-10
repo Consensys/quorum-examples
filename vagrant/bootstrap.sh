@@ -20,6 +20,9 @@ CREL="constellation-$CVER-ubuntu1604"
 CONSTELLATION_OUTPUT_FILE="constellation.tar.xz"
 POROSITY_OUTPUT_FILE="/usr/local/bin/porosity"
 
+SOLC_VER="0.5.5"
+SOLC_OUTPUT_FILE="/usr/local/bin/solc"
+
 TESSERA_HOME=/home/vagrant/tessera
 mkdir -p ${TESSERA_HOME}
 TESSERA_VERSION="0.10.3"
@@ -43,18 +46,20 @@ parallel --link wget -q -O ::: \
     ${QUORUM_OUTPUT_FILE} \
     ${POROSITY_OUTPUT_FILE} \
     ${CAKESHOP_OUTPUT_FILE} \
+    ${SOLC_OUTPUT_FILE} \
     ::: \
     https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz \
     https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/tessera-app/${TESSERA_VERSION}/tessera-app-${TESSERA_VERSION}-app.jar \
     https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/enclave-jaxrs/${TESSERA_VERSION}/enclave-jaxrs-${TESSERA_VERSION}-server.jar \
     https://dl.bintray.com/quorumengineering/quorum/v${QUORUM_VERSION}/geth_v${QUORUM_VERSION}_linux_amd64.tar.gz \
     https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity \
-    https://github.com/jpmorganchase/cakeshop/releases/download/v${CAKESHOP_VERSION}/cakeshop-${CAKESHOP_VERSION}.war
+    https://github.com/jpmorganchase/cakeshop/releases/download/v${CAKESHOP_VERSION}/cakeshop-${CAKESHOP_VERSION}.war \
+    https://github.com/ethereum/solidity/releases/download/v${SOLC_VER}/solc-static-linux
 
 # install constellation
 echo "Installing Constellation ${CVER}"
 tar xfJ ${CONSTELLATION_OUTPUT_FILE}
-cp ${CREL}/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node
+cp ${CREL}/constellation-node /usr/local/bin && chmod 0755 /usr/local/bin/constellation-node && chmod 0755 /usr/local/bin/solc
 rm -rf ${CREL}
 rm -f ${CONSTELLATION_OUTPUT_FILE}
 
@@ -75,6 +80,11 @@ chmod 0755 ${POROSITY_OUTPUT_FILE}
 # install cakeshop
 echo "Installing Cakeshop ${CAKESHOP_VERSION}"
 echo "CAKESHOP_JAR=${CAKESHOP_OUTPUT_FILE}" >> /home/vagrant/.profile
+
+#echo "Installing solc version 0.5.5"
+#sudo add-apt-repository ppa:ethereum/ethereum
+#sudo apt-get update
+#apt-get install solc
 
 
 # copy examples

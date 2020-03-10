@@ -13,6 +13,33 @@ function usage() {
   exit -1
 }
 
+function createPermissionedNodesJson(){
+    nodes=$1
+    i=$(( ${nodes} + 1))
+
+    permFile=./permissioned-nodes-${nodes}.json
+    creFile=true
+    if [[ "$nodes" -le 7 ]] ; then
+        # check if file exists and the enode count is matching
+        if test -f "$permFile"; then
+            numPermissionedNodes=`grep "enode" ${permFile} |wc -l`
+            if [[ $numPermissionedNodes -ne $nodes ]]; then
+                rm -f ${permFile}
+            else
+                creFile=false
+            fi
+        fi
+    else
+        cp ./permissioned-nodes.json ${permFile}
+        creFile=false
+    fi
+    if [[ "$creFile" == "true" ]]; then
+        cat ./permissioned-nodes.json | head -${nodes} >> ./${permFile}
+        cat ./permissioned-nodes.json | head -$i | tail -1 | cut -f1 -d "," >> ./${permFile}
+        cat ./permissioned-nodes.json | tail -1 >> ./${permFile}
+    fi
+}
+
 function buildGenesisFile() {
     genesisFile=$1
     nodes=$2
@@ -61,14 +88,13 @@ echo $numNodes > qdata/numberOfNodes
 
 permNodesFile=./permissioned-nodes.json
 
-tempPermNodesFile=./permissioned-nodes-${numNodes}.json
-if test -f "$tempPermNodesFile"; then
-    permNodesFile=$tempPermNodesFile
-fi
+permNodesFile=./permissioned-nodes-${numNodes}.json
+createPermissionedNodesJson $numNodes
 
 numPermissionedNodes=`grep "enode" ${permNodesFile}  |wc -l`
 if [[ $numPermissionedNodes -ne $numNodes ]]; then
     echo "ERROR: $numPermissionedNodes nodes are configured in 'permissioned-nodes.json', but expecting configuration for $numNodes nodes"
+    rm -f $permNodesFile
     exit -1
 fi
 
@@ -98,4 +124,4 @@ done
 #Initialise Cakeshop configuration
 ./cakeshop-init.sh
 
-rm -f $tempGenesisFile
+rm -f $tempGenesisFile $permNodesFile
