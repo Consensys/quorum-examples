@@ -16,49 +16,6 @@ function usage() {
   exit -1
 }
 
-function buildGenesisFile() {
-    genesisFile=$1
-    nodes=$2
-
-    extraDataLine=`awk '/extraData/{print NR; exit}' ./istanbul-genesis.json`
-    totalLines=`cat ./istanbul-genesis.json| wc -l`
-    i=$(( $extraDataLine -1 ))
-    j=$(( $totalLines - extraDataLine ))
-
-    extraData=`cat ./istanbul-extradata.txt | grep ${nodes}node | cut -f2 -d ":"`
-
-    cat ./istanbul-genesis.json | head -$i >> $genesisFile
-    echo -e "\t \"extraData\": ${extraData}," >> $genesisFile
-    cat ./istanbul-genesis.json | tail -$j >> $genesisFile
-}
-
-function createPermissionedNodesJson(){
-    nodes=$1
-    i=$(( ${nodes} + 1))
-
-    permFile=./permissioned-nodes-${nodes}.json
-    creFile=true
-    if [[ "$nodes" -le 7 ]] ; then
-        # check if file exists and the enode count is matching
-        if test -f "$permFile"; then
-            numPermissionedNodes=`grep "enode" ${permFile} |wc -l`
-            if [[ $numPermissionedNodes -ne $nodes ]]; then
-                rm -f ${permFile}
-            else
-                creFile=false
-            fi
-        fi
-    else
-        cp ./permissioned-nodes.json ${permFile}
-        creFile=false
-    fi
-    if [[ "$creFile" == "true" ]]; then
-        cat ./permissioned-nodes.json | head -${nodes} >> ./${permFile}
-        cat ./permissioned-nodes.json | head -$i | tail -1 | cut -f1 -d "," >> ./${permFile}
-        cat ./permissioned-nodes.json | tail -1 >> ./${permFile}
-    fi
-}
-
 istanbulTools="false"
 numNodes=7
 while (( "$#" )); do
@@ -102,7 +59,7 @@ fi
 permNodesFile=./permissioned-nodes.json
 
 permNodesFile=./permissioned-nodes-${numNodes}.json
-createPermissionedNodesJson $numNodes
+./create-permissioned-nodes.sh $numNodes
 
 numPermissionedNodes=`grep "enode" ${permNodesFile} |wc -l`
 if [[ $numPermissionedNodes -ne $numNodes ]]; then
@@ -116,7 +73,7 @@ tempGenesisFile=
 if [[ "$istanbulTools" == "false" ]] && [[ "$numNodes" -lt 7 ]] ; then
     # number of nodes is less than 7, update genesis file
     tempGenesisFile="istanbul-genesis-${numNodes}.json"
-    buildGenesisFile $tempGenesisFile $numNodes
+    ./create-genesis.sh istanbul $tempGenesisFile $numNodes
     genesisFile=$tempGenesisFile
 fi
 

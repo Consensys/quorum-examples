@@ -13,49 +13,6 @@ function usage() {
   exit -1
 }
 
-function createPermissionedNodesJson(){
-    nodes=$1
-    i=$(( ${nodes} + 1))
-
-    permFile=./permissioned-nodes-${nodes}.json
-    creFile=true
-    if [[ "$nodes" -le 7 ]] ; then
-        # check if file exists and the enode count is matching
-        if test -f "$permFile"; then
-            numPermissionedNodes=`grep "enode" ${permFile} |wc -l`
-            if [[ $numPermissionedNodes -ne $nodes ]]; then
-                rm -f ${permFile}
-            else
-                creFile=false
-            fi
-        fi
-    else
-        cp ./permissioned-nodes.json ${permFile}
-        creFile=false
-    fi
-    if [[ "$creFile" == "true" ]]; then
-        cat ./permissioned-nodes.json | head -${nodes} >> ./${permFile}
-        cat ./permissioned-nodes.json | head -$i | tail -1 | cut -f1 -d "," >> ./${permFile}
-        cat ./permissioned-nodes.json | tail -1 >> ./${permFile}
-    fi
-}
-
-function buildGenesisFile() {
-    genesisFile=$1
-    nodes=$2
-
-    extraDataLine=`awk '/extraData/{print NR; exit}' ./clique-genesis.json`
-    totalLines=`cat ./clique-genesis.json | wc -l`
-    i=$(( $extraDataLine -1 ))
-    j=$(( $totalLines - extraDataLine ))
-
-    extraData=`cat ./clique-extradata.txt | grep ${nodes}node | cut -f2 -d ":"`
-
-    cat ./clique-genesis.json | head -$i >> $genesisFile
-    echo -e "\t \"extraData\": ${extraData}," >> $genesisFile
-    cat ./clique-genesis.json | tail -$j >> $genesisFile
-}
-
 numNodes=7
 while (( "$#" )); do
     case "$1" in
@@ -87,7 +44,7 @@ echo "[*] Configuring for $numNodes node(s)"
 echo $numNodes > qdata/numberOfNodes
 
 permNodesFile=./permissioned-nodes-${numNodes}.json
-createPermissionedNodesJson $numNodes
+./create-permissioned-nodes.sh $numNodes
 
 numPermissionedNodes=`grep "enode" ${permNodesFile}  |wc -l`
 if [[ $numPermissionedNodes -ne $numNodes ]]; then
@@ -101,7 +58,7 @@ tempGenesisFile=
 if [[ "$numNodes" -lt 7 ]] ; then
     # number of nodes is less than 7, update genesis file
     tempGenesisFile="clique-genesis-${numNodes}.json"
-    buildGenesisFile $tempGenesisFile $numNodes
+    ./create-genesis.sh clique $tempGenesisFile $numNodes
     genesisFile=$tempGenesisFile
 fi
 
