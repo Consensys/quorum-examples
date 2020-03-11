@@ -65,7 +65,7 @@ rm -rf ${CREL}
 rm -f ${CONSTELLATION_OUTPUT_FILE}
 
 # make solc executable
-chmod 0755 /usr/local/bin/solc
+chmod 0755 ${SOLC_OUTPUT_FILE}
 
 # install tessera
 echo "Installing Tessera ${TESSERA_VERSION}"

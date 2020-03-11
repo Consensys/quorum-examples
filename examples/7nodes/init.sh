@@ -56,8 +56,4 @@ if  [[ "$numNodes" -gt 7 ]] ; then
     exit -1
 fi
 
-# check if the number of nodes is less than 7. if yes dynamically create the permissioned-nodes.json
-./create-permissioned-nodes.sh $numNodes
-
 ./$consensus-init.sh --numNodes $numNodes
-rm -f ./permissioned-nodes-${numNodes}.json
