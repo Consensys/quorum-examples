@@ -14,20 +14,6 @@ function usage() {
   exit -1
 }
 
-function createPermissionedNodesJson(){
-    nodes=$1
-    i=$(( ${nodes} + 1))
-
-    permFile=./permissioned-nodes-${nodes}.json
-    rm -f ${permFile}
-    if [[ "$nodes" -ne 7 ]] ; then
-        cat ./permissioned-nodes.json | head -${nodes} >> ./${permFile}
-        cat ./permissioned-nodes.json | head -$i | tail -1 | cut -f1 -d "," >> ./${permFile}
-        cat ./permissioned-nodes.json | tail -1 >> ./${permFile}
-    fi
-
-}
-
 consensus=raft
 numNodes=7
 while (( "$#" )); do
@@ -70,8 +56,4 @@ if  [[ "$numNodes" -gt 7 ]] ; then
     exit -1
 fi
 
-# check if the number of nodes is less than 7. if yes dynamically create the permissioned-nodes.json
-createPermissionedNodesJson $numNodes
-
 ./$consensus-init.sh --numNodes $numNodes
-rm -f ./permissioned-nodes-${numNodes}.json

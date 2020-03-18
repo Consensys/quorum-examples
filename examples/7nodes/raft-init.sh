@@ -43,16 +43,13 @@ mkdir -p qdata/logs
 echo "[*] Configuring for $numNodes node(s)"
 echo $numNodes > qdata/numberOfNodes
 
-permNodesFile=./permissioned-nodes.json
-
-tempPermNodesFile=./permissioned-nodes-${numNodes}.json
-if test -f "$tempPermNodesFile"; then
-    permNodesFile=$tempPermNodesFile
-fi
+permNodesFile=./permissioned-nodes-${numNodes}.json
+./create-permissioned-nodes.sh $numNodes
 
 numPermissionedNodes=`grep "enode" ${permNodesFile} |wc -l`
 if [[ $numPermissionedNodes -ne $numNodes ]]; then
     echo "ERROR: $numPermissionedNodes nodes are configured in 'permissioned-nodes.json', but expecting configuration for $numNodes nodes"
+    rm -f $permNodesFile
     exit -1
 fi
 
@@ -80,3 +77,5 @@ done
 
 #Initialise Cakeshop configuration
 ./cakeshop-init.sh
+
+rm -f $permNodesFile

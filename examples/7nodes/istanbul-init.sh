@@ -16,23 +16,6 @@ function usage() {
   exit -1
 }
 
-function buildGenesisFile() {
-    genesisFile=$1
-    nodes=$2
-
-    extraDataLine=`awk '/extraData/{print NR; exit}' ./istanbul-genesis.json`
-    totalLines=`cat ./istanbul-genesis.json| wc -l`
-    i=$(( $extraDataLine -1 ))
-    j=$(( $totalLines - extraDataLine ))
-
-    extraData=`cat ./istanbul-extradata.txt | grep ${nodes}node | cut -f2 -d ":"`
-
-    cat ./istanbul-genesis.json | head -$i >> $genesisFile
-    echo -e "\t \"extraData\": ${extraData}," >> $genesisFile
-    cat ./istanbul-genesis.json | tail -$j >> $genesisFile
-}
-
-
 istanbulTools="false"
 numNodes=7
 while (( "$#" )); do
@@ -75,14 +58,13 @@ fi
 
 permNodesFile=./permissioned-nodes.json
 
-tempPermNodesFile=./permissioned-nodes-${numNodes}.json
-if test -f "$tempPermNodesFile"; then
-    permNodesFile=$tempPermNodesFile
-fi
+permNodesFile=./permissioned-nodes-${numNodes}.json
+./create-permissioned-nodes.sh $numNodes
 
 numPermissionedNodes=`grep "enode" ${permNodesFile} |wc -l`
 if [[ $numPermissionedNodes -ne $numNodes ]]; then
     echo "ERROR: $numPermissionedNodes nodes are configured in 'permissioned-nodes.json', but expecting configuration for $numNodes nodes"
+    rm -f $permNodesFile
     exit -1
 fi
 
@@ -91,7 +73,7 @@ tempGenesisFile=
 if [[ "$istanbulTools" == "false" ]] && [[ "$numNodes" -lt 7 ]] ; then
     # number of nodes is less than 7, update genesis file
     tempGenesisFile="istanbul-genesis-${numNodes}.json"
-    buildGenesisFile $tempGenesisFile $numNodes
+    ./create-genesis.sh istanbul $tempGenesisFile $numNodes
     genesisFile=$tempGenesisFile
 fi
 
@@ -118,4 +100,4 @@ done
 
 #Initialise Cakeshop configuration
 ./cakeshop-init.sh
-rm -f $tempGenesisFile
+rm -f $tempGenesisFile $permNodesFile
