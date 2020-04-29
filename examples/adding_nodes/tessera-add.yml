@@ -53,7 +53,7 @@ x-quorum-def:
         ${QUORUM_GETH_ARGS:-}
 x-tx-manager-def:
   &tx-manager-def
-  image: "quorumengineering/tessera:0.10.4"
+  image: "quorumengineering/tessera:0.10.5"
   expose:
     - "9000"
   restart: "no"
