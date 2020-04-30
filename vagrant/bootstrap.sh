@@ -26,7 +26,7 @@ SOLC_OUTPUT_FILE="/usr/local/bin/solc"
 
 TESSERA_HOME=/home/vagrant/tessera
 mkdir -p ${TESSERA_HOME}
-TESSERA_VERSION="0.10.4"
+TESSERA_VERSION="0.10.5"
 TESSERA_OUTPUT_FILE="${TESSERA_HOME}/tessera.jar"
 TESSERA_ENCLAVE_OUTPUT_FILE="${TESSERA_HOME}/enclave.jar"
 
