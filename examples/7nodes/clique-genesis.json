@@ -29,8 +29,12 @@
     "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
     "eip158Block": 0,
     "isQuorum": true,
-    "maxCodeSize" : 35,
-    "maxCodeSizeChangeBlock" : 0,
+    "maxCodeSizeConfig" : [
+      {
+        "block" : 0,
+        "size" : 32
+      }
+    ],
     "clique": {
       "period": 5,
       "epoch": 30000
