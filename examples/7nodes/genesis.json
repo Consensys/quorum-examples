@@ -21,6 +21,8 @@
     "homesteadBlock": 0,
     "byzantiumBlock": 0,
     "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "istanbulBlock": 0,
     "chainId": 10,
     "eip150Block": 0,
     "eip155Block": 0,
