@@ -140,7 +140,7 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
         {
             "app":"P2P",
             "enabled": true,
-            "serverAddress":"http://localhost:${serverPortP2P}",
+            "serverAddress":"http://127.0.0.1:${serverPortP2P}",
             "sslConfig": {
                 "tls": "OFF",
                 "generateKeyStoreIfNotExisted": true,
@@ -209,7 +209,7 @@ cat <<EOF > ${DDIR}/tessera-config-enclave-09-${i}.json
         {
             "app":"P2P",
             "enabled": true,
-            "serverAddress":"http://localhost:${serverPortP2P}",
+            "serverAddress":"http://127.0.0.1:${serverPortP2P}",
             "sslConfig": {
                 "tls": "OFF"
             },
