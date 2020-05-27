@@ -13,7 +13,7 @@ function usage() {
   exit -1
 }
 
-numNodes=7
+numNodes=1
 while (( "$#" )); do
     case "$1" in
         --numNodes)
@@ -46,12 +46,12 @@ echo $numNodes > qdata/numberOfNodes
 permNodesFile=./permissioned-nodes-${numNodes}.json
 ./create-permissioned-nodes.sh $numNodes
 
-numPermissionedNodes=`grep "enode" ${permNodesFile} |wc -l`
-if [[ $numPermissionedNodes -ne $numNodes ]]; then
-    echo "ERROR: $numPermissionedNodes nodes are configured in 'permissioned-nodes.json', but expecting configuration for $numNodes nodes"
-    rm -f $permNodesFile
-    exit -1
-fi
+#numPermissionedNodes=`grep "enode" ${permNodesFile} |wc -l`
+#if [[ $numPermissionedNodes -ne $numNodes ]]; then
+#    echo "ERROR: $numPermissionedNodes nodes are configured in 'permissioned-nodes.json', but expecting configuration for $numNodes nodes"
+#    rm -f $permNodesFile
+#    exit -1
+#fi
 
 for i in `seq 1 ${numNodes}`
 do
