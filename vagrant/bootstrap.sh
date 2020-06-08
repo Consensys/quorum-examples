@@ -35,7 +35,7 @@ mkdir -p ${CAKESHOP_HOME}
 CAKESHOP_VERSION="0.11.0"
 CAKESHOP_OUTPUT_FILE="${CAKESHOP_HOME}/cakeshop.war"
 
-QUORUM_VERSION="2.5.0"
+QUORUM_VERSION="2.6.0"
 QUORUM_OUTPUT_FILE="geth.tar.gz"
 
 # download binaries in parallel
