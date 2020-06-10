@@ -73,6 +73,8 @@ x-quorum-def:
         --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONSENSUS:-istanbul} \
         --port 21000 \
         --unlock 0 \
+        --allow-insecure-unlock \
+        --nousb \
         --password /examples/passwords.txt \
         ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
 x-tx-manager-def:
