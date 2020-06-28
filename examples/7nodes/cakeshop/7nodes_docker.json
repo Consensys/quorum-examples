@@ -1,37 +1,37 @@
 [
   {
     "name": "node1",
-    "rpcUrl": "http://host.docker.internal:22000",
-    "transactionManagerUrl": "http://host.docker.internal:9081"
+    "rpcUrl": "http://node1:8545",
+    "transactionManagerUrl": "http://txmanager1:9080"
   },
   {
     "name": "node2",
-    "rpcUrl": "http://host.docker.internal:22001",
-    "transactionManagerUrl": "http://host.docker.internal:9082"
+    "rpcUrl": "http://node2:8545",
+    "transactionManagerUrl": "http://txmanager2:9080"
   },
   {
     "name": "node3",
-    "rpcUrl": "http://host.docker.internal:22002",
-    "transactionManagerUrl": "http://host.docker.internal:9083"
+    "rpcUrl": "http://node3:8545",
+    "transactionManagerUrl": "http://txmanager3:9080"
   },
   {
     "name": "node4",
-    "rpcUrl": "http://host.docker.internal:22003",
-    "transactionManagerUrl": "http://host.docker.internal:9084"
+    "rpcUrl": "http://node4:8545",
+    "transactionManagerUrl": "http://txmanager4:9080"
   },
   {
     "name": "node5",
-    "rpcUrl": "http://host.docker.internal:22004",
-    "transactionManagerUrl": "http://host.docker.internal:9085"
+    "rpcUrl": "http://node5:8545",
+    "transactionManagerUrl": "http://txmanager5:9080"
   },
   {
     "name": "node6",
-    "rpcUrl": "http://host.docker.internal:22005",
-    "transactionManagerUrl": "http://host.docker.internal:9086"
+    "rpcUrl": "http://node6:8545",
+    "transactionManagerUrl": "http://txmanager6:9080"
   },
   {
     "name": "node7",
-    "rpcUrl": "http://host.docker.internal:22006",
-    "transactionManagerUrl": "http://host.docker.internal:9087"
+    "rpcUrl": "http://node7:8545",
+    "transactionManagerUrl": "http://txmanager7:9080"
   }
 ]
