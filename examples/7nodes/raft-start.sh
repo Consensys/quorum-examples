@@ -102,7 +102,7 @@ fi
 
 if [ "$privacyImpl" == "tessera" ]; then
   echo "[*] Starting Tessera nodes"
-#  ./tessera-start.sh ${tesseraOptions}
+  ./tessera-start.sh ${tesseraOptions}
 elif [ "$privacyImpl" == "constellation" ]; then
   echo "[*] Starting Constellation nodes"
   ./constellation-start.sh
@@ -139,7 +139,7 @@ do
         permissioned="--permissioned"
     fi
 
-    PRIVATE_CONFIG=ignore nohup geth --datadir qdata/dd${i} --graphql.port ${gport} --wsport ${wsPort} ${ARGS} ${permissioned} --raftport ${raftPort} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
+    PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} --graphql.port ${gport} --wsport ${wsPort} ${ARGS} ${permissioned} --raftport ${raftPort} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
 done
 
 set +v

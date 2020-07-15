@@ -84,10 +84,11 @@ fi
 
 echo Config type $TESSERA_CONFIG_TYPE
 
-numNodes=7
+numNodes=1
 if [[ -f qdata/numberOfNodes ]]; then
     numNodes=`cat qdata/numberOfNodes`
 fi
+numNodes=1
 
 echo "[*] Starting $numNodes Tessera node(s)"
 
