@@ -18,9 +18,121 @@ var erc20token = erc20tokenContract.new(
 
 
 var address = "0x1932c48b2bf8102ba33b4a6b545c32236e342f34";
-var abi = [{"inputs": [{"internalType": "address", "name": "_owner", "type": "address"}],"name": "balanceOf","outputs": [{"internalType": "uint256", "name": "balance", "type": "uint256"}],"stateMutability": "view","type": "function","constant": true}];
+var abi = [{"inputs": [], "stateMutability": "nonpayable", "type": "constructor"}, {
+    "anonymous": false,
+    "inputs": [{"indexed": true, "internalType": "address", "name": "_owner", "type": "address"}, {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_spender",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "_value", "type": "uint256"}],
+    "name": "Approval",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{"indexed": true, "internalType": "address", "name": "_from", "type": "address"}, {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "_value", "type": "uint256"}],
+    "name": "Transfer",
+    "type": "event"
+}, {
+    "inputs": [{"internalType": "address", "name": "_owner", "type": "address"}, {
+        "internalType": "address",
+        "name": "_spender",
+        "type": "address"
+    }],
+    "name": "allowance",
+    "outputs": [{"internalType": "uint256", "name": "remaining", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "_spender", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+    }],
+    "name": "approve",
+    "outputs": [{"internalType": "bool", "name": "success", "type": "bool"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "_spender", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+    }, {"internalType": "bytes", "name": "_extraData", "type": "bytes"}],
+    "name": "approveAndCall",
+    "outputs": [{"internalType": "bool", "name": "success", "type": "bool"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "_owner", "type": "address"}],
+    "name": "balanceOf",
+    "outputs": [{"internalType": "uint256", "name": "balance", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [{"internalType": "uint8", "name": "", "type": "uint8"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [],
+    "name": "name",
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "bytes4", "name": "interfaceID", "type": "bytes4"}],
+    "name": "supportsInterface",
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [{"internalType": "uint256", "name": "supply", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [],
+    "name": "totalSupplyVar",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "_to", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+    }],
+    "name": "transfer",
+    "outputs": [{"internalType": "bool", "name": "success", "type": "bool"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "_from", "type": "address"}, {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+    }, {"internalType": "uint256", "name": "_value", "type": "uint256"}],
+    "name": "transferFrom",
+    "outputs": [{"internalType": "bool", "name": "success", "type": "bool"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+}];
 var private = eth.contract(abi).at(address);
-// private.transfer("0x1349f3e1b8d71effb47b840594ff27da7e603d17", 200, {from:eth.accounts[0]})
+private.transfer("0x1349f3e1b8d71effb47b840594ff27da7e603d17", 200, {from: eth.accounts[0]})
 
 
 //var abi = [{"inputs": [{"internalType": "address", "name": "_owner", "type": "address"}],"name": "balanceOf","outputs": [{"internalType": "uint256", "name": "balance", "type": "uint256"}],"stateMutability": "view","type": "function","constant": true}];
