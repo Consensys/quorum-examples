@@ -129,6 +129,12 @@ ARGS="--nodiscover --nousb ${allowSecureUnlock} --verbosity ${verbosity} --istan
 
 basePort=21000
 baseRpcPort=22000
+
+eeaPerm=
+if ! [[ -z "${PERMISSIONMODEL+x}" ]] ; then
+    eeaPerm="--eeapermissions"
+fi
+
 for i in `seq 1 ${numNodes}`
 do
     port=$(($basePort + ${i} - 1))
@@ -138,7 +144,7 @@ do
         permissioned="--permissioned"
     fi
 
-    PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
+    PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} ${eeaPerm} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
 done
 
 set +v

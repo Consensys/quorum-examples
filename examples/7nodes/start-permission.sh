@@ -61,8 +61,12 @@ buildFiles(){
 
     echo "Compiling $1.sol"
     #compile and generate solc output in abi
-    solc --bin --optimize --overwrite -o ./output ./perm-contracts/$1.sol
-    solc --abi --optimize --overwrite -o ./output ./perm-contracts/$1.sol
+    if [ "$permissionModel" == "basic" ]
+    then
+        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/basic/$1.sol
+    else
+        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/EEA/$1.sol
+    fi
 
     cd ./output
 
@@ -216,6 +220,7 @@ consensus=raft
 numNodes=7
 blockPeriod=
 verbosity=3
+permissionModel=basic
 while (( "$#" )); do
     case "$1" in
         raft)
@@ -232,6 +237,10 @@ while (( "$#" )); do
             ;;
         tessera)
             privacyImpl=tessera
+            shift
+            ;;
+        eea)
+            permissionModel=eea
             shift
             ;;
         constellation)
@@ -287,6 +296,11 @@ fi
 ./stop.sh
 
 export STARTPERMISSION=1
+
+if [ "$permissionModel" == "eea" ]
+then
+    export PERMISSIONMODEL=1
+fi
 
 # check solc  & geth version if it is below 0.5.3 throw error
 displayMsg "Checking solidity and geth version compatibility"
@@ -353,7 +367,6 @@ sleep 10
 displayMsg "Restarting the network with permissions"
 # Bring down the network wait for all time wait connections to close
 ./stop.sh
-waitPortClose
 
 # Bring the netowrk back up
 if [ "$blockPeriod" == "" ]; then
