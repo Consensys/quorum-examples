@@ -117,19 +117,22 @@ ARGS="--nodiscover --nousb --allow-insecure-unlock --networkid $NETWORK_ID --ver
 basePort=21000
 baseRpcPort=22000
 
+
+permissioned=
 eeaPerm=
-if ! [[ -z "${PERMISSIONMODEL+x}" ]] ; then
-    eeaPerm="--eeapermissions"
+if ! [[ -z "${STARTPERMISSION+x}" ]] ; then
+    permissioned="--permissioned"
+
+    if ! [[ -z "${PERMISSIONMODEL+x}" ]] ; then
+        eeaPerm="--eeapermissions"
+    fi
 fi
 
 for i in `seq 1 ${numNodes}`
 do
     port=$(($basePort + ${i} - 1))
     rpcPort=$(($baseRpcPort + ${i} - 1))
-    permissioned=
-    if ! [[ -z "${STARTPERMISSION+x}" ]] ; then
-        permissioned="--permissioned"
-    fi
+
 
     PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} ${eeaPerm} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
 done

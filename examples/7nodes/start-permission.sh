@@ -295,7 +295,7 @@ fi
 
 ./stop.sh
 
-export STARTPERMISSION=1
+
 
 if [ "$permissionModel" == "eea" ]
 then
@@ -367,7 +367,7 @@ sleep 10
 displayMsg "Restarting the network with permissions"
 # Bring down the network wait for all time wait connections to close
 ./stop.sh
-
+export STARTPERMISSION=1
 # Bring the netowrk back up
 if [ "$blockPeriod" == "" ]; then
     ./start.sh $consensus $privacyImpl --verbosity ${verbosity}
