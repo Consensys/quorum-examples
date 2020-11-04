@@ -50,8 +50,8 @@ parallel --link wget -q -O ::: \
     ${SOLC_OUTPUT_FILE} \
     ::: \
     https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz \
-    https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/tessera-app/${TESSERA_VERSION}/tessera-app-${TESSERA_VERSION}-app.jar \
-    https://oss.sonatype.org/content/groups/public/com/jpmorgan/quorum/enclave-jaxrs/${TESSERA_VERSION}/enclave-jaxrs-${TESSERA_VERSION}-server.jar \
+    https://oss.sonatype.org/content/groups/public/net/consensys/quorum/tessera/tessera-app/${TESSERA_VERSION}/tessera-app-${TESSERA_VERSION}-app.jar \
+    https://oss.sonatype.org/content/groups/public/net/consensys/quorum/tessera/enclave-jaxrs/${TESSERA_VERSION}/enclave-jaxrs-${TESSERA_VERSION}-server.jar \
     https://dl.bintray.com/quorumengineering/quorum/v${QUORUM_VERSION}/geth_v${QUORUM_VERSION}_linux_amd64.tar.gz \
     https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity \
     https://github.com/jpmorganchase/cakeshop/releases/download/v${CAKESHOP_VERSION}/cakeshop-${CAKESHOP_VERSION}.war \
