@@ -112,7 +112,7 @@ echo "[*] Starting $numNodes Ethereum nodes with ChainID and NetworkId of $NETWO
 QUORUM_GETH_ARGS=${QUORUM_GETH_ARGS:-}
 set -v
 
-ARGS="--nodiscover --nousb --allow-insecure-unlock --networkid $NETWORK_ID --verbosity ${verbosity} --syncmode full --mine --minerthreads 1 --rpc --rpccorsdomain=* --rpcvhosts=* --rpcaddr 0.0.0.0 --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,quorumPermission,quorumExtension,clique --unlock 0 --password passwords.txt $QUORUM_GETH_ARGS"
+ARGS="--nousb --allow-insecure-unlock --networkid $NETWORK_ID --verbosity ${verbosity} --syncmode full --mine --minerthreads 1 --rpc --rpccorsdomain=* --rpcvhosts=* --rpcaddr 0.0.0.0 --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,quorumPermission,quorumExtension,clique --unlock 0 --password passwords.txt $QUORUM_GETH_ARGS"
 
 basePort=21000
 baseRpcPort=22000
@@ -135,6 +135,7 @@ do
 
 
     PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} ${eeaPerm} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
+	sleep 2	
 done
 
 set +v
