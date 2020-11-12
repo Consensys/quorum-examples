@@ -2,7 +2,7 @@ version: "3.6"
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: "quorumengineering/quorum:2.4.0"
+  image: "quorumengineering/quorum:20.10.0"
   expose:
     - "21000"
   healthcheck:
@@ -53,7 +53,7 @@ x-quorum-def:
         ${QUORUM_GETH_ARGS:-}
 x-tx-manager-def:
   &tx-manager-def
-  image: "quorumengineering/tessera:0.10.6"
+  image: "quorumengineering/tessera:20.10.0"
   expose:
     - "9000"
   restart: "no"
