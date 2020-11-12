@@ -139,6 +139,12 @@ EOF
 createPermConfig(){
     rm -f ./permission-config.json
     echo -e "{" >> ./permission-config.json
+    if [ "$permissionModel" == "eea" ]
+    then
+        echo -e "\t\"permissionModel\": \"EEA\"," >> ./permission-config.json
+    else
+        echo -e "\t\"permissionModel\": \"BASIC\"," >> ./permission-config.json
+    fi
     echo -e "\t\"upgrdableAddress\": \"$upgr\"," >> ./permission-config.json
     echo -e "\t\"interfaceAddress\": \"$permInterface\"," >> ./permission-config.json
     echo -e "\t\"implAddress\": \"$permImpl\"," >> ./permission-config.json
@@ -313,6 +319,7 @@ getInputs $blockPeriod
 # init the network
 displayMsg "Starting the network in $consensus mode"
 echo "Initializing the network"
+export STARTPERMISSION=1
 ./init.sh $consensus --numNodes $numNodes
 
 echo "Starting the network"
@@ -367,7 +374,6 @@ sleep 10
 displayMsg "Restarting the network with permissions"
 # Bring down the network wait for all time wait connections to close
 ./stop.sh
-export STARTPERMISSION=1
 # Bring the netowrk back up
 if [ "$blockPeriod" == "" ]; then
     ./start.sh $consensus $privacyImpl --verbosity ${verbosity}

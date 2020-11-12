@@ -28,7 +28,7 @@
     "eip155Block": 0,
     "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
     "eip158Block": 0,
-    "qip714Block": 0,
+    "qip714Block": 100,
     "isQuorum": true,
     "maxCodeSizeConfig" : [
       {
