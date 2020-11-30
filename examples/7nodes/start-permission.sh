@@ -61,11 +61,11 @@ buildFiles(){
 
     echo "Compiling $1.sol"
     #compile and generate solc output in abi
-    if [ "$permissionModel" == "basic" ]
+    if [ "$permissionModel" == "v1" ]
     then
-        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/basic/$1.sol
+        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/v1/$1.sol
     else
-        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/EEA/$1.sol
+        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/v2/$1.sol
     fi
 
     cd ./output
@@ -139,11 +139,11 @@ EOF
 createPermConfig(){
     rm -f ./permission-config.json
     echo -e "{" >> ./permission-config.json
-    if [ "$permissionModel" == "eea" ]
+    if [ "$permissionModel" == "v2" ]
     then
-        echo -e "\t\"permissionModel\": \"EEA\"," >> ./permission-config.json
+        echo -e "\t\"permissionModel\": \"v2\"," >> ./permission-config.json
     else
-        echo -e "\t\"permissionModel\": \"BASIC\"," >> ./permission-config.json
+        echo -e "\t\"permissionModel\": \"v1\"," >> ./permission-config.json
     fi
     echo -e "\t\"upgrdableAddress\": \"$upgr\"," >> ./permission-config.json
     echo -e "\t\"interfaceAddress\": \"$permInterface\"," >> ./permission-config.json
@@ -226,7 +226,7 @@ consensus=raft
 numNodes=7
 blockPeriod=
 verbosity=3
-permissionModel=basic
+permissionModel=v1
 while (( "$#" )); do
     case "$1" in
         raft)
@@ -245,8 +245,8 @@ while (( "$#" )); do
             privacyImpl=tessera
             shift
             ;;
-        eea)
-            permissionModel=eea
+        v2)
+            permissionModel=v2
             shift
             ;;
         constellation)
