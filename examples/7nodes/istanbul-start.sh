@@ -129,8 +129,6 @@ ARGS="--nodiscover --nousb ${allowSecureUnlock} --verbosity ${verbosity} --istan
 
 basePort=21000
 baseRpcPort=22000
-
-
 for i in `seq 1 ${numNodes}`
 do
     port=$(($basePort + ${i} - 1))

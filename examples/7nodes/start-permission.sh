@@ -61,13 +61,7 @@ buildFiles(){
 
     echo "Compiling $1.sol"
     #compile and generate solc output in abi
-    if [ "$permissionModel" == "v1" ]
-    then
-        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/v1/$1.sol
-    else
-        solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/v2/$1.sol
-    fi
-
+    solc --bin --abi --optimize --overwrite -o ./output ./perm-contracts/${permissionModel}/$1.sol
     cd ./output
 
     deployFile="deploy-$contract.js"
@@ -139,12 +133,7 @@ EOF
 createPermConfig(){
     rm -f ./permission-config.json
     echo -e "{" >> ./permission-config.json
-    if [ "$permissionModel" == "v2" ]
-    then
-        echo -e "\t\"permissionModel\": \"v2\"," >> ./permission-config.json
-    else
-        echo -e "\t\"permissionModel\": \"v1\"," >> ./permission-config.json
-    fi
+    echo -e "\t\"permissionModel\": \"$permissionModel\"," >> ./permission-config.json
     echo -e "\t\"upgrdableAddress\": \"$upgr\"," >> ./permission-config.json
     echo -e "\t\"interfaceAddress\": \"$permInterface\"," >> ./permission-config.json
     echo -e "\t\"implAddress\": \"$permImpl\"," >> ./permission-config.json
@@ -201,6 +190,12 @@ displayMsg(){
 
 getInputs(){
     blockPeriod=$1
+    read -p "Enter Permission model to use [v1/v2]: "  permissionModel
+    while [[ "$permissionModel" != "v1" && "$permissionModel" != "v2" ]];
+    do
+        echo "Invalid input for permissions model. Enter v1 or v2"
+        read -p "Enter Permission model to use [v1/v2]: "  permissionModel
+    done
     read -p "Enter Network Admin Org Name: "  nwAdminOrg
     read -p "Enter Network Admin Role Name: "  nwAdminRole
     read -p "Enter Org Admin Role Name: "  orgAdminRole
@@ -226,7 +221,7 @@ consensus=raft
 numNodes=7
 blockPeriod=
 verbosity=3
-permissionModel=v1
+permissionModel=
 while (( "$#" )); do
     case "$1" in
         raft)
@@ -243,10 +238,6 @@ while (( "$#" )); do
             ;;
         tessera)
             privacyImpl=tessera
-            shift
-            ;;
-        v2)
-            permissionModel=v2
             shift
             ;;
         constellation)
@@ -301,12 +292,6 @@ fi
 
 ./stop.sh
 
-
-
-if [ "$permissionModel" == "eea" ]
-then
-    export PERMISSIONMODEL=1
-fi
 
 # check solc  & geth version if it is below 0.5.3 throw error
 displayMsg "Checking solidity and geth version compatibility"
