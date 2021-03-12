@@ -214,7 +214,7 @@ x-tx-manager-def:
       esac
 x-cakeshop-def:
   &cakeshop-def
-  image: "${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.12.0}"
+  image: "${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.12.1}"
   expose:
     - "8999"
   restart: "no"
