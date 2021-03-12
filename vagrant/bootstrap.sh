@@ -26,16 +26,16 @@ SOLC_OUTPUT_FILE="/usr/local/bin/solc"
 
 TESSERA_HOME=/home/vagrant/tessera
 mkdir -p ${TESSERA_HOME}
-TESSERA_VERSION="20.10.0"
+TESSERA_VERSION="21.1.0"
 TESSERA_OUTPUT_FILE="${TESSERA_HOME}/tessera.jar"
 TESSERA_ENCLAVE_OUTPUT_FILE="${TESSERA_HOME}/enclave.jar"
 
 CAKESHOP_HOME=/home/vagrant/cakeshop
 mkdir -p ${CAKESHOP_HOME}
-CAKESHOP_VERSION="0.11.0"
+CAKESHOP_VERSION="0.12.1"
 CAKESHOP_OUTPUT_FILE="${CAKESHOP_HOME}/cakeshop.war"
 
-QUORUM_VERSION="20.10.0"
+QUORUM_VERSION="21.1.0"
 QUORUM_OUTPUT_FILE="geth.tar.gz"
 
 # download binaries in parallel

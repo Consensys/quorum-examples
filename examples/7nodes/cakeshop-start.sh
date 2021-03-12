@@ -14,7 +14,7 @@ else
   cakeshopJar=${CAKESHOP_JAR}
 fi
 
-jvmParams="-Dcakeshop.config.dir=qdata/cakeshop -Dlogging.path=qdata/logs/cakeshop"
+jvmParams="-Dcakeshop.config.dir=qdata/cakeshop"
 
 if [ ! -f qdata/cakeshop/local/application.properties ]; then
     echo "ERROR: could not find qdata/cakeshop/application.properties. Please run one of the init scripts first."
@@ -33,8 +33,8 @@ echo "[*] Starting Cakeshop"
 
 currentDir=`pwd`
 CMD="java $jvmParams -jar ${cakeshopJar}"
-echo "$CMD 2>&1 &"
-${CMD} > /dev/null 2>&1 &
+echo "$CMD >> qdata/logs/cakeshop.log 2>&1 &"
+${CMD} >> qdata/logs/cakeshop.log 2>&1 &
 sleep 1
 
 DOWN=true
