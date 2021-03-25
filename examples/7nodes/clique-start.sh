@@ -126,6 +126,7 @@ do
     fi
 
     PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
+    sleep 2
 done
 
 set +v

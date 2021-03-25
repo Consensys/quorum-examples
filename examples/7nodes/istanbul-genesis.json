@@ -28,11 +28,12 @@
       "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
       "eip155Block": 0,
       "eip158Block": 0,
+      "qip714Block": 50,
       "isQuorum": true,
       "maxCodeSizeConfig" : [
         {
           "block" : 0,
-          "size" : 32
+          "size" : 64
         }
       ],
       "istanbul": {
