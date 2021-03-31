@@ -62,6 +62,8 @@ if [ "$encryptorType" == "EC" ]; then
 
     encryptorProps=$(printf "\"symmetricCipher\":\"%s\",\n            \"ellipticCurve\":\"%s\",\n            \"nonceLength\":\"%s\",\n            \"sharedKeyLength\":\"%s\"" \
      "${ENCRYPTOR_EC_SYMMETRIC_CIPHER:-AES/GCM/NoPadding}" "${ENCRYPTOR_EC_ELLIPTIC_CURVE:-secp256r1}" "${ENCRYPTOR_EC_NONCE_LENGTH:-24}" "${ENCRYPTOR_EC_SHARED_KEY_LENGTH:-32}" )
+    encryptorCmdLineParams=$(printf " --encryptor.type EC --encryptor.symmetricCipher %s --encryptor.ellipticCurve %s --encryptor.nonceLength %s --encryptor.sharedKeyLength %s" \
+     "${ENCRYPTOR_EC_SYMMETRIC_CIPHER:-AES/GCM/NoPadding}" "${ENCRYPTOR_EC_ELLIPTIC_CURVE:-secp256r1}" "${ENCRYPTOR_EC_NONCE_LENGTH:-24}" "${ENCRYPTOR_EC_SHARED_KEY_LENGTH:-32}" )
 fi
 
 # Dynamically create the config for peers, depending on numNodes
@@ -253,22 +255,8 @@ EOF
 
     #generate tessera keys
     if [ "$encryptorType" == "EC" ]; then
-        cat <<EOF > ${DDIR}/keygenconfig.json
-{
-    "encryptor":{
-        "type":"${encryptorType}",
-        "properties":{
-            ${encryptorProps}
-        }
-    }
-}
-EOF
-
         cd $DDIR
-        set +e
-        java -jar $tesseraJar -configfile keygenconfig.json -keygen -filename tm < /dev/null
-        set -e
-        rm keygenconfig.json
+        java -jar $tesseraJar -keygen $encryptorCmdLineParams -filename tm < /dev/null
         cd $currentDir
     fi
 
