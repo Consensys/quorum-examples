@@ -53,6 +53,15 @@ if [[ $numPermissionedNodes -ne $numNodes ]]; then
     exit -1
 fi
 
+genesisFile=genesis.json
+tempGenesisFile=
+if [[ "${PRIVACY_ENHANCEMENTS:-false}" == "true" ]]; then
+  echo "adding privacyEnhancementsBlock to genesis.config"
+  tempGenesisFile=genesis-pe.json
+  jq '.config.privacyEnhancementsBlock = 0' $genesisFile > $tempGenesisFile
+  genesisFile=$tempGenesisFile
+fi
+
 for i in `seq 1 ${numNodes}`
 do
     mkdir -p qdata/dd${i}/{keystore,geth}
@@ -69,7 +78,7 @@ do
     cp ${permNodesFile} qdata/dd${i}/static-nodes.json
     cp keys/key${i} qdata/dd${i}/keystore
     cp raft/nodekey${i} qdata/dd${i}/geth/nodekey
-    geth --datadir qdata/dd${i} init genesis.json
+    geth --datadir qdata/dd${i} init $genesisFile
 done
 
 #Initialise Tessera configuration
@@ -78,4 +87,4 @@ done
 #Initialise Cakeshop configuration
 ./cakeshop-init.sh
 
-rm -f $permNodesFile
+rm -f $tempGenesisFile $permNodesFile

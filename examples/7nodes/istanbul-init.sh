@@ -77,6 +77,13 @@ if [[ "$istanbulTools" == "false" ]] && [[ "$numNodes" -lt 7 ]] ; then
     genesisFile=$tempGenesisFile
 fi
 
+if [[ "${PRIVACY_ENHANCEMENTS:-false}" == "true" ]]; then
+  echo "adding privacyEnhancementsBlock to genesis.config"
+  tempGenesisFile="istanbul-genesis-${numNodes}-pe.json"
+  jq '.config.privacyEnhancementsBlock = 0' $genesisFile > $tempGenesisFile
+  genesisFile=$tempGenesisFile
+fi
+
 for i in `seq 1 ${numNodes}`
 do
     echo "[*] Configuring node ${i}"

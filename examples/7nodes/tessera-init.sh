@@ -174,7 +174,10 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
             }
         ]
     },
-    "alwaysSendTo": []
+    "alwaysSendTo": [],
+    "features":{
+        "enablePrivacyEnhancements": "${PRIVACY_ENHANCEMENTS:-false}"
+    }
 }
 EOF
 
