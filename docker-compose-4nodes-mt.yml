@@ -45,12 +45,46 @@ x-quorum-def-node1:
       rm -rf $${DDIR}
       mkdir -p $${DDIR}/keystore
       mkdir -p $${DDIR}/geth
+      mkdir -p $${DDIR}/plugins
       cp /examples/raft/nodekey$${NODE_ID} $${DDIR}/geth/nodekey
       cp /examples/keys/key1 $${DDIR}/keystore/
       cp /examples/keys/key5 $${DDIR}/keystore/
       cp /examples/keys/key6 $${DDIR}/keystore/
       cp /examples/keys/key7 $${DDIR}/keystore/
       cp /examples/disallowed-nodes.json $${DDIR}/
+      cat <<EOF > $${DDIR}/plugin-settings.json
+      {
+        "central": {
+          "baseURL": "https://provisional-plugins-repo.quorum.consensys.net",
+          "publicKeyURI": ".pgp/Central.pgp.pk"
+        },
+        "providers": {"security":{"config":"file:///qdata/dd/plugins/security-config.json","name":"quorum-security-plugin-enterprise","version":"0.1.0"}}
+      }
+      EOF
+      cat <<EOF > $${DDIR}/plugins/security-config.json
+      {
+        "tls": {
+          "auto": true,
+          "certFile": "/tmp/cert.pem",
+          "keyFile": "/tmp/key.pem"
+        },
+        "tokenValidation": {
+          "issuers": [
+              "https://goquorum.com/oauth/"
+          ],
+          "jws": {
+            "endpoint": "https://multi-tenancy-oauth2-server:4444/.well-known/jwks.json",
+            "tlsConnection": {
+              "insecureSkipVerify": true
+            }
+          },
+          "jwt": {
+            "authorizationField": "scp",
+            "preferIntrospection": false
+          }
+        }
+      }
+      EOF
       jq 'del(.[4,5,6])' /examples/permissioned-nodes.json  | sed 's/^\(.*\)@.*\?\(.*\)raftport=5040\([0-9]\)\(.*\)$$/\1@172.16.239.1\3:21000?discport=0\&raftport=50400\4/g' > $${DDIR}/static-nodes.json
       cp $${DDIR}/static-nodes.json $${DDIR}/permissioned-nodes.json
       cat $${DDIR}/static-nodes.json
@@ -90,6 +124,9 @@ x-quorum-def-node1:
         --password /examples/passwords.txt \
         --password /examples/passwords.txt \
         --password /examples/passwords.txt \
+        --plugins file:///qdata/dd/plugin-settings.json \
+        --multitenancy \
+        --identity Node1 \
         ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
 x-quorum-def:
   &quorum-def
@@ -618,6 +655,22 @@ services:
     environment:
       - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=4
+  oauth2-server:
+    image: oryd/hydra:v1.3.2-alpine
+    hostname: multi-tenancy-oauth2-server
+    container_name: multi-tenancy-oauth2-server
+    ports:
+      - 4444:4444 # Public
+      - 4445:4445 # Public
+    expose:
+      - 4445
+    restart: unless-stopped
+    networks:
+      - quorum-examples-net
+    environment:
+      - URLS_SELF_ISSUER=https://goquorum.com/oauth/
+      - DSN=memory
+      - STRATEGIES_ACCESS_TOKEN=jwt
 #  cakeshop:
 #    << : *cakeshop-def
 #    hostname: cakeshop

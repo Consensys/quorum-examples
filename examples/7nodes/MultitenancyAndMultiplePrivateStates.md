@@ -1,6 +1,6 @@
 # Multiple private states
 ## Set Up
-Either build locally or pull docker images of both go-quorum and tessera which support multitenancy and multiple private states.
+Either build locally or pull docker images for both go-quorum and tessera which support multitenancy and multiple private states.
 
 Note: the "develop" tag should support the necessary features.
 
@@ -9,7 +9,7 @@ Bring up the network using docker compose:
 docker-compose -f docker-compose-4nodes-mps.yml up
 ```
 
-The above sets up tessera node1 with key1, key5, key6 and key7 and starts the network.
+The above sets up quorum node1 with keys key1, key5, key6 and key7 as node managed accounts. It also sets up tessera node1 with tm1, tm5, tm6 and tm7 keys and starts the network.
 
 This is the residentGroups configuration on node1:
 ```json
@@ -67,7 +67,7 @@ contract accumulator {
 
 ### Console setup
 
-Open 4 consoles to node1:
+Open 4 consoles to node1 (in order to take advantage of the latest APIs please use a geth binary that supports multiple private states):
 
 * Console1 - using the "private" state - key1 (BULeR8JyUWhiuuCMU/HLA0Q5pzkYT+cHII3ZKBey3Bo=) 
 ```shell script
@@ -141,3 +141,28 @@ Do an `acc.get()` in all consoles. You should get `3` in node1 consoles 1, `2` i
 Do an `eth.getTransactionReceipt("0x34f881b717ddb3b1ab05fb948d375b593f4c74576258915e06a7f9cd9d0d15f4")` (the last transaction from node4) in all consoles and observe the different results (similar to the observed states above).
 
 Do an `eth.getQuorumPayload(eth.getTransaction("0xe0e0e199f16dfe9c0a59724d5a9759e670934fb80b35fa8fdd2a03a3636dcebd").input)` (try to get the private payload of the contract creation transaction) on all consoles. On all of them except for Console4/PS3 you should get the contract bytecode while on Console4 you should get an empty result. 
+
+# Multitenancy with multiple private states
+## Set Up
+Similar to the multiple private states example with the exception that node1 is started as a multitenant node and the rpc security plugin is enabled/configured.
+An OAUTH2 server is also deployed in order to facilitate generating the necessary access tokens. 
+
+Bring up the network using docker compose:
+```shell script
+docker-compose -f docker-compose-4nodes-mt.yml up
+```
+
+## Connecting to the multitenant node
+Use the `mtAttachWithPSI.sh` script to connect to node1 as any of the 4 tenants (private, PS1, PS2, PS3).
+The script configures the relevant access for the tenant on the OAUTH2 server and then requests a token. It then uses the token to attach (`geth attach`) to node1. 
+The parameters are:
+* The private state one wants to access. This parameter is mandatory.
+* The node managed eth account to use for transaction signing (the tenant is restricted to that account only). This parameter is optional. 
+```shell
+./mtAttachWithPSI.sh PS1 
+```
+or
+```shell
+./mtAttachWithPSI.sh PS1 0x0638e1574728b6d862dd5d3a3e0942c3be47d996 
+```
+Once attached you can exercise the private state the same as as in the multiple private states example. Keep in mind the additional restrictions deriving from the access token (the node managed eth account access).
