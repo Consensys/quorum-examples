@@ -26,7 +26,7 @@ SOLC_OUTPUT_FILE="/usr/local/bin/solc"
 
 TESSERA_HOME=/home/vagrant/tessera
 mkdir -p ${TESSERA_HOME}
-TESSERA_VERSION="21.1.1"
+TESSERA_VERSION="21.4.1"
 TESSERA_OUTPUT_FILE="${TESSERA_HOME}/tessera.jar"
 TESSERA_ENCLAVE_OUTPUT_FILE="${TESSERA_HOME}/enclave.jar"
 
@@ -35,7 +35,7 @@ mkdir -p ${CAKESHOP_HOME}
 CAKESHOP_VERSION="0.12.1"
 CAKESHOP_OUTPUT_FILE="${CAKESHOP_HOME}/cakeshop.war"
 
-QUORUM_VERSION="21.1.0"
+QUORUM_VERSION="21.4.2"
 QUORUM_OUTPUT_FILE="geth.tar.gz"
 
 # download binaries in parallel
@@ -52,7 +52,7 @@ parallel --link wget -q -O ::: \
     https://github.com/jpmorganchase/constellation/releases/download/v$CVER/$CREL.tar.xz \
     https://oss.sonatype.org/content/groups/public/net/consensys/quorum/tessera/tessera-app/${TESSERA_VERSION}/tessera-app-${TESSERA_VERSION}-app.jar \
     https://oss.sonatype.org/content/groups/public/net/consensys/quorum/tessera/enclave-jaxrs/${TESSERA_VERSION}/enclave-jaxrs-${TESSERA_VERSION}-server.jar \
-    https://dl.bintray.com/quorumengineering/quorum/v${QUORUM_VERSION}/geth_v${QUORUM_VERSION}_linux_amd64.tar.gz \
+    https://artifacts.consensys.net/public/go-quorum/raw/versions/v${QUORUM_VERSION}/geth_v${QUORUM_VERSION}_linux_amd64.tar.gz \
     https://github.com/jpmorganchase/quorum/releases/download/v1.2.0/porosity \
     https://github.com/jpmorganchase/cakeshop/releases/download/v${CAKESHOP_VERSION}/cakeshop-${CAKESHOP_VERSION}.war \
     https://github.com/ethereum/solidity/releases/download/v${SOLC_VER}/solc-static-linux
