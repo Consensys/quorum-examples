@@ -2,7 +2,7 @@ version: "3.6"
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:21.1.0}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:21.4}"
   expose:
     - "21000"
     - "50400"
