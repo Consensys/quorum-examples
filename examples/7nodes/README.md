@@ -118,6 +118,23 @@ You can check the log files in `7nodes/qdata/logs/` to see each node validating 
 ```
 And there you have it: All 7 nodes are validating the same blockchain of transactions, with the private transactions containing only a 512 bit hash in place of the transaction data, and only the parties to the private transactions being able to view and update the state of the private contracts.
 
+###Privacy Enhancements
+####Set up 
+Before running the relevant initialization script make sure to define the `PRIVACY_ENHANCEMENTS=true` environment variable. The init script will then update the `genesis.json` to enable privacy enhancements from block 0 (`privacyEnhancementsBlock: 0`).
+####Usage
+Add the relevant `privacyFlag` to your private transaction parameters:
+* 0 - Standard Private (optional - when omitted the `privacyFlag` is assumed to be standard private)
+* 1 - Party Protection (PP)
+* 3 - Private State Validation (PSV)
+
+Party Protection and Private State Validation versions of the `private-contract.js` (`private-contract-pp.js` and `private-contract-psv.js`) have been prepared that deploy the simple storage contract `privateFor` Node2.
+
+Similar to the standard private example above you can update a PP or PSV contract by specifying the appropriate `privacyFlag`.  
+```shell
+private.set(6, {from:web3.eth.accounts[0], gas: 0x47b760, privacyFlag:1, privateFor: ["BULeR8JyUWhiuuCMU/HLA0Q5pzkYT+cHII3ZKBey3Bo="]})
+```
+For further details about [privacy enhancements](https://docs.goquorum.consensys.net/en/latest/Concepts/Privacy/PrivacyEnhancements/) please consult the latest go-quorum documentation. 
+
 ## Permissions
 
 Node Permissioning is a feature in Quorum that allows only a pre-defined set of nodes (as identified by their remotekey/enodes) to connect to the permissioned network.
