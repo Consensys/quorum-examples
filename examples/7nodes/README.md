@@ -118,10 +118,10 @@ You can check the log files in `7nodes/qdata/logs/` to see each node validating 
 ```
 And there you have it: All 7 nodes are validating the same blockchain of transactions, with the private transactions containing only a 512 bit hash in place of the transaction data, and only the parties to the private transactions being able to view and update the state of the private contracts.
 
-###Privacy Enhancements
-####Set up 
+### Privacy Enhancements
+#### Set up
 Before running the relevant initialization script make sure to define the `PRIVACY_ENHANCEMENTS=true` environment variable. The init script will then update the `genesis.json` to enable privacy enhancements from block 0 (`privacyEnhancementsBlock: 0`).
-####Usage
+#### Usage
 Add the relevant `privacyFlag` to your private transaction parameters:
 * 0 - Standard Private (optional - when omitted the `privacyFlag` is assumed to be standard private)
 * 1 - Party Protection (PP)
