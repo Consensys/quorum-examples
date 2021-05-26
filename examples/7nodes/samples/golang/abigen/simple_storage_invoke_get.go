@@ -4,10 +4,15 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"os"
 )
 
 func main() {
-	contractAddress := "0x6D19a263c40D5e724D6aEcBf87BD9a3716CC6889"
+	contractAddress := os.Args[1]
+	if len(contractAddress) == 0 {
+		println("Please provide a simple storage contract address.")
+		return
+	}
 
 	// connect to node1
 	rpcClient, err := rpc.DialHTTP("http://localhost:22001")

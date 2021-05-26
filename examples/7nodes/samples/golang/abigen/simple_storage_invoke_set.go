@@ -6,12 +6,29 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"math/big"
+	"os"
+	"strconv"
 	"strings"
 )
 
 func main() {
 
-	contractAddress := "0x6D19a263c40D5e724D6aEcBf87BD9a3716CC6889"
+	contractAddress := os.Args[1]
+	if len(contractAddress) == 0 {
+		println("Please provide a simple storage contract address.")
+		return
+	}
+
+	valStr := os.Args[2]
+	if len(valStr) == 0 {
+		valStr = "5"
+	}
+	val, err := strconv.ParseInt(valStr, 10, 64)
+	if err != nil {
+		println("Invalid set value specified. " + err.Error())
+		return
+	}
+
 	// connect to node1
 	rpcClient, err := rpc.DialHTTP("http://localhost:22000")
 	if err != nil {
@@ -41,7 +58,7 @@ func main() {
 		return
 	}
 
-	transaction, err := simplestorage.Set(trOpts, big.NewInt(6))
+	transaction, err := simplestorage.Set(trOpts, big.NewInt(val))
 	if err != nil {
 		print(err.Error())
 		return
