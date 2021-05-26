@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/consensys/quorum-examples/storagecontract"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -52,7 +53,7 @@ func main() {
 	// using node1 tessra 3rd party API
 	ethClient, err := ethclient.NewClient(rpcClient).WithPrivateTransactionManager("http://localhost:9081")
 
-	simplestorage, err := NewSimplestorageTransactor(common.HexToAddress(contractAddress), ethClient)
+	simplestorage, err := storagecontract.NewSimplestorageTransactor(common.HexToAddress(contractAddress), ethClient)
 
 	if err != nil {
 		print(err.Error())

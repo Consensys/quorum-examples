@@ -1,4 +1,4 @@
-module example.com/quorum-examples
+module github.com/consensys/quorum-examples
 
 go 1.15
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/consensys/quorum-examples/storagecontract"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -34,7 +35,7 @@ func main() {
 	// using node1 tessra 3rd party API
 	ethClient, err := ethclient.NewClient(rpcClient).WithPrivateTransactionManager("http://localhost:9081")
 
-	simplestorage, transaction, s, err := DeploySimplestorage(trOpts, ethClient, big.NewInt(123))
+	simplestorage, transaction, s, err := storagecontract.DeploySimplestorage(trOpts, ethClient, big.NewInt(123))
 
 	if err != nil {
 		print(err.Error())
