@@ -1,13 +1,14 @@
 package main
 
 import (
+	"math/big"
+	"strings"
+	"time"
+
 	"github.com/consensys/quorum-examples/storagecontract"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
-	"math/big"
-	"strings"
-	"time"
 )
 
 func main() {
