@@ -141,7 +141,7 @@ Similar to the standard private example above you can update a PP or PSV contrac
 ```shell
 private.set(6, {from:web3.eth.accounts[0], gas: 0x47b760, privacyFlag:1, privateFor: ["BULeR8JyUWhiuuCMU/HLA0Q5pzkYT+cHII3ZKBey3Bo="]})
 ```
-For further details about [privacy enhancements](https://docs.goquorum.consensys.net/en/latest/Concepts/Privacy/PrivacyEnhancements/) please consult the latest go-quorum documentation. 
+For further details about [privacy enhancements](https://docs.goquorum.consensys.net/en/latest/Concepts/Privacy/PrivacyEnhancements/) please consult the latest go-quorum documentation.  
 
 ## Permissions
 
