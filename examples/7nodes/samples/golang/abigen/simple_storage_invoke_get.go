@@ -14,12 +14,13 @@ func main() {
 		return
 	}
 
-	// connect to node1
+	// connect to node2
 	rpcClient, err := rpc.DialHTTP("http://localhost:22001")
 	if err != nil {
 		println(err.Error())
 		return
 	}
+	// using node2 tessra 3rd party API
 	ethClient, err := ethclient.NewClient(rpcClient).WithPrivateTransactionManager("http://localhost:9082")
 
 	simplestorage, err := NewSimplestorageCaller(common.HexToAddress(contractAddress), ethClient)

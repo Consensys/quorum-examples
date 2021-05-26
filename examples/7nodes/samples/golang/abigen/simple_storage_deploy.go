@@ -31,6 +31,7 @@ func main() {
 	// make sure you specify the appropriate privateFrom address (corresponding to your private state/privacy manager)
 	trOpts.PrivateFrom = "BULeR8JyUWhiuuCMU/HLA0Q5pzkYT+cHII3ZKBey3Bo="
 
+	// using node1 tessra 3rd party API
 	ethClient, err := ethclient.NewClient(rpcClient).WithPrivateTransactionManager("http://localhost:9081")
 
 	simplestorage, transaction, s, err := DeploySimplestorage(trOpts, ethClient, big.NewInt(123))
