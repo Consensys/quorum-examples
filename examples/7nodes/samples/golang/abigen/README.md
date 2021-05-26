@@ -35,16 +35,16 @@ Retrieved value: 123
 
 Make a note of the `contractAddress` that is printed in the console.
 
-Using the above contact address check the simple storage contract value on `Node2` (invoke `simpleStorage.get()`).
+Using the above contract address check the simple storage contract value on `Node2` (invoke `simpleStorage.get()`).
 
 ```shell
 > go run simple_storage.go  simple_storage_invoke_get.go <contractAddress>
 Retrieved value: 123
 ```
 
-Using the above contact address set a new value for the simple storage contract on `Node1` privateFor `Node2` (invoke `simpleStorage.set()`).
+Using the above contract address set a new value for the simple storage contract on `Node1` privateFor `Node2` (invoke `simpleStorage.set()`).
 
 ```shell
-> go run simple_storage.go  simple_storage_invoke_set.go <contractAddress>
+> go run simple_storage.go  simple_storage_invoke_set.go <contractAddress> <newValue>
 transactionHash: 0xd9ec885e64b8d3480d07d0b439e646153ac3743f163add502854b57be412b1dd
 ```
