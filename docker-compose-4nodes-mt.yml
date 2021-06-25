@@ -244,9 +244,12 @@ x-tx-manager-def-node1:
           cp /examples/keys/tm6.key $${DDIR}/tm6.key
           cp /examples/keys/tm7.pub $${DDIR}/tm7.pub
           cp /examples/keys/tm7.key $${DDIR}/tm7.key
-          #extract the tessera version from the jar
-          TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
-          echo "Tessera version (extracted from manifest file): $${TESSERA_VERSION}"
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+          else
+              TESSERA_VERSION=$$(/tessera/bin/tessera version)
+          fi
+          echo "Tessera version: $${TESSERA_VERSION}"
           # sorting versions to target correct configuration
           V08=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
           V09AndAbove=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
@@ -356,7 +359,12 @@ x-tx-manager-def-node1:
           }
       EOF
           cat $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
-          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          else
+              export JAVA_OPTS="-Xms128M -Xmx128M"
+              /tessera/bin/tessera -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          fi
           ;;
         constellation)
           echo "socket=\"$${DDIR}/tm.ipc\"\npublickeys=[\"/examples/keys/tm$${NODE_ID}.pub\"]\n" > $${DDIR}/tm.conf
@@ -407,9 +415,12 @@ x-tx-manager-def:
         tessera)
           cp /examples/keys/tm$${NODE_ID}.pub $${DDIR}/tm.pub
           cp /examples/keys/tm$${NODE_ID}.key $${DDIR}/tm.key
-          #extract the tessera version from the jar
-          TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
-          echo "Tessera version (extracted from manifest file): $${TESSERA_VERSION}"
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+          else
+              TESSERA_VERSION=$$(/tessera/bin/tessera version)
+          fi
+          echo "Tessera version: $${TESSERA_VERSION}"
           # sorting versions to target correct configuration
           V08=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
           V09AndAbove=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
@@ -491,7 +502,12 @@ x-tx-manager-def:
           }
       EOF
           cat $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
-          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          else
+              export JAVA_OPTS="-Xms128M -Xmx128M"
+              /tessera/bin/tessera -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          fi
           ;;
         constellation)
           echo "socket=\"$${DDIR}/tm.ipc\"\npublickeys=[\"/examples/keys/tm$${NODE_ID}.pub\"]\n" > $${DDIR}/tm.conf

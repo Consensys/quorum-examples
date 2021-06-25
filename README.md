@@ -54,6 +54,17 @@ exist, please run `sudo rm -r /opt/vagrant/embedded/bin/curl`. This is usually d
 issues with the version of curl bundled with Vagrant.
 * If you receive the error `default: cp: cannot open '/path/to/geth.ipc' for reading: Operation not supported` after running `vagrant up`, run `./raft-init.sh` within the 7nodes directory on your local machine.  This will remove temporary files created after running 7nodes locally and will enable `vagrant up` to execute correctly.  
 
+#### Troubleshooting Vagrant: VBoxManage error during vagrant up
+
+If encountering an error like 
+```
+VBoxManage: error: Details: code NS_ERROR_FAILURE (0x80004005), component MachineWrap, interface IMachine
+``` 
+during `vagrant up` try the following:
+
+* *macOS* - Open *Security & Privacy* system preferences after VirtualBox installation.  Allow installation of software from Oracle (as described [here](https://stackoverflow.com/a/52813517)).  Uninstalling and installing VirtualBox may be required to show the prompt again.     
+* Download *VM VirtualBox Extension Pack* from [VirtualBox downloads](https://www.virtualbox.org/wiki/Downloads) (*macOS* - Also allow installation as described above).
+
 #### Troubleshooting Vagrant: Memory usage
 * The Vagrant instance is allocated 6 GB of memory.  This is defined in the `Vagrantfile`, `v.memory = 6144`.  This has been deemed a suitable value to allow the VM and examples to run as expected.  The memory allocation can be changed by updating this value and running `vagrant reload` to apply the change.
 

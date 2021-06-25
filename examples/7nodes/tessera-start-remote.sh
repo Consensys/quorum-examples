@@ -27,16 +27,18 @@ defaultTesseraJarExpr="/home/vagrant/tessera/tessera.jar"
 set +e
 defaultTesseraJar=`find ${defaultTesseraJarExpr} 2>/dev/null`
 set -e
-if [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
-  tesseraJar=${defaultTesseraJar}
+tesseraScript=${TESSERA_SCRIPT:-""}
+if [[ "${tesseraScript:-unset}" == "unset" ]] && [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
+    tesseraJar=${defaultTesseraJar}
 else
-  tesseraJar=${TESSERA_JAR}
+    tesseraJar=${TESSERA_JAR}
 fi
 
 set +e
 defaultEnclaveJar=`find ${defaultEnclaveJarExpr} 2>/dev/null`
+enclaveScript=${ENCLAVE_SCRIPT}
 set -e
-if [[ "${ENCLAVE_JAR:-unset}" == "unset" ]]; then
+if [[ "${enclaveScript:-unset}" == "unset" ]] && [[ "${ENCLAVE_JAR:-unset}" == "unset" ]]; then
   enclaveJar=${defaultEnclaveJar}
 else
   enclaveJar=${ENCLAVE_JAR}
@@ -79,25 +81,34 @@ while (( "$#" )); do
   esac
 done
 
-if [  "${tesseraJar}" == "" ]; then
-  echo "ERROR: unable to find Tessera jar file using TESSERA_JAR envvar, or using ${defaultTesseraJarExpr}"
-  usage
-elif [  ! -f "${tesseraJar}" ]; then
-  echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
-  usage
+if [ "${tesseraJar}" == "" ] && [ "${tesseraScript}" == "" ]; then
+    echo "ERROR: unable to find Tessera jar or script file using TESSERA_JAR and TESSERA_SCRIPT envvars, or using default jar location ${defaultTesseraJarExpr}"
+    usage
+elif [ "${tesseraJar}" != "" ] && [  ! -f "${tesseraJar}" ]; then
+    echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
+    usage
+elif [ "${tesseraScript}" != "" ] && [  ! -f "${tesseraScript}" ]; then
+    echo "ERROR: unable to find Tessera script file: ${tesseraScript}"
+    usage
 fi
 
-if [  "${enclaveJar}" == "" ]; then
-  echo "ERROR: unable to find Enclave jar file using ENCLAVE_JAR envvar, or using ${defaultEnclaveJarExpr}"
-  usage
-elif [  ! -f "${enclaveJar}" ]; then
-  echo "ERROR: unable to find Enclave jar file: ${enclaveJar}"
-  usage
+if [ "${enclaveJar}" == "" ] && [ "${enclaveScript}" == "" ]; then
+    echo "ERROR: unable to find Enclave jar or script file using ENCLAVE_JAR and ENCLAVE_SCRIPT envvars, or using default jar location ${defaultEnclaveJarExpr}"
+    usage
+elif [ "${enclaveJar}" != "" ] && [  ! -f "${enclaveJar}" ]; then
+    echo "ERROR: unable to find Enclave jar file: ${enclaveJar}"
+    usage
+elif [ "${enclaveScript}" != "" ] && [  ! -f "${enclaveScript}" ]; then
+    echo "ERROR: unable to find Enclave script file: ${enclaveScript}"
+    usage
 fi
 
-#extract the tessera version from the jar
-TESSERA_VERSION=$(unzip -p $tesseraJar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
-echo "Tessera version (extracted from manifest file): $TESSERA_VERSION"
+if [ "${tesseraScript}" != "" ]; then
+    TESSERA_VERSION=$($tesseraScript version)
+else
+    TESSERA_VERSION=$(unzip -p $tesseraJar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+fi
+echo "Tessera version: $TESSERA_VERSION"
 
 TESSERA_CONFIG_TYPE="-09-"
 
@@ -135,7 +146,15 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    CMD="java $jvmParams $DEBUG $MEMORY -jar ${enclaveJar} -configfile $DDIR/enclave$TESSERA_CONFIG_TYPE$i.json"
+    if [ "${enclaveJar}" != "" ]; then
+        enclaveExec="java $jvmParams $DEBUG $MEMORY -jar ${enclaveJar}"
+    else
+        export JAVA_OPTS="$jvmParams $DEBUG $MEMORY"
+        enclaveExec=${enclaveScript}
+    fi
+
+    CMD="${enclaveExec} -configfile $DDIR/enclave$TESSERA_CONFIG_TYPE$i.json"
+
     echo "$CMD >> qdata/logs/enclave$i.log 2>&1 &"
     ${CMD} >> "qdata/logs/enclave$i.log" 2>&1 &
     sleep 1
@@ -189,7 +208,15 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    CMD="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar} -configfile $DDIR/tessera-config-enclave$TESSERA_CONFIG_TYPE$i.json"
+    if [ "${tesseraJar}" != "" ]; then
+        tesseraExec="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar}"
+    else
+        export JAVA_OPTS="$jvmParams $DEBUG $MEMORY"
+        tesseraExec=${tesseraScript}
+    fi
+
+    CMD="${tesseraExec} -configfile $DDIR/tessera-config-enclave$TESSERA_CONFIG_TYPE$i.json"
+
     echo "$CMD >> qdata/logs/tessera$i.log 2>&1 &"
     ${CMD} >> "qdata/logs/tessera$i.log" 2>&1 &
     sleep 1
@@ -214,7 +241,15 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    CMD="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar} -configfile $DDIR/tessera-config$TESSERA_CONFIG_TYPE$i.json"
+    if [ "${tesseraJar}" != "" ]; then
+        tesseraExec="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar}"
+    else
+        export JAVA_OPTS="$jvmParams $DEBUG $MEMORY"
+        tesseraExec=${tesseraScript}
+    fi
+
+    CMD="${tesseraExec} -configfile $DDIR/tessera-config$TESSERA_CONFIG_TYPE$i.json"
+
     echo "$CMD >> qdata/logs/tessera$i.log 2>&1 &"
     ${CMD} >> "qdata/logs/tessera$i.log" 2>&1 &
     sleep 1

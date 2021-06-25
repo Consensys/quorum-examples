@@ -46,18 +46,22 @@ if [ "$encryptorType" == "EC" ]; then
     set +e
     defaultTesseraJar=`find ${defaultTesseraJarExpr} 2>/dev/null`
     set -e
-    if [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
-      tesseraJar=${defaultTesseraJar}
+    tesseraScript=${TESSERA_SCRIPT:-""}
+    if [[ "${tesseraScript:-unset}" == "unset" ]] && [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
+        tesseraJar=${defaultTesseraJar}
     else
-      tesseraJar=${TESSERA_JAR}
+        tesseraJar=${TESSERA_JAR}
     fi
 
-    if [  "${tesseraJar}" == "" ]; then
-      echo "ERROR: unable to find Tessera jar file using TESSERA_JAR envvar, or using ${defaultTesseraJarExpr}"
-      exit -1
-    elif [  ! -f "${tesseraJar}" ]; then
-      echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
-      exit -1
+    if [ "${tesseraJar}" == "" ] && [ "${tesseraScript}" == "" ]; then
+        echo "ERROR: unable to find Tessera jar or script file using TESSERA_JAR and TESSERA_SCRIPT envvars, or using default jar location ${defaultTesseraJarExpr}"
+        exit -1
+    elif [ "${tesseraJar}" != "" ] && [  ! -f "${tesseraJar}" ]; then
+        echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
+        exit -1
+    elif [ "${tesseraScript}" != "" ] && [  ! -f "${tesseraScript}" ]; then
+        echo "ERROR: unable to find Tessera script file: ${tesseraScript}"
+        exit -1
     fi
 
     encryptorProps=$(printf "\"symmetricCipher\":\"%s\",\n            \"ellipticCurve\":\"%s\",\n            \"nonceLength\":\"%s\",\n            \"sharedKeyLength\":\"%s\"" \
@@ -258,9 +262,15 @@ EOF
 
     #generate tessera keys
     if [ "$encryptorType" == "EC" ]; then
-        cd $DDIR
-        java -jar $tesseraJar -keygen $encryptorCmdLineParams -filename tm < /dev/null
-        cd $currentDir
+        if [ "${tesseraJar}" != "" ]; then
+            tesseraExec="java -jar ${tesseraJar}"
+        else
+            tesseraExec=${tesseraScript}
+        fi
+
+        pushd $DDIR
+        $tesseraExec -keygen $encryptorCmdLineParams -filename tm < /dev/null
+        popd
     fi
 
 done
