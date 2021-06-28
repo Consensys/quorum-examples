@@ -82,10 +82,13 @@ chmod 0755 ${SOLC_OUTPUT_FILE}
 echo "Installing Tessera ${TESSERA_VERSION}"
 
 if [ "$TESSERA_VERSION" \> "21.7.0" ] || [ "$TESSERA_VERSION" == "21.7.0" ]; then
-    tar --strip-components 1 --directory ${TESSERA_HOME} -xvf ${TESSERA_OUTPUT_FILE}
+    mkdir ${TESSERA_HOME}/tessera
+    mkdir ${TESSERA_HOME}/enclave-jaxrs
+    tar --strip-components 1 --directory ${TESSERA_HOME}/tessera -xvf ${TESSERA_OUTPUT_FILE}
+    tar --strip-components 1 --directory ${TESSERA_HOME}/enclave-jaxrs -xvf ${TESSERA_ENCLAVE_OUTPUT_FILE}
 
-    echo "TESSERA_SCRIPT=${TESSERA_OUTPUT_FILE}" >> /home/vagrant/.profile
-    echo "ENCLAVE_SCRIPT=${TESSERA_ENCLAVE_OUTPUT_FILE}" >> /home/vagrant/.profile
+    echo "TESSERA_SCRIPT=${TESSERA_HOME}/tessera/bin/tessera" >> /home/vagrant/.profile
+    echo "ENCLAVE_SCRIPT=${TESSERA_HOME}/enclave-jaxrs/bin/enclave-jaxrs" >> /home/vagrant/.profile
 else
     echo "TESSERA_JAR=${TESSERA_OUTPUT_FILE}" >> /home/vagrant/.profile
     echo "ENCLAVE_JAR=${TESSERA_ENCLAVE_OUTPUT_FILE}" >> /home/vagrant/.profile

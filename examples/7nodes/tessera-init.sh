@@ -42,25 +42,14 @@ encryptorType=${ENCRYPTOR_TYPE:-NACL}
 encryptorProps=""
 
 if [ "$encryptorType" == "EC" ]; then
-    defaultTesseraJarExpr="/home/vagrant/tessera/tessera.jar"
-    set +e
-    defaultTesseraJar=`find ${defaultTesseraJarExpr} 2>/dev/null`
-    set -e
-    tesseraScript=${TESSERA_SCRIPT:-""}
-    if [[ "${tesseraScript:-unset}" == "unset" ]] && [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
-        tesseraJar=${defaultTesseraJar}
-    else
-        tesseraJar=${TESSERA_JAR}
-    fi
+    tesseraJarDefault="/home/vagrant/tessera/tessera.jar"
+    tesseraScriptDefault="/home/vagrant/tessera/tessera/bin/tessera"
 
-    if [ "${tesseraJar}" == "" ] && [ "${tesseraScript}" == "" ]; then
-        echo "ERROR: unable to find Tessera jar or script file using TESSERA_JAR and TESSERA_SCRIPT envvars, or using default jar location ${defaultTesseraJarExpr}"
-        exit -1
-    elif [ "${tesseraJar}" != "" ] && [  ! -f "${tesseraJar}" ]; then
-        echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
-        exit -1
-    elif [ "${tesseraScript}" != "" ] && [  ! -f "${tesseraScript}" ]; then
-        echo "ERROR: unable to find Tessera script file: ${tesseraScript}"
+    tesseraJar=${TESSERA_JAR:-$tesseraJarDefault}
+    tesseraScript=${TESSERA_SCRIPT:-$tesseraScriptDefault}
+
+    if [ ! -f "${tesseraJar}" ] && [ ! -f "${tesseraScript}" ]; then
+        echo "ERROR: no Tessera jar or executable script found at ${tesseraJar} or ${tesseraScript}. Use TESSERA_JAR or TESSERA_SCRIPT env vars to specify the path to an executable jar or script."
         exit -1
     fi
 
@@ -262,12 +251,11 @@ EOF
 
     #generate tessera keys
     if [ "$encryptorType" == "EC" ]; then
-        if [ "${tesseraJar}" != "" ]; then
+        if [ -f "${tesseraJar}" ]; then
             tesseraExec="java -jar ${tesseraJar}"
         else
             tesseraExec=${tesseraScript}
         fi
-
         pushd $DDIR
         $tesseraExec -keygen $encryptorCmdLineParams -filename tm < /dev/null
         popd

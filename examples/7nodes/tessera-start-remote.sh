@@ -21,28 +21,16 @@ function usage() {
 }
 
 defaultNumberOfRemoteEnclaves=4
-defaultEnclaveJarExpr="/home/vagrant/tessera/enclave.jar"
-defaultTesseraJarExpr="/home/vagrant/tessera/tessera.jar"
 
-set +e
-defaultTesseraJar=`find ${defaultTesseraJarExpr} 2>/dev/null`
-set -e
-tesseraScript=${TESSERA_SCRIPT:-""}
-if [[ "${tesseraScript:-unset}" == "unset" ]] && [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
-    tesseraJar=${defaultTesseraJar}
-else
-    tesseraJar=${TESSERA_JAR}
-fi
+tesseraJarDefault="/home/vagrant/tessera/tessera.jar"
+tesseraScriptDefault="/home/vagrant/tessera/tessera/bin/tessera"
+enclaveJarDefault="/home/vagrant/tessera/enclave.jar"
+enclaveScriptDefault="/home/vagrant/tessera/enclave-jaxrs/bin/enclave-jaxrs"
 
-set +e
-defaultEnclaveJar=`find ${defaultEnclaveJarExpr} 2>/dev/null`
-enclaveScript=${ENCLAVE_SCRIPT}
-set -e
-if [[ "${enclaveScript:-unset}" == "unset" ]] && [[ "${ENCLAVE_JAR:-unset}" == "unset" ]]; then
-  enclaveJar=${defaultEnclaveJar}
-else
-  enclaveJar=${ENCLAVE_JAR}
-fi
+tesseraJar=${TESSERA_JAR:-$tesseraJarDefault}
+tesseraScript=${TESSERA_SCRIPT:-$tesseraScriptDefault}
+enclaveJar=${ENCLAVE_JAR:-$enclaveJarDefault}
+enclaveScript=${ENCLAVE_SCRIPT:-$enclaveScriptDefault}
 
 numberOfRemoteEnclaves=${defaultNumberOfRemoteEnclaves}
 
@@ -81,32 +69,20 @@ while (( "$#" )); do
   esac
 done
 
-if [ "${tesseraJar}" == "" ] && [ "${tesseraScript}" == "" ]; then
-    echo "ERROR: unable to find Tessera jar or script file using TESSERA_JAR and TESSERA_SCRIPT envvars, or using default jar location ${defaultTesseraJarExpr}"
-    usage
-elif [ "${tesseraJar}" != "" ] && [  ! -f "${tesseraJar}" ]; then
-    echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
-    usage
-elif [ "${tesseraScript}" != "" ] && [  ! -f "${tesseraScript}" ]; then
-    echo "ERROR: unable to find Tessera script file: ${tesseraScript}"
-    usage
+if [ ! -f "${tesseraJar}" ] && [ ! -f "${tesseraScript}" ]; then
+    echo "ERROR: no Tessera jar or executable script found at ${tesseraJar} or ${tesseraScript}. Use TESSERA_JAR or TESSERA_SCRIPT env vars to specify the path to an executable jar or script."
+    exit -1
 fi
 
-if [ "${enclaveJar}" == "" ] && [ "${enclaveScript}" == "" ]; then
-    echo "ERROR: unable to find Enclave jar or script file using ENCLAVE_JAR and ENCLAVE_SCRIPT envvars, or using default jar location ${defaultEnclaveJarExpr}"
-    usage
-elif [ "${enclaveJar}" != "" ] && [  ! -f "${enclaveJar}" ]; then
-    echo "ERROR: unable to find Enclave jar file: ${enclaveJar}"
-    usage
-elif [ "${enclaveScript}" != "" ] && [  ! -f "${enclaveScript}" ]; then
-    echo "ERROR: unable to find Enclave script file: ${enclaveScript}"
-    usage
+if [ ! -f "${enclaveJar}" ] && [ ! -f "${enclaveScript}" ]; then
+    echo "ERROR: no Tessera Enclave jar or executable script found at ${enclaveJar} or ${enclaveScript}. Use ENCLAVE_JAR or ENCLAVE_SCRIPT env vars to specify the path to an executable jar or script."
+    exit -1
 fi
 
-if [ "${tesseraScript}" != "" ]; then
-    TESSERA_VERSION=$($tesseraScript version)
-else
+if [ -f "${tesseraJar}" ]; then
     TESSERA_VERSION=$(unzip -p $tesseraJar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+else
+    TESSERA_VERSION=$($tesseraScript version)
 fi
 echo "Tessera version: $TESSERA_VERSION"
 
@@ -146,7 +122,7 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    if [ "${enclaveJar}" != "" ]; then
+    if [ -f "${enclaveJar}" ]; then
         enclaveExec="java $jvmParams $DEBUG $MEMORY -jar ${enclaveJar}"
     else
         export JAVA_OPTS="$jvmParams $DEBUG $MEMORY"
@@ -208,7 +184,7 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    if [ "${tesseraJar}" != "" ]; then
+    if [ -f "${tesseraJar}" ]; then
         tesseraExec="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar}"
     else
         export JAVA_OPTS="$jvmParams $DEBUG $MEMORY"
@@ -241,7 +217,7 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    if [ "${tesseraJar}" != "" ]; then
+    if [ -f "${tesseraJar}" ]; then
         tesseraExec="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar}"
     else
         export JAVA_OPTS="$jvmParams $DEBUG $MEMORY"
