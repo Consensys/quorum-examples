@@ -179,12 +179,10 @@ The sample network can be created to run using Istanbul BFT, Raft or Clique POA 
 
     - If running locally:
         ```
-        ./{consensus}-start.sh tessera --tesseraOptions "--tesseraJar /path/to/tessera-app.jar"
+        TESSERA_{JAR|SCRIPT}=/path/to/jar-or-startscript ./{consensus}-start.sh
         ```
         
-        By default, `{consensus}-start.sh` will look in `/home/vagrant/tessera/tessera-app/target/tessera-app-{version}-app.jar` for the Tessera jar.  `--tesseraOptions` must be provided so that the start script looks in the correct location for the Tessera jar: 
-
-        Alternatively, the Tessera jar location can be specified by setting the environment variable `TESSERA_JAR`.
+        The `{consensus}-start.sh` scripts look for a Tessera executable at default paths unique to the Vagrant environment.  When running locally these defaults must be overriden with the `TESSERA_SCRIPT` or `TESSERA_JAR` environment variables.  Set `TESSERA_SCRIPT` when using the newer versions of Tessera distributed as a `.tar` - extract the tar and set `TESSERA_SCRIPT` to the contained runnable script.  Set `TESSERA_JAR` when using older versions of Tessera distributed as an executable `.jar`.
 
 1. You are now ready to start sending private/public transactions between the nodes
 

@@ -13,9 +13,12 @@ function usage() {
   echo "    --jvmParams specifies parameters to be used by JVM when running Tessera"
   echo "    --remoteEnclaves specifies the number of nodes that should be using a remote enclave"
   echo "Notes:"
-  echo "    Tessera jar location defaults to ${defaultTesseraJarExpr};"
-  echo "    Enclave jar location defaults to ${defaultEnclaveJarExpr};"
-  echo "    however, this can be overridden by environment variable TESSERA_JAR or ENCLAVE_JAR or by the command line option."
+  echo "  - Tessera/Enclave .jar and extracted .tar dists supported."
+  echo "    Tessera jar location defaults to ${tesseraJarDefault}."
+  echo "    Tessera extracted runscript location defaults to ${tesseraScriptDefault}."
+  echo "    Enclave jar location defaults to ${enclaveJarDefault};"
+  echo "    Enclave extracted runscript location defaults to ${enclaveScriptDefault};"
+  echo "    Environment variables TESSERA_JAR, TESSERA_SCRIPT, ENCLAVE_JAR, and ENCLAVE_SCRIPT can be used to override these defaults."
   echo ""
   exit -1
 }

@@ -17,8 +17,10 @@ function usage() {
   echo "    --remoteDebug enables remote debug on port 500n for each Tessera node (for use with JVisualVm etc)"
   echo "    --jvmParams specifies parameters to be used by JVM when running Tessera"
   echo "Notes:"
-  echo "  - Tessera jar location defaults to ${defaultTesseraJarExpr};"
-  echo "    however, this can be overridden by environment variable TESSERA_JAR or by the command line option."
+  echo "  - Tessera .jar and extracted .tar dists supported."
+  echo "    Tessera jar location defaults to ${tesseraJarDefault}".
+  echo "    Tessera runscript location defaults to ${tesseraScriptDefault}".
+  echo "    Environment variables TESSERA_JAR and TESSERA_SCRIPT can be used to override these defaults."
   echo "  - This script will examine the file qdata/numberOfNodes to"
   echo "    determine how many nodes to start up. If the file doesn't"
   echo "    exist then 7 nodes will be assumed"
