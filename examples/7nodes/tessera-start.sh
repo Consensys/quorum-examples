@@ -17,8 +17,10 @@ function usage() {
   echo "    --remoteDebug enables remote debug on port 500n for each Tessera node (for use with JVisualVm etc)"
   echo "    --jvmParams specifies parameters to be used by JVM when running Tessera"
   echo "Notes:"
-  echo "  - Tessera jar location defaults to ${defaultTesseraJarExpr};"
-  echo "    however, this can be overridden by environment variable TESSERA_JAR or by the command line option."
+  echo "  - Tessera .jar and extracted .tar dists supported."
+  echo "    Tessera jar location defaults to ${tesseraJarDefault}".
+  echo "    Tessera runscript location defaults to ${tesseraScriptDefault}".
+  echo "    Environment variables TESSERA_JAR and TESSERA_SCRIPT can be used to override these defaults."
   echo "  - This script will examine the file qdata/numberOfNodes to"
   echo "    determine how many nodes to start up. If the file doesn't"
   echo "    exist then 7 nodes will be assumed"
@@ -26,15 +28,11 @@ function usage() {
   exit -1
 }
 
-defaultTesseraJarExpr="/home/vagrant/tessera/tessera.jar"
-set +e
-defaultTesseraJar=`find ${defaultTesseraJarExpr} 2>/dev/null`
-set -e
-if [[ "${TESSERA_JAR:-unset}" == "unset" ]]; then
-  tesseraJar=${defaultTesseraJar}
-else
-  tesseraJar=${TESSERA_JAR}
-fi
+tesseraJarDefault="/home/vagrant/tessera/tessera.jar"
+tesseraScriptDefault="/home/vagrant/tessera/tessera/bin/tessera"
+
+tesseraJar=${TESSERA_JAR:-$tesseraJarDefault}
+tesseraScript=${TESSERA_SCRIPT:-$tesseraScriptDefault}
 
 remoteDebug=false
 jvmParams=
@@ -63,17 +61,17 @@ while (( "$#" )); do
   esac
 done
 
-if [  "${tesseraJar}" == "" ]; then
-  echo "ERROR: unable to find Tessera jar file using TESSERA_JAR envvar, or using ${defaultTesseraJarExpr}"
-  usage
-elif [  ! -f "${tesseraJar}" ]; then
-  echo "ERROR: unable to find Tessera jar file: ${tesseraJar}"
-  usage
+if [ ! -f "${tesseraJar}" ] && [ ! -f "${tesseraScript}" ]; then
+    echo "ERROR: no Tessera jar or executable script found at ${tesseraJar} or ${tesseraScript}. Use TESSERA_JAR or TESSERA_SCRIPT env vars to specify the path to an executable jar or script."
+    exit -1
 fi
 
-#extract the tessera version from the jar
-TESSERA_VERSION=$(unzip -p $tesseraJar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
-echo "Tessera version (extracted from manifest file): $TESSERA_VERSION"
+if [ -f "${tesseraJar}" ]; then
+    TESSERA_VERSION=$(unzip -p $tesseraJar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+else
+    TESSERA_VERSION=$($tesseraScript version)
+fi
+echo "Tessera version: $TESSERA_VERSION"
 
 TESSERA_CONFIG_TYPE="-09-"
 
@@ -110,7 +108,14 @@ do
       MEMORY="-Xms128M -Xmx128M"
     fi
 
-    CMD="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar} -configfile $DDIR/tessera-config$TESSERA_CONFIG_TYPE$i.json"
+    if [ -f "${tesseraJar}" ]; then
+        tesseraExec="java $jvmParams $DEBUG $MEMORY -jar ${tesseraJar}"
+    else
+        export JAVA_OPTS="$jvmParams $DEBUG $MEMORY"
+        tesseraExec=${tesseraScript}
+    fi
+
+    CMD="${tesseraExec} -configfile $DDIR/tessera-config$TESSERA_CONFIG_TYPE$i.json"
     echo "$CMD >> qdata/logs/tessera$i.log 2>&1 &"
     ${CMD} >> "qdata/logs/tessera$i.log" 2>&1 &
     sleep 1

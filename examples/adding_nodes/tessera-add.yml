@@ -115,7 +115,12 @@ x-tx-manager-def:
       }
       EOF
 
-      java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config.json
+      if [ -f "/tessera/tessera-app.jar" ]; then
+          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config.json
+      else
+          export JAVA_OPTS="-Xms128M -Xmx128M"
+          /tessera/bin/tessera -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+      fi
 services:
   node1:
     << : *quorum-def
