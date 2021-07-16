@@ -26,7 +26,7 @@ SOLC_OUTPUT_FILE="/usr/local/bin/solc"
 
 TESSERA_HOME=/home/vagrant/tessera
 mkdir -p ${TESSERA_HOME}
-TESSERA_VERSION="21.4.1"
+TESSERA_VERSION="21.7.0"
 if [ "$TESSERA_VERSION" \> "21.7.0" ] || [ "$TESSERA_VERSION" == "21.7.0" ]; then
     TESSERA_DL_URL="https://oss.sonatype.org/content/groups/public/net/consensys/quorum/tessera/tessera-dist/${TESSERA_VERSION}/tessera-dist-${TESSERA_VERSION}.tar"
     TESSERA_ENCLAVE_DL_URL="https://oss.sonatype.org/content/groups/public/net/consensys/quorum/tessera/enclave-jaxrs/${TESSERA_VERSION}/enclave-jaxrs-${TESSERA_VERSION}.tar"
