@@ -1,6 +1,16 @@
 # Quorum Examples
 
-This repository contains setup examples for Quorum Platform.
+This repository contains scripts for advanced deployment and connection to the Quorum Platform.
+
+## Usage notice
+
+This project is meant for advanced Quorum users (mainly Quorum contributors) who are already familiar with Quorum deployments and who are looking for some advanced configurations for their network.
+
+If you have a limited experience with Quorum, or if you are looking to start a Quorum network for some testing purposes then you should instead use our [quorum-dev-quickstart](https://github.com/ConsenSys/quorum-dev-quickstart).
+
+We do not guarantee that all scripts in this project work out of the box, in particular some scripts may be out of date and will require some adjustments from users to properly work on latest Quorum versions. 
+
+## About 
 
 Current examples include:
 * [7nodes](examples/7nodes): Starts up a fully-functioning Quorum environment consisting of 7 independent nodes. From this example one can test consensus, privacy, and all the expected functionality of an Ethereum platform.
@@ -24,8 +34,8 @@ A 7 node Quorum network must be running before the example can be run.  The [`qu
 There are 3 ways to start the sample network, each method is detailed below:
 
 1. By running a pre-configured Vagrant virtual-machine environment which comes complete with Quorum, Constellation, Tessera and the 7nodes example already installed.  Bash scripts provided in the examples are used to create the sample network: [Running with Vagrant](#running-with-vagrant)
-1. By running [`docker-compose`](https://docs.docker.com/compose/) against a [preconfigured `compose` file](https://github.com/jpmorganchase/quorum-examples/blob/master/docker-compose.yml) to create the sample network: [Running with Docker](#running-with-docker)
-1. By installing Quorum and Tessera/Constellation locally and using bash scripts provided in the examples to create the sample network: [Running locally](#running-locally)
+2. By running [`docker-compose`](https://docs.docker.com/compose/) against a [preconfigured `compose` file](https://github.com/jpmorganchase/quorum-examples/blob/master/docker-compose.yml) to create the sample network: [Running with Docker](#running-with-docker)
+3. By installing Quorum and Tessera/Constellation locally and using bash scripts provided in the examples to create the sample network: [Running locally](#running-locally)
 
 Your environment must be prepared differently depending on the method being used to run the example.
 
