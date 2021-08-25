@@ -1,7 +1,7 @@
 # The following environment variables are substituted if present
 # * QUORUM_CONSENSUS: default to istanbul
-# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:2.6.0
-# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:0.10.6
+# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:21.7.1
+# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:21.7.2
 # * QUORUM_GETH_ARGS: extra geth arguments to be included when running geth
 # To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
 # e.g.: QUORUM_TX_MANAGER_DOCKER_IMAGE=quorumengineering/constellation:0.3.2 docker-compose up -d
@@ -10,7 +10,7 @@ version: "3.6"
 x-quorum-def-node1:
   &quorum-def-node1
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:develop}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:21.7.1}"
   expose:
     - "21000"
     - "50400"
@@ -94,7 +94,7 @@ x-quorum-def-node1:
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:develop}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:21.7.1}"
   expose:
     - "21000"
     - "50400"
@@ -171,7 +171,7 @@ x-quorum-def:
         ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
 x-tx-manager-def-node1:
   &tx-manager-def-node1
-  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:develop}"
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7.2}"
   expose:
     - "9000"
     - "9080"
@@ -193,7 +193,7 @@ x-tx-manager-def-node1:
       DDIR=/qdata/tm
       rm -rf $${DDIR}
       mkdir -p $${DDIR}
-      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.10.6}"
+      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7.2}"
       TX_MANAGER=$$(echo $${DOCKER_IMAGE} | sed 's/^.*\/\(.*\):.*$$/\1/g')
       echo "TxManager: $${TX_MANAGER}"
       case $${TX_MANAGER}
@@ -348,7 +348,7 @@ x-tx-manager-def-node1:
       esac
 x-tx-manager-def:
   &tx-manager-def
-  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:develop}"
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7.2}"
   expose:
     - "9000"
     - "9080"
@@ -370,7 +370,7 @@ x-tx-manager-def:
       DDIR=/qdata/tm
       rm -rf $${DDIR}
       mkdir -p $${DDIR}
-      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:0.10.6}"
+      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7.2}"
       TX_MANAGER=$$(echo $${DOCKER_IMAGE} | sed 's/^.*\/\(.*\):.*$$/\1/g')
       echo "TxManager: $${TX_MANAGER}"
       case $${TX_MANAGER}
@@ -491,7 +491,7 @@ x-tx-manager-def:
       esac
 x-cakeshop-def:
   &cakeshop-def
-  image: "${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0}"
+  image: "${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.12.1}"
   expose:
     - "8999"
   restart: "no"
@@ -508,7 +508,7 @@ x-cakeshop-def:
       DDIR=/qdata/cakeshop/local
       rm -rf $${DDIR}
       mkdir -p $${DDIR}
-      DOCKER_IMAGE="${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0}"
+      DOCKER_IMAGE="${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.12.1}"
       cp /examples/cakeshop/application.properties.template $${DDIR}/application.properties
       cp /examples/cakeshop/7nodes_docker.json $${DDIR}/7nodes.json
       java -Xms128M -Xmx128M -Dcakeshop.config.dir=/qdata/cakeshop -Dlogging.path=/qdata/logs/cakeshop -jar /opt/cakeshop/cakeshop.war

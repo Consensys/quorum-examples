@@ -100,6 +100,7 @@ during `vagrant up` try the following:
    ```sh
    PRIVATE_CONFIG=ignore QUORUM_CONSENSUS=raft docker-compose up -d
    ```
+   Note that additional geth command line parameters can also be specified via the environment variable `QUORUM_GETH_ARGS`
 1. Run `docker ps` to verify that all quorum-examples containers (7 nodes and 7 tx managers) are **healthy**
 1. Run `docker logs <container-name> -f` to view the logs for a particular container
 1. __Note__: to run the 7nodes demo, use the following snippet to open `geth` Javascript console to a desired node (using container name from `docker ps`) and send a private transaction
