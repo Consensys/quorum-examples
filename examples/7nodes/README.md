@@ -143,6 +143,33 @@ private.set(6, {from:web3.eth.accounts[0], gas: 0x47b760, privacyFlag:1, private
 ```
 For further details about [privacy enhancements](https://docs.goquorum.consensys.net/en/latest/Concepts/Privacy/PrivacyEnhancements/) please consult the latest go-quorum documentation.  
 
+### Private Transactions using Privacy Marker Transactions
+
+#### Set up
+
+Before running the relevant startup script, set the `QUORUM_GETH_ARGS` environment variable with the command line argument to enable the creation of privacy marker transactions.
+The `genesis.json` is already set up to support processing of privacy marker transactions from block 0 (`privacyPrecompileBlock: 0`).
+
+```
+export QUORUM_GETH_ARGS="--privacymarker.enable"
+```
+
+#### Usage
+
+Submit private transactions to the network as normal, for example using the `geth` console:
+```shell
+> loadScript('private-contract.js')
+Contract transaction send: TransactionHash: 0xdeb7058fe871b11fb544eadeeafb62de44e035fb57587d550e39f925ab87c86b waiting to be mined...
+undefined
+> Contract mined! Address: 0x180893a0ec847fa8c92786791348d7d65916acbb
+```
+
+This will return the transaction hash for the public Privacy Marker Transaction. The receipt for this can be retrieved as normal using `eth_getTransactionReceipt()`.
+
+In order to retrieve details of the underlying private transaction, you must use the functions `eth_getPrivateTransaction()` and `eth_getPrivateTransactionReceipt()`. These are only available to participants of the private transaction. Non-participants will receive an empty result.
+
+For further details about [privacy marker transactions](https://docs.goquorum.consensys.net/en/latest/Concepts/Privacy/PrivacyMarkerTransactions/) please consult the latest go-quorum documentation.
+
 ## Permissions
 
 Node Permissioning is a feature in Quorum that allows only a pre-defined set of nodes (as identified by their remotekey/enodes) to connect to the permissioned network.

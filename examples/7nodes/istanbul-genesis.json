@@ -30,6 +30,7 @@
       "eip158Block": 0,
       "qip714Block": 50,
       "isQuorum": true,
+      "privacyPrecompileBlock": 0,
       "maxCodeSizeConfig" : [
         {
           "block" : 0,
