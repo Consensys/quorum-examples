@@ -133,11 +133,12 @@ export PRIVACY_ENHANCEMENTS=true
 Add the relevant `privacyFlag` to your private transaction parameters:
 * 0 - Standard Private (optional - when omitted the `privacyFlag` is assumed to be standard private)
 * 1 - Party Protection (PP)
+* 2 - Mandatory Recipients (MR)
 * 3 - Private State Validation (PSV)
 
-Party Protection and Private State Validation versions of the `private-contract.js` (`private-contract-pp.js` and `private-contract-psv.js`) have been prepared that deploy the simple storage contract `privateFor` Node2 from Node 1.
+Party Protection, Mandatory Recipient, and Private State Validation versions of the `private-contract.js` (`private-contract-pp.js`, `private-contract-mr.js` and `private-contract-psv.js`) have been prepared that deploy the simple storage contract `privateFor` Node2 from Node 1.
 
-Similar to the standard private example above you can update a PP or PSV contract by specifying the appropriate `privacyFlag`.  
+Similar to the standard private example above you can update a PP, MR or PSV contract by specifying the appropriate `privacyFlag`.  
 ```shell
 private.set(6, {from:web3.eth.accounts[0], gas: 0x47b760, privacyFlag:1, privateFor: ["BULeR8JyUWhiuuCMU/HLA0Q5pzkYT+cHII3ZKBey3Bo="]})
 ```
