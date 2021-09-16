@@ -8,7 +8,7 @@ The 7nodes example comes with some simple contracts to demonstrate the privacy f
 - Show that only nodes 1 and 7 are able to view the initial state of the contract
 - Have Node 1 update the state of the contract and, once the block containing the updated transaction is validated by the network, again verify that only nodes 1 and 7 are able to see the updated state of the contract 
 
-> [Constellation](https://github.com/jpmorganchase/constellation) or [Tessera](https://github.com/jpmorganchase/tessera) is used to enable the privacy features of Quorum.  To start a Quorum node without its associated privacy transaction manager, set `PRIVATE_CONFIG=ignore` when starting the node.
+> [Constellation](https://github.com/Consensys/constellation) or [Tessera](https://github.com/Consensys/tessera) is used to enable the privacy features of Quorum.  To start a Quorum node without its associated privacy transaction manager, set `PRIVATE_CONFIG=ignore` when starting the node.
 
 ### Sending a private transaction
 
@@ -247,4 +247,4 @@ Check out some of the other examples highlighting and showcasing the functionali
 
 ## Adding Cakeshop
 
-[Cakeshop](https://github.com/jpmorganchase/cakeshop) is our Monitoring and Development dashboard for Quorum networks. It allows to you see the current status of the network and inspect transactions, as well as compile and deploy solidity contracts. To run an instance of Cakeshop alongside of the 7nodes example, run `./cakeshop-start.sh` and then go to http://localhost:8999 in your browser to see the UI.
+[Cakeshop](https://github.com/Consensys/cakeshop) is our Monitoring and Development dashboard for Quorum networks. It allows to you see the current status of the network and inspect transactions, as well as compile and deploy solidity contracts. To run an instance of Cakeshop alongside of the 7nodes example, run `./cakeshop-start.sh` and then go to http://localhost:8999 in your browser to see the UI.

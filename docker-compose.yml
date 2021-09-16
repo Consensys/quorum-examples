@@ -1,7 +1,7 @@
 # The following environment variables are substituted if present
 # * QUORUM_CONSENSUS: default to istanbul
-# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:21.7
-# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:21.7
+# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:21.7.1
+# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:21.7.2
 # * QUORUM_GETH_ARGS: extra geth arguments to be included when running geth
 # To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
 # e.g.: QUORUM_TX_MANAGER_DOCKER_IMAGE=quorumengineering/constellation:0.3.2 docker-compose up -d
@@ -10,7 +10,7 @@ version: "3.6"
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:21.7}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:21.7.1}"
   expose:
     - "21000"
     - "50400"
@@ -51,12 +51,17 @@ x-quorum-def:
       cp $${DDIR}/static-nodes.json $${DDIR}/permissioned-nodes.json
       cat $${DDIR}/static-nodes.json
       GENESIS_FILE="/examples/istanbul-genesis.json"
+      CONSENSUS_RPC_API="istanbul"
       if [ "${QUORUM_CONSENSUS:-istanbul}" == "raft" ]; then
         GENESIS_FILE="/examples/genesis.json"
+        CONSENSUS_RPC_API="raft"
+      elif [ "${QUORUM_CONSENSUS:-istanbul}" == "qbft" ]; then
+        GENESIS_FILE="/examples/qbft-genesis.json"
       fi
       NETWORK_ID=$$(cat $${GENESIS_FILE} | grep chainId | awk -F " " '{print $$2}' | awk -F "," '{print $$1}')
       GETH_ARGS_raft="--raft --raftport 50400"
       GETH_ARGS_istanbul="--emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full"
+      GETH_ARGS_qbft="--emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full"
       geth --datadir $${DDIR} init $${GENESIS_FILE}
       geth \
         --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
@@ -70,7 +75,7 @@ x-quorum-def:
         --rpcvhosts "*" \
         --rpcaddr 0.0.0.0 \
         --rpcport 8545 \
-        --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONSENSUS:-istanbul} \
+        --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${CONSENSUS_RPC_API} \
         --port 21000 \
         --unlock 0 \
         --allow-insecure-unlock \
@@ -79,7 +84,7 @@ x-quorum-def:
         ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
 x-tx-manager-def:
   &tx-manager-def
-  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7}"
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7.2}"
   expose:
     - "9000"
     - "9080"
