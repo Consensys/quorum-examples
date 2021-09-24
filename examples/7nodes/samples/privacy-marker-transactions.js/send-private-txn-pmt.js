@@ -3,9 +3,11 @@
  */
 
 const Web3 = require("web3");
-// TODO: once a web3js-quorum release is available with the PMT changes merged, then use the next line instead of local web3js-quorum
+// TODO: This example relies on a change introduced into web3js-quorum in this PR: https://github.com/ConsenSys/web3js-quorum/pull/25
+// TODO: Until that PR has been merged and released, you will need to checkout the branch locally and specify the path to it in the require statement below.
+// TODO: Once the PR has been merged and released then the commented out line can be restored and used instead.
 //const Web3Quorum = require("web3js-quorum");
-const Web3Quorum = require("/Users/satpal/Documents/GitHub/web3js-quorum");
+const Web3Quorum = require("/My/local/path/to/web3js-quorum");
 
 const web3 = new Web3Quorum(
   new Web3("http://localhost:22000"),

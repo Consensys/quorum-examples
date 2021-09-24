@@ -26,10 +26,10 @@
             <groupId>org.web3j</groupId>
             <artifactId>quorum</artifactId>
             <version>${web3j-quorum.version}</version>
-            <!-- ####### TODO: Satpal - remove next three lines #######-->
-            <!--use the next two lines when running against locally built web3j-quorum-->
+            <!-- TODO: When the privacy marker transaction changes are merged and released in web3j-quorum, then next two dependency lines can be removed. -->
+            <!-- TODO: In the meantime, you need to checkout https://github.com/QuorumEngineering/web3j-quorum/tree/feature/addPrivacyMarkerTransactions and build locally. -->
             <scope>system</scope>
-            <systemPath>/Users/satpal/Documents/GitHub/web3j-quorum/build/libs/web3j-quorum-${web3j-quorum.version}.jar</systemPath>
+            <systemPath>/My/local/path/to/web3j-quorum/build/libs/web3j-quorum-${web3j-quorum.version}.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.web3j</groupId>
