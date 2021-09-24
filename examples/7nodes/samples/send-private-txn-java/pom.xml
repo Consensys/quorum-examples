@@ -14,23 +14,34 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <generated.sol.dir>${project.build.directory}/generate-sources/sol</generated.sol.dir>
 
-        <web3j-quorum.version>4.5.8</web3j-quorum.version>
+        <web3j.version>4.8.7</web3j.version>
+        <web3j-quorum.version>4.8.5</web3j-quorum.version>
         <commons-lang.version>2.6</commons-lang.version>
         <!-- plugins -->
         <web3j-maven-plugin.version>4.2.0</web3j-maven-plugin.version>
     </properties>
-    <dependencies>
 
+    <dependencies>
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>quorum</artifactId>
             <version>${web3j-quorum.version}</version>
+            <!-- ####### TODO: Satpal - remove next three lines #######-->
+            <!--use the next two lines when running against locally built web3j-quorum-->
+            <scope>system</scope>
+            <systemPath>/Users/satpal/Documents/GitHub/web3j-quorum/build/libs/web3j-quorum-${web3j-quorum.version}.jar</systemPath>
         </dependency>
-    	<dependency>
-      	    <groupId>org.web3j</groupId>
+        <dependency>
+            <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
-            <version>${web3j-maven-plugin.version}</version>
-    	</dependency>
+            <version>${web3j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+            <version>2.12.5</version>
+        </dependency>
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
