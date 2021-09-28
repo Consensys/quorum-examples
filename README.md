@@ -18,10 +18,10 @@ Current examples include:
 Additional examples exist highlighting and showcasing the functionality offered by the Quorum platform.  An up-to-date list can be found in the [Quorum Documentation](https://docs.goquorum.com/en/latest/Getting%20Started/Quorum-Examples/) site.
 
 ## Installation
-Clone the [`quorum-examples`](https://github.com/jpmorganchase/quorum-examples.git) repo. 
+Clone the [`quorum-examples`](https://github.com/Consensys/quorum-examples.git) repo. 
 
 ```bash
-git clone https://github.com/jpmorganchase/quorum-examples.git
+git clone https://github.com/Consensys/quorum-examples.git
 ```
 
 **Important note**: Any account/encryption keys used in the quorum-examples repo are for demonstration and testing purposes only. Before running a real environment, new keys should be generated using Geth's `account` tool, Tessera's `-keygen` option, and Constellation's `--generate-keys` option
@@ -29,12 +29,12 @@ git clone https://github.com/jpmorganchase/quorum-examples.git
 
 ## Prepare your environment
 
-A 7 node Quorum network must be running before the example can be run.  The [`quorum-examples`](https://github.com/jpmorganchase/quorum-examples.git) repo provides the means to create a pre-configured sample network in minutes.  
+A 7 node Quorum network must be running before the example can be run.  The [`quorum-examples`](https://github.com/Consensys/quorum-examples.git) repo provides the means to create a pre-configured sample network in minutes.  
 
 There are 3 ways to start the sample network, each method is detailed below:
 
 1. By running a pre-configured Vagrant virtual-machine environment which comes complete with Quorum, Constellation, Tessera and the 7nodes example already installed.  Bash scripts provided in the examples are used to create the sample network: [Running with Vagrant](#running-with-vagrant)
-2. By running [`docker-compose`](https://docs.docker.com/compose/) against a [preconfigured `compose` file](https://github.com/jpmorganchase/quorum-examples/blob/master/docker-compose.yml) to create the sample network: [Running with Docker](#running-with-docker)
+2. By running [`docker-compose`](https://docs.docker.com/compose/) against a [preconfigured `compose` file](https://github.com/Consensys/quorum-examples/blob/master/docker-compose.yml) to create the sample network: [Running with Docker](#running-with-docker)
 3. By installing Quorum and Tessera/Constellation locally and using bash scripts provided in the examples to create the sample network: [Running locally](#running-locally)
 
 Your environment must be prepared differently depending on the method being used to run the example.
@@ -46,7 +46,7 @@ Your environment must be prepared differently depending on the method being used
 3. Download and start the Vagrant instance (note: running `vagrant up` takes approx 5 mins):
 
     ```sh
-    git clone https://github.com/jpmorganchase/quorum-examples
+    git clone https://github.com/Consensys/quorum-examples
     cd quorum-examples
     vagrant up
     vagrant ssh
@@ -58,7 +58,7 @@ Your environment must be prepared differently depending on the method being used
 
 
 #### Troubleshooting Vagrant
-* If you are behind a proxy server, please see https://github.com/jpmorganchase/quorum/issues/23.
+* If you are behind a proxy server, please see https://github.com/Consensys/quorum/issues/23.
 * If you are using macOS and get an error saying that the ubuntu/xenial64 image doesn't
 exist, please run `sudo rm -r /opt/vagrant/embedded/bin/curl`. This is usually due to
 issues with the version of curl bundled with Vagrant.
@@ -92,7 +92,7 @@ during `vagrant up` try the following:
     - Required Docker Engine 18.02.0+ and Docker Compose 1.21+
 1. Download and run `docker-compose`
    ```sh
-   git clone https://github.com/jpmorganchase/quorum-examples
+   git clone https://github.com/Consensys/quorum-examples
    cd quorum-examples
    docker-compose up -d
    ```
@@ -139,27 +139,27 @@ during `vagrant up` try the following:
 **Note:** Quorum must be run on Ubuntu-based/macOS machines.  Constellation can only be run on Ubuntu-based machines.  Running the examples therefore requires an Ubuntu-based/macOS machine.  If running the examples using Constellation then an Ubuntu-based machine is required. 
 
 1. Install [Golang](https://golang.org/dl/)
-2. Download and build [Quorum](https://github.com/jpmorganchase/quorum/):
+2. Download and build [Quorum](https://github.com/Consensys/quorum/):
    
     ```sh
-    git clone https://github.com/jpmorganchase/quorum
+    git clone https://github.com/Consensys/quorum
     cd quorum
     make
     GETHDIR=`pwd`; export PATH=$GETHDIR/build/bin:$PATH
     cd ..
     ```
     
-3. Download and build Tessera (see [README](https://github.com/jpmorganchase/tessera) for build options)
+3. Download and build Tessera (see [README](https://github.com/Consensys/tessera) for build options)
    
     ```bash
-    git clone https://github.com/jpmorganchase/tessera.git
+    git clone https://github.com/Consensys/tessera.git
     cd tessera
     mvn install
     ```
     
 4. Download quorum-examples
     ```sh
-    git clone https://github.com/jpmorganchase/quorum-examples
+    git clone https://github.com/Consensys/quorum-examples
     ```
 
 
@@ -171,7 +171,7 @@ Shell scripts are included in the examples to make it simple to configure the ne
 
 All logs and temporary data are written to the `qdata` folder.
 
-The sample network can be created to run using Istanbul BFT, Raft or Clique POA consensus mechanisms.  In the following commands replace `{consensus}` with one of `raft`, `istanbul` or `clique` depending on the consensus mechanism you want to use.
+The sample network can be created to run using Istanbul BFT, QBFT, Raft or Clique POA consensus mechanisms.  In the following commands replace `{consensus}` with one of `raft`, `istanbul` `qbft` or `clique` depending on the consensus mechanism you want to use.
 
 1. Navigate to the 7nodes example directory, configure the Quorum nodes and initialize accounts & keystores:
     ```sh
@@ -224,14 +224,14 @@ For example, to run the example with 5 nodes instead of 7, follow these steps:
             
             console.log('addr: ' + wallet.getAddressString());
             ```
-        1. Use `istanbul-tools` to decode the `extraData` field in `istanbul-genesis.json`
+        2. Use `istanbul-tools` to decode the `extraData` field in `istanbul-genesis.json`
             ```bash
-            git clone https://github.com/jpmorganchase/istanbul-tools.git
+            git clone https://github.com/Consensys/istanbul-tools.git
             cd istanbul-tools
-            make
+            make istanbul
             ./build/bin/istanbul extra decode --extradata <...>
             ```
-        1. Copy the output into a new `.toml` file and update the formatting to the following:
+        3. Copy the output into a new `.toml` file and update the formatting to the following:
             ```yaml
             vanity = "0x0000000000000000000000000000000000000000000000000000000000000000"
             validators = [
@@ -240,12 +240,44 @@ For example, to run the example with 5 nodes instead of 7, follow these steps:
               ...
             ]
             ```
-        1. Remove the addresses of node 6 and node 7 from the validators list 
-        1. Use `istanbul-tools` to encode the `.toml` as `extraData`
+        4. Remove the addresses of node 6 and node 7 from the validators list 
+        5. Use `istanbul-tools` to encode the `.toml` as `extraData`
             ```bash
             ./build/bin/istanbul extra encode --config /path/to/conf.toml
             ```
-        1. Update the `extraData` field in `istanbul-genesis.json` with output from the encoding 
+        6. Update the `extraData` field in `istanbul-genesis.json` with output from the encoding 
+   * If using QBFT
+      1. Find the 20-byte address representations of node 6 and node 7's nodekey (nodekeys located at `qdata/dd{i}/geth/nodekey`).  There are many ways to do this, one is to run a script making use of `ethereumjs-wallet`:
+          ```node
+          const wlt = require('ethereumjs-wallet');
+          
+          var nodekey = '1be3b50b31734be48452c29d714941ba165ef0cbf3ccea8ca16c45e3d8d45fb0';
+          var wallet = wlt.fromPrivateKey(Buffer.from(nodekey, 'hex'));
+          
+          console.log('addr: ' + wallet.getAddressString());
+          ```
+      1. Use `istanbul-tools` to decode the `extraData` field in `qbft-genesis.json`
+          ```bash
+          git clone https://github.com/Consensys/istanbul-tools.git
+          cd istanbul-tools
+          make qbft
+          ./build/bin/qbft extra decode --extradata <...>
+          ```
+      1. Copy the output into a new `.toml` file and update the formatting to the following:
+          ```yaml
+          vanity = "0x0000000000000000000000000000000000000000000000000000000000000000"
+          validators = [
+            "0xd8dba507e85f116b1f7e231ca8525fc9008a6966",
+            "0x6571d97f340c8495b661a823f2c2145ca47d63c2",
+            ...
+          ]
+          ```
+      1. Remove the addresses of node 6 and node 7 from the validators list
+      1. Use `istanbul-tools` to encode the `.toml` as `extraData`
+          ```bash
+          ./build/bin/qbft extra encode --config /path/to/conf.toml
+          ```
+      1. Update the `extraData` field in `qbft-genesis.json` with output from the encoding
 
 1. After making these changes, the relevant init/start scripts can be run (replace `{consensus}` with the relevent consensus mechanism in the following):
 
