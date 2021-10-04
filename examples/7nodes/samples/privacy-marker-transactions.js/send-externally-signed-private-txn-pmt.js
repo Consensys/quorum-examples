@@ -2,11 +2,12 @@
  * Example of creating a contract, using an externally signed privacy marker transaction.
  */
 
-const Web3 = require("web3");
-// TODO: once a web3js-quorum release is available with the PMT changes merged, then use the next line instead of local web3js-quorum
-//const Web3Quorum = require("web3js-quorum");
-const Web3Quorum = require("/Users/satpal/Documents/GitHub/web3js-quorum");
 const ethereumjsTx = require('ethereumjs-tx');
+const Web3 = require("web3");
+// TODO: this example requires a web3j-quorum release with recent changes on master to add PMT support.
+//  Until a release is available with those, you need to build web3j-quorum from master and use:
+//      const Web3Quorum = require("/path/to/local/web3js-quorum");
+const Web3Quorum = require("web3js-quorum");
 
 const web3 = new Web3Quorum(
   new Web3("http://localhost:22000"),

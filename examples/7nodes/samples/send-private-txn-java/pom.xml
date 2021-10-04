@@ -26,10 +26,14 @@
             <groupId>org.web3j</groupId>
             <artifactId>quorum</artifactId>
             <version>${web3j-quorum.version}</version>
-            <!-- TODO: When the privacy marker transaction changes are merged and released in web3j-quorum, then next two dependency lines can be removed. -->
-            <!-- TODO: In the meantime, you need to checkout https://github.com/QuorumEngineering/web3j-quorum/tree/feature/addPrivacyMarkerTransactions and build locally. -->
+            <!-- TODO: this example requires a web3j-quorum release with recent changes on master to add PMT support.
+                       Until a release is available with those, you need to set web3j-quorum-version to "4.8.5-SNAPSHOT",
+                       build web3j-quorum from master and use <scope> and <systemPath> lines shown below.
+                       You will also need "-Dexec.classpathScope=compile" added to "mvn exec:java" command line
+                       when running the examples.
             <scope>system</scope>
             <systemPath>/My/local/path/to/web3j-quorum/build/libs/web3j-quorum-${web3j-quorum.version}.jar</systemPath>
+            -->
         </dependency>
         <dependency>
             <groupId>org.web3j</groupId>
