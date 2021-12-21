@@ -248,7 +248,7 @@ x-tx-manager-def-node1:
             "jdbc": {
               "username": "sa",
               "password": "",
-              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+              "url": "jdbc:h2:./$${DDIR}/db;TRACE_LEVEL_SYSTEM_OUT=0",
               "autoCreateTables": true
             },
             "serverConfigs":[
@@ -419,7 +419,7 @@ x-tx-manager-def:
             "jdbc": {
               "username": "sa",
               "password": "",
-              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+              "url": "jdbc:h2:./$${DDIR}/db;TRACE_LEVEL_SYSTEM_OUT=0",
               "autoCreateTables": true
             },
             "serverConfigs":[

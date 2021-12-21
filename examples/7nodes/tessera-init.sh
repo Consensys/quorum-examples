@@ -112,7 +112,7 @@ cat <<EOF > ${DDIR}/tessera-config-09-${i}.json
     "jdbc": {
         "username": "sa",
         "password": "",
-        "url": "jdbc:h2:${DDIR}/db${i};MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+        "url": "jdbc:h2:${DDIR}/db${i};TRACE_LEVEL_SYSTEM_OUT=0",
         "autoCreateTables": true
     },
     "serverConfigs":[
@@ -182,7 +182,7 @@ cat <<EOF > ${DDIR}/tessera-config-enclave-09-${i}.json
     "jdbc": {
         "username": "sa",
         "password": "",
-        "url": "jdbc:h2:${DDIR}/db${i};MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+        "url": "jdbc:h2:${DDIR}/db${i};TRACE_LEVEL_SYSTEM_OUT=0",
         "autoCreateTables": true
     },
     "serverConfigs":[
