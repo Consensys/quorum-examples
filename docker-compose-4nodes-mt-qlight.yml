@@ -10,7 +10,7 @@ version: "3.6"
 x-quorum-def-node1:
   &quorum-def-node1
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:develop}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:22.4.0}"
   expose:
     - "21000"
     - "23000"
@@ -145,7 +145,7 @@ x-quorum-def-node1:
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:develop}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:22.4.0}"
   expose:
     - "21000"
     - "50400"
@@ -231,7 +231,7 @@ x-quorum-def:
 x-quorum-def-qlight:
   &quorum-def-qlight
   restart: "on-failure"
-  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:develop}"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:22.4.0}"
   expose:
     - "21000"
     - "50400"
@@ -330,7 +330,7 @@ x-quorum-def-qlight:
         ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
 x-tx-manager-def-node1:
   &tx-manager-def-node1
-  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:develop}"
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:22.1.0}"
   expose:
     - "9000"
     - "9080"
