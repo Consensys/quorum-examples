@@ -302,6 +302,7 @@ x-quorum-def-qlight:
       accessToken=$$(curl -k -s -X POST -F "grant_type=client_credentials" -F "client_id=$${PSI}" -F "client_secret=foofoo" -F "scope=rpc://eth_* p2p://qlight rpc://admin_* rpc://personal_* rpc://quorumExtension_* rpc://rpc_modules psi://$${PSI}?self.eoa=0x0&node.eoa=0x0" -F "audience=Node1" https://multi-tenancy-oauth2-server:4444/oauth2/token | jq '.access_token' -r)
       echo $${accessToken}
       geth --datadir $${DDIR} init $${MPS_GENESIS_FILE}
+      # TODO update params when client-security-plugin is ready
       geth \
         --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
         --datadir $${DDIR} \
@@ -320,7 +321,9 @@ x-quorum-def-qlight:
         --allow-insecure-unlock \
         --qlight.client \
         --qlight.client.psi $${PSI} \
-        --qlight.client.token "bearer $${accessToken}" \
+        --qlight.client.token.enabled \
+        --qlight.client.token.value "bearer $${accessToken}" \
+        --qlight.client.token.management none \
         --qlight.client.serverNode "enode://ac6b1096ca56b9f6d004b779ae3728bf83f8e22453404cc3cef16a3d9b96608bc67c4b30db88e0a5a6c6390213f7acbe1153ff6d23ce57380104288ae19373ef@172.16.239.11:23000?discport=0&raftport=50401" \
         --qlight.client.serverNodeRPC "https://172.16.239.11:8545/?PSI=$${PSI}" \
         --qlight.client.rpc.tls \
