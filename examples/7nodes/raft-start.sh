@@ -125,7 +125,7 @@ if (( $chk == 1 )); then
     allowSecureUnlock="--allow-insecure-unlock"
 fi
 
-ARGS="--nodiscover --nousb ${allowSecureUnlock} --verbosity ${verbosity} --networkid $NETWORK_ID --raft --raftblocktime ${blockTime} --rpc --rpccorsdomain=* --rpcvhosts=* --rpcaddr 0.0.0.0 --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft,quorumPermission,quorumExtension --emitcheckpoints --unlock 0 --password passwords.txt $QUORUM_GETH_ARGS"
+ARGS="--nodiscover ${allowSecureUnlock} --verbosity ${verbosity} --networkid $NETWORK_ID --raft --raftblocktime ${blockTime} --http --http.corsdomain=* --http.vhosts=* --http.addr 0.0.0.0 --http.api admin,eth,debug,miner,net,txpool,personal,web3,raft,quorumPermission,quorumExtension --emitcheckpoints --unlock 0 --password passwords.txt $QUORUM_GETH_ARGS"
 
 basePort=21000
 baseRpcPort=22000
@@ -142,7 +142,7 @@ do
         permissioned="--permissioned"
     fi
 
-    PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} --raftport ${raftPort} --rpcport ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
+    PRIVATE_CONFIG=qdata/c${i}/tm.ipc nohup geth --datadir qdata/dd${i} ${ARGS} ${permissioned} --raftport ${raftPort} --http.port ${rpcPort} --port ${port} 2>>qdata/logs/${i}.log &
 done
 
 set +v
