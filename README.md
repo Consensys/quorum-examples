@@ -1,10 +1,18 @@
 # Quorum Examples
 
-This repository contains scripts for advanced deployment and connection to the Quorum Platform.
+## ⚠️ Project Deprecation Notice ⚠️
+
+quorum-examples will be deprecated on July 11th 2022, from when we will stop supporting the project.
+
+From now on, we encourage all users to use to [quorum-dev-quickstart](https://github.com/ConsenSys/quorum-dev-quickstart) which is a similar tool offering extra compatibility with Quorum products, in particular Hyperledger Besu and Orchestrate.
+
+We will continue to support quorum-examples in particular fixing bugs until the end of July 2022.
+
+If you have any questions or concerns, please reach out to the ConsenSys protocol engineering team on [#Discord](https://chat.consensys.net) or by [email](mailto:quorum@consensys.net).
 
 ## Usage notice
 
-This project is meant for advanced Quorum users (mainly Quorum contributors) who are already familiar with Quorum deployments and who are looking for some advanced configurations for their network.
+This project is meant for Quorum users (mainly Quorum contributors) who are already familiar with Quorum deployments and who are looking for some configurations for their network.
 
 If you have a limited experience with Quorum, or if you are looking to start a Quorum network for some testing purposes then you should instead use our [quorum-dev-quickstart](https://github.com/ConsenSys/quorum-dev-quickstart).
 
