@@ -44,16 +44,16 @@ x-quorum-def:
         --verbosity 3 \
         --networkid 10 \
         --bootnodes enode://ac6b1096ca56b9f6d004b779ae3728bf83f8e22453404cc3cef16a3d9b96608bc67c4b30db88e0a5a6c6390213f7acbe1153ff6d23ce57380104288ae19373ef@172.16.239.11:21000 \
-        --rpc --rpcaddr 0.0.0.0 --rpcport 8545 \
-        --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul \
+        --http --http.addr 0.0.0.0 --http.port 8545 \
+        --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
         --port 21000 \
         --unlock 0 --password /qdata/dd/passwords.txt \
-        --emitcheckpoints --istanbul.blockperiod 2 --mine --minerthreads 1 --syncmode full \
+        --emitcheckpoints --istanbul.blockperiod 2 --mine --miner.threads 1 --syncmode full \
         --nodekeyhex $${NODE_KEY_HEX} \
         ${QUORUM_GETH_ARGS:-}
 x-tx-manager-def:
   &tx-manager-def
-  image: "quorumengineering/tessera:21.7"
+  image: "quorumengineering/tessera:22.1.2"
   expose:
     - "9000"
   restart: "no"

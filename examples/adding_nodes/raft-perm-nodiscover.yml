@@ -35,7 +35,7 @@ x-quorum-def:
         --nodiscover \
         --verbosity 3 \
         --networkid 10 \
-        --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpcapi admin,eth,debug,miner,net,txpool,personal,web3,quorum,raft \
+        --http --http.addr 0.0.0.0 --http.port 8545 --http.api admin,eth,debug,miner,net,txpool,personal,web3,raft \
         --port 21000 \
         --unlock 0 --password /qdata/passwords.txt \
         --raft --raftport 50400 \
