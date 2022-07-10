@@ -1,0 +1,891 @@
+# The following environment variables are substituted if present
+# * QUORUM_CONSENSUS: default to istanbul
+# * QUORUM_DOCKER_IMAGE: default to quorumengineering/quorum:21.7.1
+# * QUORUM_TX_MANAGER_DOCKER_IMAGE: default to quorumengineering/tessera:21.7.2
+# * QUORUM_GETH_ARGS: extra geth arguments to be included when running geth
+# To use Constellation, set QUORUM_TX_MANAGER_DOCKER_IMAGE to Constellation docker image,
+# e.g.: QUORUM_TX_MANAGER_DOCKER_IMAGE=quorumengineering/constellation:0.3.2 docker-compose up -d
+# To use Remix, set QUORUM_GETH_ARGS="--rpccorsdomain https://remix.ethereum.org"
+version: "3.6"
+x-quorum-def-node1:
+  &quorum-def-node1
+  restart: "on-failure"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:22.4.0}"
+  expose:
+    - "21000"
+    - "23000"
+    - "50400"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
+  labels:
+    com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      apk add jq
+      UDS_WAIT=10
+      if [ "$${PRIVATE_CONFIG}" != "ignore" ]; then
+      for i in $$(seq 1 100)
+      do
+        set -e
+        if [ -S $${PRIVATE_CONFIG} ] && \
+          [ "I'm up!" == "$$(wget --timeout $${UDS_WAIT} -qO- --proxy off 172.16.239.10$${NODE_ID}:9000/upcheck)" ];
+        then break
+        else
+          echo "Sleep $${UDS_WAIT} seconds. Waiting for TxManager."
+          sleep $${UDS_WAIT}
+        fi
+      done
+      fi
+      DDIR=/qdata/dd
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}/keystore
+      mkdir -p $${DDIR}/tls
+      mkdir -p $${DDIR}/geth
+      mkdir -p $${DDIR}/plugins
+      cp /examples/raft/nodekey$${NODE_ID} $${DDIR}/geth/nodekey
+      cp /examples/keys/key1 $${DDIR}/keystore/
+      cp /examples/keys/key5 $${DDIR}/keystore/
+      cp /examples/keys/key6 $${DDIR}/keystore/
+      cp /examples/keys/key7 $${DDIR}/keystore/
+      cp /examples/disallowed-nodes.json $${DDIR}/
+      cp /examples/tls/cert_docker.pem $${DDIR}/tls/
+      cp /examples/tls/key_docker.pem $${DDIR}/tls/
+      cat <<EOF > $${DDIR}/plugin-settings.json
+      {
+        "central": {
+          "baseURL": "https://provisional-plugins-repo.quorum.consensys.net",
+          "publicKeyURI": ".pgp/Central.pgp.pk"
+        },
+        "providers": {"security":{"config":"file:///qdata/dd/plugins/security-config.json","name":"quorum-security-plugin-enterprise","version":"0.1.0"}}
+      }
+      EOF
+      cat <<EOF > $${DDIR}/plugins/security-config.json
+      {
+        "tls": {
+          "auto": true,
+          "certFile": "/qdata/dd/tls/cert_docker.pem",
+          "keyFile": "/qdata/dd/tls/key_docker.pem"
+        },
+        "tokenValidation": {
+          "issuers": [
+              "https://goquorum.com/oauth/"
+          ],
+          "jws": {
+            "endpoint": "https://multi-tenancy-oauth2-server:4444/.well-known/jwks.json",
+            "tlsConnection": {
+              "insecureSkipVerify": true
+            }
+          },
+          "jwt": {
+            "authorizationField": "scp",
+            "preferIntrospection": false
+          }
+        }
+      }
+      EOF
+      jq 'del(.[4,5,6])' /examples/permissioned-nodes.json  | sed 's/^\(.*\)@.*\?\(.*\)raftport=5040\([0-9]\)\(.*\)$$/\1@172.16.239.1\3:21000?discport=0\&raftport=50400\4/g' > $${DDIR}/static-nodes.json
+      cp $${DDIR}/static-nodes.json $${DDIR}/permissioned-nodes.json
+      cat $${DDIR}/static-nodes.json
+      UPDATE_QUERY=".config.isMPS = true"
+      GENESIS_FILE="/examples/genesis.json"
+      CONSENSUS_RPC_API="raft"
+      if [ "${QUORUM_CONSENSUS:-istanbul}" == "istanbul" ]; then
+        CONSENSUS_RPC_API="istanbul"
+        GENESIS_FILE="/examples/istanbul-genesis.json"
+        #set the extradata for 4 nodes
+        UPDATE_QUERY=$${UPDATE_QUERY}' | .extraData = "0x0000000000000000000000000000000000000000000000000000000000000000f89af85494d8dba507e85f116b1f7e231ca8525fc9008a6966946571d97f340c8495b661a823f2c2145ca47d63c294e36cbeb565b061217930767886474e3cde903ac594f512a992f3fb749857d758ffda1330e590fa915eb8410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0"'
+      elif [ "${QUORUM_CONSENSUS:-istanbul}" == "qbft" ]; then
+        CONSENSUS_RPC_API="istanbul"
+        GENESIS_FILE="/examples/qbft-genesis.json"
+        #set the extradata for 4 nodes
+        UPDATE_QUERY=$${UPDATE_QUERY}' | .extraData = "0xf87aa00000000000000000000000000000000000000000000000000000000000000000f85494d8dba507e85f116b1f7e231ca8525fc9008a6966946571d97f340c8495b661a823f2c2145ca47d63c294e36cbeb565b061217930767886474e3cde903ac594f512a992f3fb749857d758ffda1330e590fa915ec080c0"'
+      fi
+      MPS_GENESIS_FILE=$${DDIR}/mps-genesis.json
+      echo "JQ Update Query:" $${UPDATE_QUERY}
+      jq "$${UPDATE_QUERY}" $${GENESIS_FILE} > $${MPS_GENESIS_FILE}
+      cat $${MPS_GENESIS_FILE}
+      NETWORK_ID=$$(cat $${MPS_GENESIS_FILE} | grep chainId | awk -F " " '{print $$2}' | awk -F "," '{print $$1}')
+      GETH_ARGS_raft="--raft --raftport 50400"
+      GETH_ARGS_istanbul="--emitcheckpoints --istanbul.blockperiod 2 --mine --miner.threads 1 --syncmode full"
+      GETH_ARGS_qbft="--emitcheckpoints --istanbul.blockperiod 2 --mine --miner.threads 1 --syncmode full"
+      geth --datadir $${DDIR} init $${MPS_GENESIS_FILE}
+      geth \
+        --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
+        --datadir $${DDIR} \
+        --permissioned \
+        --nodiscover \
+        --verbosity 5 \
+        --networkid $${NETWORK_ID} \
+        --rpc \
+        --rpccorsdomain "*" \
+        --rpcvhosts "*" \
+        --rpcaddr 0.0.0.0 \
+        --rpcport 8545 \
+        --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,quorumExtension,$${CONSENSUS_RPC_API} \
+        --port 21000 \
+        --unlock "0,1,2,3" \
+        --allow-insecure-unlock \
+        --qlight.server \
+        --qlight.server.p2p.port 23000 \
+        --nousb \
+        --password /examples/passwords.txt \
+        --password /examples/passwords.txt \
+        --password /examples/passwords.txt \
+        --password /examples/passwords.txt \
+        --plugins file:///qdata/dd/plugin-settings.json \
+        --multitenancy \
+        --identity Node1 \
+        ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
+x-quorum-def:
+  &quorum-def
+  restart: "on-failure"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:22.4.0}"
+  expose:
+    - "21000"
+    - "50400"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
+  labels:
+    com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      apk add jq
+      UDS_WAIT=10
+      if [ "$${PRIVATE_CONFIG}" != "ignore" ]; then
+      for i in $$(seq 1 100)
+      do
+        set -e
+        if [ -S $${PRIVATE_CONFIG} ] && \
+          [ "I'm up!" == "$$(wget --timeout $${UDS_WAIT} -qO- --proxy off 172.16.239.10$${NODE_ID}:9000/upcheck)" ];
+        then break
+        else
+          echo "Sleep $${UDS_WAIT} seconds. Waiting for TxManager."
+          sleep $${UDS_WAIT}
+        fi
+      done
+      fi
+      DDIR=/qdata/dd
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}/keystore
+      mkdir -p $${DDIR}/geth
+      cp /examples/raft/nodekey$${NODE_ID} $${DDIR}/geth/nodekey
+      cp /examples/keys/key$${NODE_ID} $${DDIR}/keystore/
+      cp /examples/disallowed-nodes.json $${DDIR}/
+      jq 'del(.[4,5,6])' /examples/permissioned-nodes.json | sed 's/^\(.*\)@.*\?\(.*\)raftport=5040\([0-9]\)\(.*\)$$/\1@172.16.239.1\3:21000?discport=0\&raftport=50400\4/g' > $${DDIR}/static-nodes.json
+      cp $${DDIR}/static-nodes.json $${DDIR}/permissioned-nodes.json
+      cat $${DDIR}/static-nodes.json
+      UPDATE_QUERY=".config.isMPS = false"
+      GENESIS_FILE="/examples/genesis.json"
+      CONSENSUS_RPC_API="raft"
+      if [ "${QUORUM_CONSENSUS:-istanbul}" == "istanbul" ]; then
+        CONSENSUS_RPC_API="istanbul"
+        GENESIS_FILE="/examples/istanbul-genesis.json"
+        #set the extradata for 4 nodes
+        UPDATE_QUERY=$${UPDATE_QUERY}' | .extraData = "0x0000000000000000000000000000000000000000000000000000000000000000f89af85494d8dba507e85f116b1f7e231ca8525fc9008a6966946571d97f340c8495b661a823f2c2145ca47d63c294e36cbeb565b061217930767886474e3cde903ac594f512a992f3fb749857d758ffda1330e590fa915eb8410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0"'
+      elif [ "${QUORUM_CONSENSUS:-istanbul}" == "qbft" ]; then
+        CONSENSUS_RPC_API="istanbul"
+        GENESIS_FILE="/examples/qbft-genesis.json"
+        #set the extradata for 4 nodes
+        UPDATE_QUERY=$${UPDATE_QUERY}' | .extraData = "0xf87aa00000000000000000000000000000000000000000000000000000000000000000f85494d8dba507e85f116b1f7e231ca8525fc9008a6966946571d97f340c8495b661a823f2c2145ca47d63c294e36cbeb565b061217930767886474e3cde903ac594f512a992f3fb749857d758ffda1330e590fa915ec080c0"'
+      fi
+      MPS_GENESIS_FILE=$${DDIR}/mps-genesis.json
+      echo "JQ Update Query:" $${UPDATE_QUERY}
+      jq "$${UPDATE_QUERY}" $${GENESIS_FILE} > $${MPS_GENESIS_FILE}
+      cat $${MPS_GENESIS_FILE}
+      NETWORK_ID=$$(cat $${MPS_GENESIS_FILE} | grep chainId | awk -F " " '{print $$2}' | awk -F "," '{print $$1}')
+      GETH_ARGS_raft="--raft --raftport 50400"
+      GETH_ARGS_istanbul="--emitcheckpoints --istanbul.blockperiod 2 --mine --miner.threads 1 --syncmode full"
+      GETH_ARGS_qbft="--emitcheckpoints --istanbul.blockperiod 2 --mine --miner.threads 1 --syncmode full"
+      geth --datadir $${DDIR} init $${MPS_GENESIS_FILE}
+      geth \
+        --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
+        --datadir $${DDIR} \
+        --permissioned \
+        --nodiscover \
+        --verbosity 5 \
+        --networkid $${NETWORK_ID} \
+        --rpc \
+        --rpccorsdomain "*" \
+        --rpcvhosts "*" \
+        --rpcaddr 0.0.0.0 \
+        --rpcport 8545 \
+        --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,quorumExtension,$${CONSENSUS_RPC_API} \
+        --port 21000 \
+        --unlock 0 \
+        --allow-insecure-unlock \
+        --nousb \
+        --password /examples/passwords.txt \
+        ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
+x-quorum-def-qlight:
+  &quorum-def-qlight
+  restart: "on-failure"
+  image: "${QUORUM_DOCKER_IMAGE:-quorumengineering/quorum:22.4.0}"
+  expose:
+    - "21000"
+    - "50400"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
+  labels:
+    com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      apk add jq 
+      apk add curl 
+      UDS_WAIT=10
+      if [ "$${PRIVATE_CONFIG}" != "ignore" ]; then
+      for i in $$(seq 1 100)
+      do
+        set -e
+        if [ -S $${PRIVATE_CONFIG} ] && \
+          [ "I'm up!" == "$$(wget --timeout $${UDS_WAIT} -qO- --proxy off 172.16.239.101:9000/upcheck)" ];
+        then break
+        else
+          echo "Sleep $${UDS_WAIT} seconds. Waiting for TxManager."
+          sleep $${UDS_WAIT}
+        fi
+      done
+      fi
+      DDIR=/qdata/dd
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}/keystore
+      mkdir -p $${DDIR}/geth
+      cp /examples/raft/nodekey$${NODE_ID} $${DDIR}/geth/nodekey
+      cp /examples/keys/key$${NODE_ID} $${DDIR}/keystore/
+      cp /examples/disallowed-nodes.json $${DDIR}/
+      jq 'del(.[4,5,6])' /examples/permissioned-nodes.json | sed 's/^\(.*\)@.*\?\(.*\)raftport=5040\([0-9]\)\(.*\)$$/\1@172.16.239.1\3:21000?discport=0\&raftport=50400\4/g' > $${DDIR}/static-nodes.json
+      cp $${DDIR}/static-nodes.json $${DDIR}/permissioned-nodes.json
+      cat $${DDIR}/static-nodes.json
+      UPDATE_QUERY=".config.isMPS = false"
+      GENESIS_FILE="/examples/genesis.json"
+      CONSENSUS_RPC_API="raft"
+      if [ "${QUORUM_CONSENSUS:-istanbul}" == "istanbul" ]; then
+        CONSENSUS_RPC_API="istanbul"
+        GENESIS_FILE="/examples/istanbul-genesis.json"
+        #set the extradata for 4 nodes
+        UPDATE_QUERY=$${UPDATE_QUERY}' | .extraData = "0x0000000000000000000000000000000000000000000000000000000000000000f89af85494d8dba507e85f116b1f7e231ca8525fc9008a6966946571d97f340c8495b661a823f2c2145ca47d63c294e36cbeb565b061217930767886474e3cde903ac594f512a992f3fb749857d758ffda1330e590fa915eb8410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0"'
+      elif [ "${QUORUM_CONSENSUS:-istanbul}" == "qbft" ]; then
+        CONSENSUS_RPC_API="qbft"
+        GENESIS_FILE="/examples/qbft-genesis.json"
+        #set the extradata for 4 nodes
+        UPDATE_QUERY=$${UPDATE_QUERY}' | .extraData = "0xf87aa00000000000000000000000000000000000000000000000000000000000000000f85494d8dba507e85f116b1f7e231ca8525fc9008a6966946571d97f340c8495b661a823f2c2145ca47d63c294e36cbeb565b061217930767886474e3cde903ac594f512a992f3fb749857d758ffda1330e590fa915ec080c0"'
+      fi
+      MPS_GENESIS_FILE=$${DDIR}/mps-genesis.json
+      echo "JQ Update Query:" $${UPDATE_QUERY}
+      jq "$${UPDATE_QUERY}" $${GENESIS_FILE} > $${MPS_GENESIS_FILE}
+      cat $${MPS_GENESIS_FILE}
+      NETWORK_ID=$$(cat $${MPS_GENESIS_FILE} | grep chainId | awk -F " " '{print $$2}' | awk -F "," '{print $$1}')
+      GETH_ARGS_raft="--raft --syncmode full"
+      GETH_ARGS_istanbul="--emitcheckpoints --istanbul.blockperiod 2 --syncmode full"
+      GETH_ARGS_qbft="--emitcheckpoints --istanbul.blockperiod 2 --syncmode full"
+      curl -k -q -X DELETE https://multi-tenancy-oauth2-server:4445/clients/$${PSI}
+      curl -k -s -X POST https://multi-tenancy-oauth2-server:4445/clients \
+        -H "Content-Type: application/json" \
+        --data "{\"grant_types\":[\"client_credentials\"],\"token_endpoint_auth_method\":\"client_secret_post\",\"audience\":[\"Node1\"],\"client_id\":\"$${PSI}\",\"client_secret\":\"foofoo\",\"scope\":\"rpc://eth_* p2p://qlight rpc://admin_* rpc://personal_* rpc://quorumExtension_* rpc://rpc_modules psi://$${PSI}?self.eoa=0x0&node.eoa=0x0\"}" | jq .
+      accessToken=$$(curl -k -s -X POST -F "grant_type=client_credentials" -F "client_id=$${PSI}" -F "client_secret=foofoo" -F "scope=rpc://eth_* p2p://qlight rpc://admin_* rpc://personal_* rpc://quorumExtension_* rpc://rpc_modules psi://$${PSI}?self.eoa=0x0&node.eoa=0x0" -F "audience=Node1" https://multi-tenancy-oauth2-server:4444/oauth2/token | jq '.access_token' -r)
+      echo $${accessToken}
+      geth --datadir $${DDIR} init $${MPS_GENESIS_FILE}
+      # TODO update params when client-security-plugin is ready
+      geth \
+        --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
+        --datadir $${DDIR} \
+        --permissioned \
+        --nodiscover \
+        --verbosity 5 \
+        --networkid $${NETWORK_ID} \
+        --rpc \
+        --rpccorsdomain "*" \
+        --rpcvhosts "*" \
+        --rpcaddr 0.0.0.0 \
+        --rpcport 8545 \
+        --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,quorumExtension,$${CONSENSUS_RPC_API} \
+        --port 21000 \
+        --unlock 0 \
+        --allow-insecure-unlock \
+        --qlight.client \
+        --qlight.client.psi $${PSI} \
+        --qlight.client.token.enabled \
+        --qlight.client.token.value "bearer $${accessToken}" \
+        --qlight.client.token.management none \
+        --qlight.client.serverNode "enode://ac6b1096ca56b9f6d004b779ae3728bf83f8e22453404cc3cef16a3d9b96608bc67c4b30db88e0a5a6c6390213f7acbe1153ff6d23ce57380104288ae19373ef@172.16.239.11:23000?discport=0&raftport=50401" \
+        --qlight.client.serverNodeRPC "https://172.16.239.11:8545/?PSI=$${PSI}" \
+        --qlight.client.rpc.tls \
+        --qlight.client.rpc.tls.insecureskipverify \
+        --nousb \
+        --password /examples/passwords.txt \
+        ${QUORUM_GETH_ARGS:-} $${GETH_ARGS_${QUORUM_CONSENSUS:-istanbul}}
+x-tx-manager-def-node1:
+  &tx-manager-def-node1
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:22.1.0}"
+  expose:
+    - "9000"
+    - "9080"
+  restart: "no"
+  healthcheck:
+    test: ["CMD-SHELL", "[ -S /qdata/tm/tm.ipc ] || exit 1"]
+    interval: 3s
+    timeout: 3s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      if [ "$${PRIVATE_CONFIG}" == "ignore" ]; then
+        /bin/true
+        exit 0
+      fi
+      DDIR=/qdata/tm
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}
+      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7}"
+      TX_MANAGER=$$(echo $${DOCKER_IMAGE} | sed 's/^.*\/\(.*\):.*$$/\1/g')
+      echo "TxManager: $${TX_MANAGER}"
+      case $${TX_MANAGER}
+      in
+        tessera)
+          cp /examples/keys/tm1.pub $${DDIR}/tm1.pub
+          cp /examples/keys/tm1.key $${DDIR}/tm1.key
+          cp /examples/keys/tm5.pub $${DDIR}/tm5.pub
+          cp /examples/keys/tm5.key $${DDIR}/tm5.key
+          cp /examples/keys/tm6.pub $${DDIR}/tm6.pub
+          cp /examples/keys/tm6.key $${DDIR}/tm6.key
+          cp /examples/keys/tm7.pub $${DDIR}/tm7.pub
+          cp /examples/keys/tm7.key $${DDIR}/tm7.key
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+          else
+              TESSERA_VERSION=$$(/tessera/bin/tessera version)
+          fi
+          echo "Tessera version: $${TESSERA_VERSION}"
+          # sorting versions to target correct configuration
+          V08=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
+          V09AndAbove=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
+          TESSERA_CONFIG_TYPE="-09"
+          case "$${TESSERA_VERSION}" in
+              "$${V09AndAbove}")
+                  TESSERA_CONFIG_TYPE="-09"
+                  ;;
+          esac
+
+          echo Config type $${TESSERA_CONFIG_TYPE}
+
+          #generating the two config flavors
+          cat <<EOF > $${DDIR}/tessera-config-09.json
+          {
+            "useWhiteList": false,
+            "jdbc": {
+              "username": "sa",
+              "password": "",
+              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+              "autoCreateTables": true
+            },
+            "serverConfigs":[
+            {
+              "app":"ThirdParty",
+              "enabled": true,
+              "serverAddress": "http://$$(hostname -i):9080",
+              "communicationType" : "REST"
+            },
+            {
+              "app":"Q2T",
+              "enabled": true,
+              "serverAddress": "unix:$${DDIR}/tm.ipc",
+              "communicationType" : "REST"
+            },
+            {
+              "app":"P2P",
+              "enabled": true,
+              "serverAddress": "http://$$(hostname -i):9000",
+              "sslConfig": {
+                "tls": "OFF"
+              },
+              "communicationType" : "REST"
+            }
+            ],
+            "peer": [
+               {
+                   "url": "http://txmanager1:9000"
+               },
+               {
+                   "url": "http://txmanager2:9000"
+               },
+               {
+                   "url": "http://txmanager3:9000"
+               },
+               {
+                   "url": "http://txmanager4:9000"
+               }
+            ],
+            "keys": {
+              "passwords": [],
+              "keyData": [
+                {
+                  "config": $$(cat $${DDIR}/tm1.key),
+                  "publicKey": "$$(cat $${DDIR}/tm1.pub)"
+                },
+                {
+                  "config": $$(cat $${DDIR}/tm5.key),
+                  "publicKey": "$$(cat $${DDIR}/tm5.pub)"
+                },
+                {
+                  "config": $$(cat $${DDIR}/tm6.key),
+                  "publicKey": "$$(cat $${DDIR}/tm6.pub)"
+                },
+                {
+                  "config": $$(cat $${DDIR}/tm7.key),
+                  "publicKey": "$$(cat $${DDIR}/tm7.pub)"
+                }
+              ]
+            },
+            "residentGroups":[
+              {
+                "name":"private",
+                "description":"default privacy group",
+                "members":["$$(cat $${DDIR}/tm1.pub)"]
+              },
+              {
+                "name":"PS1",
+                "description":"Privacy Group 1",
+                "members":["$$(cat $${DDIR}/tm5.pub)"]
+              },
+              {
+                "name":"PS2",
+                "description":"Privacy Group 2",
+                "members":["$$(cat $${DDIR}/tm6.pub)"]
+              },
+              {
+                "name":"PS3",
+                "description":"Privacy Group 3",
+                "members":["$$(cat $${DDIR}/tm7.pub)"]
+              }
+            ],
+            "alwaysSendTo": [],
+            "features": {
+              "enableMultiplePrivateStates": "true"
+            }
+          }
+      EOF
+          cat $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          else
+              export JAVA_OPTS="-Xms128M -Xmx128M"
+              /tessera/bin/tessera -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          fi
+          ;;
+        constellation)
+          echo "socket=\"$${DDIR}/tm.ipc\"\npublickeys=[\"/examples/keys/tm$${NODE_ID}.pub\"]\n" > $${DDIR}/tm.conf
+          constellation-node \
+            --url=http://$$(hostname -i):9000/ \
+            --port=9000 \
+            --socket=$${DDIR}/tm.ipc \
+            --othernodes=http://172.16.239.101:9000/,http://172.16.239.102:9000/,http://172.16.239.103:9000/,http://172.16.239.104:9000/,http://172.16.239.105:9000/ \
+            --publickeys=/examples/keys/tm$${NODE_ID}.pub \
+            --privatekeys=/examples/keys/tm$${NODE_ID}.key \
+            --storage=$${DDIR} \
+            --verbosity=4
+          ;;
+        *)
+          echo "Invalid Transaction Manager"
+          exit 1
+          ;;
+      esac
+x-tx-manager-def:
+  &tx-manager-def
+  image: "${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:develop}"
+  expose:
+    - "9000"
+    - "9080"
+  restart: "no"
+  healthcheck:
+    test: ["CMD-SHELL", "[ -S /qdata/tm/tm.ipc ] || exit 1"]
+    interval: 3s
+    timeout: 3s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      if [ "$${PRIVATE_CONFIG}" == "ignore" ]; then
+        /bin/true
+        exit 0
+      fi
+      DDIR=/qdata/tm
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}
+      DOCKER_IMAGE="${QUORUM_TX_MANAGER_DOCKER_IMAGE:-quorumengineering/tessera:21.7}"
+      TX_MANAGER=$$(echo $${DOCKER_IMAGE} | sed 's/^.*\/\(.*\):.*$$/\1/g')
+      echo "TxManager: $${TX_MANAGER}"
+      case $${TX_MANAGER}
+      in
+        tessera)
+          cp /examples/keys/tm$${NODE_ID}.pub $${DDIR}/tm.pub
+          cp /examples/keys/tm$${NODE_ID}.key $${DDIR}/tm.key
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d" " -f2)
+          else
+              TESSERA_VERSION=$$(/tessera/bin/tessera version)
+          fi
+          echo "Tessera version: $${TESSERA_VERSION}"
+          # sorting versions to target correct configuration
+          V08=$$(echo -e "0.8\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
+          V09AndAbove=$$(echo -e "0.9\n$${TESSERA_VERSION}" | sort -n -r -t '.' -k 1,1 -k 2,2 | head -n1)
+          TESSERA_CONFIG_TYPE="-09"
+          case "$${TESSERA_VERSION}" in
+              "$${V09AndAbove}")
+                  TESSERA_CONFIG_TYPE="-09"
+                  ;;
+          esac
+
+          echo Config type $${TESSERA_CONFIG_TYPE}
+
+          #generating the two config flavors
+          cat <<EOF > $${DDIR}/tessera-config-09.json
+          {
+            "useWhiteList": false,
+            "jdbc": {
+              "username": "sa",
+              "password": "",
+              "url": "jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+              "autoCreateTables": true
+            },
+            "serverConfigs":[
+            {
+              "app":"ThirdParty",
+              "enabled": true,
+              "serverAddress": "http://$$(hostname -i):9080",
+              "communicationType" : "REST"
+            },
+            {
+              "app":"Q2T",
+              "enabled": true,
+              "serverAddress": "unix:$${DDIR}/tm.ipc",
+              "communicationType" : "REST"
+            },
+            {
+              "app":"P2P",
+              "enabled": true,
+              "serverAddress": "http://$$(hostname -i):9000",
+              "sslConfig": {
+                "tls": "OFF"
+              },
+              "communicationType" : "REST"
+            }
+            ],
+            "peer": [
+               {
+                   "url": "http://txmanager1:9000"
+               },
+               {
+                   "url": "http://txmanager2:9000"
+               },
+               {
+                   "url": "http://txmanager3:9000"
+               },
+               {
+                   "url": "http://txmanager4:9000"
+               },
+               {
+                   "url": "http://txmanager5:9000"
+               },
+               {
+                   "url": "http://txmanager6:9000"
+               },
+               {
+                   "url": "http://txmanager7:9000"
+               }
+            ],
+            "keys": {
+              "passwords": [],
+              "keyData": [
+                {
+                  "config": $$(cat $${DDIR}/tm.key),
+                  "publicKey": "$$(cat $${DDIR}/tm.pub)"
+                }
+              ]
+            },
+            "alwaysSendTo": []
+          }
+      EOF
+          cat $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          if [ -f "/tessera/tessera-app.jar" ]; then
+              java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          else
+              export JAVA_OPTS="-Xms128M -Xmx128M"
+              /tessera/bin/tessera -configfile $${DDIR}/tessera-config$${TESSERA_CONFIG_TYPE}.json
+          fi
+          ;;
+        constellation)
+          echo "socket=\"$${DDIR}/tm.ipc\"\npublickeys=[\"/examples/keys/tm$${NODE_ID}.pub\"]\n" > $${DDIR}/tm.conf
+          constellation-node \
+            --url=http://$$(hostname -i):9000/ \
+            --port=9000 \
+            --socket=$${DDIR}/tm.ipc \
+            --othernodes=http://172.16.239.101:9000/,http://172.16.239.102:9000/,http://172.16.239.103:9000/,http://172.16.239.104:9000/,http://172.16.239.105:9000/ \
+            --publickeys=/examples/keys/tm$${NODE_ID}.pub \
+            --privatekeys=/examples/keys/tm$${NODE_ID}.key \
+            --storage=$${DDIR} \
+            --verbosity=4
+          ;;
+        *)
+          echo "Invalid Transaction Manager"
+          exit 1
+          ;;
+      esac
+x-cakeshop-def:
+  &cakeshop-def
+  image: "${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.12.1}"
+  expose:
+    - "8999"
+  restart: "no"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy=off", "http://localhost:8999/actuator/health"]
+    interval: 5s
+    timeout: 5s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      DDIR=/qdata/cakeshop/local
+      rm -rf $${DDIR}
+      mkdir -p $${DDIR}
+      DOCKER_IMAGE="${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.12.1}"
+      cp /examples/cakeshop/application.properties.template $${DDIR}/application.properties
+      cp /examples/cakeshop/7nodes_docker.json $${DDIR}/7nodes.json
+      java -Xms128M -Xmx128M -Dcakeshop.config.dir=/qdata/cakeshop -Dlogging.path=/qdata/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
+      ;;
+services:
+  node1:
+    << : *quorum-def-node1
+    hostname: node1
+    ports:
+      - "22000:8545"
+    volumes:
+      - vol1:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager1
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=1
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.11
+  txmanager1:
+    << : *tx-manager-def-node1
+    hostname: txmanager1
+    ports:
+      - "9081:9080"
+    volumes:
+      - vol1:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.101
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=1
+  node2:
+    << : *quorum-def
+    hostname: node2
+    ports:
+      - "22001:8545"
+    volumes:
+      - vol2:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager2
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=2
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.12
+  txmanager2:
+    << : *tx-manager-def
+    hostname: txmanager2
+    ports:
+      - "9082:9080"
+    volumes:
+      - vol2:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.102
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=2
+  node3:
+    << : *quorum-def
+    hostname: node3
+    ports:
+      - "22002:8545"
+    volumes:
+      - vol3:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager3
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=3
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.13
+  txmanager3:
+    << : *tx-manager-def
+    hostname: txmanager3
+    ports:
+      - "9083:9080"
+    volumes:
+      - vol3:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.103
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=3
+  node4:
+    << : *quorum-def
+    hostname: node4
+    ports:
+      - "22003:8545"
+    volumes:
+      - vol4:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager4
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=4
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.14
+  txmanager4:
+    << : *tx-manager-def
+    hostname: txmanager4
+    ports:
+      - "9084:9080"
+    volumes:
+      - vol4:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.104
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=4
+  node5:
+    << : *quorum-def-qlight
+    hostname: node5
+    ports:
+      - "22004:8545"
+    volumes:
+      - vol5:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager1
+    environment:
+      - NODE_ID=5
+      - PSI=PS1
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.15
+  node6:
+    << : *quorum-def-qlight
+    hostname: node6
+    ports:
+      - "22005:8545"
+    volumes:
+      - vol6:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager1
+    environment:
+      - NODE_ID=6
+      - PSI=PS2
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.16
+  node7:
+    << : *quorum-def-qlight
+    hostname: node7
+    ports:
+      - "22006:8545"
+    volumes:
+      - vol7:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager1
+    environment:
+      - NODE_ID=7
+      - PSI=PS3
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.17
+  oauth2-server:
+    image: oryd/hydra:v1.3.2-alpine
+    hostname: multi-tenancy-oauth2-server
+    container_name: multi-tenancy-oauth2-server
+    ports:
+      - 4444:4444 # Public
+      - 4445:4445 # Public
+    expose:
+      - 4445
+    restart: unless-stopped
+    networks:
+      - quorum-examples-net
+    environment:
+      - URLS_SELF_ISSUER=https://goquorum.com/oauth/
+      - TTL_ACCESS_TOKEN=72h
+      - DSN=memory
+      - STRATEGIES_ACCESS_TOKEN=jwt
+#  cakeshop:
+#    << : *cakeshop-def
+#    hostname: cakeshop
+#    ports:
+#      - "8999:8999"
+#    volumes:
+#      - cakeshopvol:/qdata
+#      - ./examples/7nodes:/examples:ro
+#    networks:
+#      quorum-examples-net:
+#        ipv4_address: 172.16.239.186
+networks:
+  quorum-examples-net:
+    name: quorum-examples-net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.239.0/24
+volumes:
+  "vol1":
+  "vol2":
+  "vol3":
+  "vol4":
+  "vol5":
+  "vol6":
+  "vol7":
+  "cakeshopvol":
