@@ -348,4 +348,4 @@ export ENCRYPTOR_EC_ELLIPTIC_CURVE=sect571k1
 Some simple transaction contracts are included in quorum-examples to demonstrate the privacy features of Quorum.  To learn how to use them see the [7nodes README](examples/7nodes/README.md).
 
 # Getting Help
-Stuck at some step? Please join our <a href="https://discord.gg/5U9Jwp7" target="_blank" rel="noopener">discord community</a> for support.
+Stuck at some step? Please join our <a href="https://discord.com/channels/697535391594446898/747810572937986240" target="_blank" rel="noopener">discord community</a> for support.
