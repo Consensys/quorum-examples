@@ -99,7 +99,7 @@ async function send() {
   const txnParams = {
     gasPrice: 0,
     gasLimit: 4300000,
-    to: "",
+    to: null,
     value: 0,
     data: initializedDeploy,
     from: decryptedAccount,
