@@ -173,6 +173,18 @@ x-tx-manager-def:
                },
                {
                    "url": "http://txmanager3:9000"
+               },
+               {
+                   "url": "http://txmanager4:9000"
+               },
+               {
+                   "url": "http://txmanager5:9000"
+               },
+               {
+                   "url": "http://txmanager6:9000"
+               },
+               {
+                   "url": "http://txmanager7:9000"
                }
             ],
             "keys": {
@@ -245,8 +257,7 @@ services:
       - vol1:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
-     txmanager1:
-       condition: service_healthy
+      - txmanager1
     environment:
       - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=1
@@ -276,8 +287,7 @@ services:
       - vol2:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
-      txmanager2:
-       condition: service_healthy
+      - txmanager2
     environment:
       - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=2
@@ -307,8 +317,7 @@ services:
       - vol3:/qdata
       - ./examples/7nodes:/examples:ro
     depends_on:
-      txmanager3:
-       condition: service_healthy
+      - txmanager3
     environment:
       - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=3
@@ -329,6 +338,126 @@ services:
     environment:
       - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
       - NODE_ID=3
+  node4:
+    << : *quorum-def
+    hostname: node4
+    ports:
+      - "22003:8545"
+    volumes:
+      - vol4:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager4
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=4
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.14
+  txmanager4:
+    << : *tx-manager-def
+    hostname: txmanager4
+    ports:
+      - "9084:9080"
+    volumes:
+      - vol4:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.104
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=4
+  node5:
+    << : *quorum-def
+    hostname: node5
+    ports:
+      - "22004:8545"
+    volumes:
+      - vol5:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager5
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=5
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.15
+  txmanager5:
+    << : *tx-manager-def
+    hostname: txmanager5
+    ports:
+      - "9085:9080"
+    volumes:
+      - vol5:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.105
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=5
+  node6:
+    << : *quorum-def
+    hostname: node6
+    ports:
+      - "22005:8545"
+    volumes:
+      - vol6:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager6
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=6
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.16
+  txmanager6:
+    << : *tx-manager-def
+    hostname: txmanager6
+    ports:
+      - "9086:9080"
+    volumes:
+      - vol6:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.106
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=6
+  node7:
+    << : *quorum-def
+    hostname: node7
+    ports:
+      - "22006:8545"
+    volumes:
+      - vol7:/qdata
+      - ./examples/7nodes:/examples:ro
+    depends_on:
+      - txmanager7
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=7
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.17
+  txmanager7:
+    << : *tx-manager-def
+    hostname: txmanager7
+    ports:
+      - "9087:9080"
+    volumes:
+      - vol7:/qdata
+      - ./examples/7nodes:/examples:ro
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.107
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - NODE_ID=7
   cakeshop:
     << : *cakeshop-def
     hostname: cakeshop
@@ -352,4 +481,8 @@ volumes:
   "vol1":
   "vol2":
   "vol3":
+  "vol4":
+  "vol5":
+  "vol6":
+  "vol7":
   "cakeshopvol":
